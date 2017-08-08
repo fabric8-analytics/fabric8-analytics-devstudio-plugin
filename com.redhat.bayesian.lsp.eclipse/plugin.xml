@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.lsp4e.languageServer">
+      <server
+            class="com.redhat.bayesian.lsp.eclipse.BayesianStreamConnectionProvider"
+            id="com.redhat.bayesian.lsp.eclipse.server"
+            label="Bayesian">
+      </server>
+      <contentTypeMapping
+            contentType="org.eclipse.m2e.core.pomFile"
+            id="com.redhat.bayesian.lsp.eclipse.server">
+      </contentTypeMapping>
+      <contentTypeMapping
+            contentType="org.eclipse.wst.json.npm.core.npmsource"
+            id="com.redhat.bayesian.lsp.eclipse.server">
+      </contentTypeMapping>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.redhat.bayesian.lsp.eclipse.Fabric8AnalysisPreferencePage"
+            id="com.redhat.bayesian.lsp.eclipse.preferences"
+            name="Fabric8 analysis">
+      </page>
+   </extension>
+
+</plugin>
