@@ -11,6 +11,11 @@
 		<oxygenURL>http://download.jboss.org/jbosstools/updates/requirements/oxygen/201706161000-Oxygen.0.RC4a/</oxygenURL>
 		<!-- <oxygenURL>http://download.eclipse.org/releases/oxygen/</oxygenURL> -->
 		<tycho.scmUrl>scm:git:https://github.com/fabric8-analytics/POC-Devstudio-plugin.git</tycho.scmUrl>
+
+		<!-- if https://issues.jboss.org/browse/JBIDE-22248 comes back, use <jbossNexus>origin-repository.jboss.org</jbossNexus> -->
+		<jbossNexus>repository.jboss.org</jbossNexus>
+		<!-- https://issues.jboss.org/browse/JBIDE-23965 performance tuning for filemgmt.jboss.org - use IP as it's 3x faster (but subject to change) -->
+		<filemgmtJbossOrg>10.5.105.197</filemgmtJbossOrg>
 	</properties>
 
 	<modules>
