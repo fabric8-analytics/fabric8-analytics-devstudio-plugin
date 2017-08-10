@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+<description>Bayesian Language Server integration</description>
+
+<!-- PLEASE NOTE!
+	When updating this file, please be sure that it parses as valid XML before committing it.
+	To test, just run `mvn clean install` in this folder. 
+-->
+<category-def name="site" label="Bayesian Language Server integration">
+	<description>Bayesian Language Server integration
+	</description>
+</category-def>
+
+<bundle id="com.redhat.bayesian.lsp.eclipse"><category name="site"/></bundle>
+
+</site>

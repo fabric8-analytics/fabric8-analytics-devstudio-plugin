@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.redhat.bayesian.eclipse</groupId>
+		<artifactId>com.redhat.bayesian.parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>com.redhat.bayesian.eclipse</groupId>
+	<artifactId>site</artifactId>
+	<packaging>eclipse-repository</packaging>
+	<properties>
+		<update.site.name>${project.name}</update.site.name>
+		<skipDeployToJBossOrg>false</skipDeployToJBossOrg>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+			<groupId>org.eclipse.tycho</groupId>
+			<artifactId>target-platform-configuration</artifactId>
+			<version>${tycho-version}</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>deploy-to-jboss.org</id>
+			<properties>
+				<!-- Skip publishing to Nexus, since we don't use it and it takes a lot of time -->
+				<maven.deploy.skip>true</maven.deploy.skip>
+				<skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy-snapshot-build</id>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>deploy</phase>
+								<configuration>
+									<arguments>
+										<arg>-s</arg>
+										<arg>${project.build.directory}/fullSite</arg>
+										<arg>-t</arg>
+										<arg>${eclipseReleaseName}/snapshots/builds/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}</arg>
+									</arguments>
+									<skip>${skipDeployToJBossOrg}</skip>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<!-- 
+		mvn verify -Pmaximum \
+			-DBUILD_TIMESTAMP=2013-04-10_01-02-03 -DBUILD_NUMBER=314 -DBUILD_ALIAS=CR1 \
+			-Dupdate.site.description="Stable Milestone" -DJOB_NAME=jbosstools-build-sites.aggregate.coretests-site_4.2.luna
+	-->
+
+</project>
