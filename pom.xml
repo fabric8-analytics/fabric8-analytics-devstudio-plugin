@@ -94,6 +94,111 @@
 			<layout>p2</layout>
 			<url>${oxygenURL}</url>
 		</repository>
+
+		<repository>
+			<id>jboss-releases</id>
+			<name>JBoss Releases Maven Repository</name>
+			<url>https://${jbossNexus}/nexus/content/repositories/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>jboss-snapshots-repository</id>
+			<name>JBoss Snapshots Repository</name>
+			<url>https://${jbossNexus}/nexus/content/repositories/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jboss-ga-repository</id>
+			<name>JBoss General Availability Maven Repository</name>
+			<url>http://maven.repository.redhat.com/ga/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
 	</repositories>
+
+	<!-- Additional m2 repos to resolve things like org.eclipse.tycho:tycho-maven-plugin -->
+	<!-- JBoss Nexus repos are also added, but in settings.xml -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>tycho-snapshots</id>
+			<url>https://repo.eclipse.org/content/repositories/tycho-snapshots/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>sonatype-public-grid</id>
+			<url>https://repository.sonatype.org/content/groups/sonatype-public-grid</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>sonatype-public-repository</id>
+			<url>https://oss.sonatype.org/content/groups/public</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>jboss-snapshots-repository</id>
+			<name>JBoss Snapshots Repository</name>
+			<url>https://${jbossNexus}/nexus/content/repositories/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>jboss-releases</id>
+			<name>JBoss Releases Maven Repository</name>
+			<url>https://${jbossNexus}/nexus/content/repositories/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<!-- To deploy parent to Nexus -->
+	<!--	Don't change "id" since it should match credentials entry in $M2_REPO/settings.xml -->
+	<distributionManagement>
+		<snapshotRepository>
+			<id>jboss-snapshots-repository</id>
+			<name>JBoss Snapshots Repository</name>
+			<url>https://${jbossNexus}/nexus/content/repositories/snapshots/</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+		<repository>
+			<id>jboss-releases-repository</id>
+			<name>JBoss Release Staging Repository</name>
+			<uniqueVersion>false</uniqueVersion>
+			<url>https://${jbossNexus}/nexus/service/local/staging/deploy/maven2/</url>
+			<layout>default</layout>
+		</repository>
+	</distributionManagement>
+
+	<scm>
+		<connection>scm:git:git://git@github.com:fabric8-analytics/POC-Devstudio-Plugin.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:fabric8-analytics/POC-Devstudio-Plugin.git</developerConnection>
+		<url>git://github.com/fabric8-analytics/POC-Devstudio-Plugin.git</url>
+	</scm>
+
+	<!-- TODO set correct tracker URL here -->
+	<issueManagement>
+		<system>jira</system>
+		<url>https://jira.jboss.org/jira/secure/</url>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+	</licenses>
+
+	<!-- TODO set correct developers here -->
+	<developers>
+		<developer>
+			<id>tools.jboss.org</id>
+			<name>JBoss Tools</name>
+			<organization>jboss.org/tools</organization>
+			<organizationUrl>http://jboss.org/tools</organizationUrl>
+		</developer>
+	</developers>
 
 </project>
