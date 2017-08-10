@@ -31,6 +31,14 @@
 		<profile>
 			<id>deploy-to-jboss.org</id>
 			<properties>
+				<deployScriptDir>${project.build.directory}/releng-scripts</deployScriptDir>
+				<deployScript>${deployScriptDir}/publish/rsync.sh</deployScript>
+				<deploySourceFolder>${project.build.directory}/repository</deploySourceFolder>
+				<deployDestination>tools@${filemgmtJbossOrg}:downloads_htdocs/jbosstools</deployDestination>
+				<deployTargetFolder>${eclipseReleaseName}/snapshots/builds/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}/all/repo/</deployTargetFolder>
+				<deployNumbuildstokeep>2</deployNumbuildstokeep>
+				<deployNumbuildstolink>2</deployNumbuildstolink>
+				<deployThreshholdwhendelete>2</deployThreshholdwhendelete>
 				<!-- Skip publishing to Nexus, since we don't use it and it takes a lot of time -->
 				<maven.deploy.skip>true</maven.deploy.skip>
 				<skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
@@ -38,9 +46,36 @@
 			<build>
 				<plugins>
 					<plugin>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy-releng-scripts</id>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<phase>deploy</phase>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>org.jboss.tools.releng</groupId>
+											<artifactId>jbosstools-releng-publish</artifactId>
+											<version>${jbosstoolsRelengPublishVersion}</version>
+											<type>tar.gz</type>
+											<outputDirectory>${deployScriptDir}</outputDirectory>
+										</artifactItem>
+									</artifactItems>
+									<skip>${skipDeployToJBossOrg}</skip>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<version>1.6.0</version>
+						<configuration>
+							<executable>${deployScript}</executable>
+						</configuration>
 						<executions>
 							<execution>
 								<id>deploy-snapshot-build</id>
@@ -50,10 +85,18 @@
 								<phase>deploy</phase>
 								<configuration>
 									<arguments>
+										<arg>-DESTINATION</arg>
+										<arg>${deployDestination}</arg>
 										<arg>-s</arg>
-										<arg>${project.build.directory}/repository</arg>
+										<arg>${deploySourceFolder}</arg>
 										<arg>-t</arg>
-										<arg>${eclipseReleaseName}/snapshots/builds/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}</arg>
+										<arg>${deployTargetFolder}</arg>
+										<arg>-k</arg>
+										<arg>${deployNumbuildstokeep}</arg>
+										<arg>-l</arg>
+										<arg>${deployNumbuildstolink}</arg>
+										<arg>-a</arg>
+										<arg>${deployThreshholdwhendelete}</arg>
 									</arguments>
 									<skip>${skipDeployToJBossOrg}</skip>
 								</configuration>
