@@ -50,7 +50,7 @@
 								<configuration>
 									<arguments>
 										<arg>-s</arg>
-										<arg>${project.build.directory}/fullSite</arg>
+										<arg>${project.build.directory}/repository</arg>
 										<arg>-t</arg>
 										<arg>${eclipseReleaseName}/snapshots/builds/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}</arg>
 									</arguments>
@@ -65,9 +65,8 @@
 	</profiles>
 
 	<!-- 
-		mvn verify -Pmaximum \
-			-DBUILD_TIMESTAMP=2013-04-10_01-02-03 -DBUILD_NUMBER=314 -DBUILD_ALIAS=CR1 \
-			-Dupdate.site.description="Stable Milestone" -DJOB_NAME=jbosstools-build-sites.aggregate.coretests-site_4.2.luna
+		mvn verify -DBUILD_TIMESTAMP=2017-08-10_01-02-03 -DBUILD_NUMBER=314 \
+			-DJOB_NAME=com.redhat.bayesian.eclipse-site_master
 	-->
 
 </project>
