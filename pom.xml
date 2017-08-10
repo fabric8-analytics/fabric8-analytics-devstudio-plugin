@@ -16,6 +16,11 @@
 		<jbossNexus>repository.jboss.org</jbossNexus>
 		<!-- https://issues.jboss.org/browse/JBIDE-23965 performance tuning for filemgmt.jboss.org - use IP as it's 3x faster (but subject to change) -->
 		<filemgmtJbossOrg>10.5.105.197</filemgmtJbossOrg>
+
+		<!-- default deployment settings to avoid dumping extra stuff in Nexus; override in site/pom.xml -->
+		<skipDeployToJBossOrg>true</skipDeployToJBossOrg>
+		<maven.deploy.skip>true</maven.deploy.skip>
+		<skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
 	</properties>
 
 	<modules>
