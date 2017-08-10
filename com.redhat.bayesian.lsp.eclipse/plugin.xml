@@ -25,5 +25,35 @@
             name="Fabric8 analysis">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="com.redhat.bayesian.lsp.eclipse.CustomView"
+            id="de.vogella.rcp.commands.first.commands.Exit"
+            name="Stack Analyses">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="com.redhat.bayesian.lsp.eclipse.ExitHandler"
+            id="myplugin.command.mycommand"
+            name="Exit">
+            
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+         locationURI=
+         "popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
+         <command
+               commandId="myplugin.command.mycommand"
+               label="stack analyses"
+               mnemonic="M1+P"
+               tooltip="Do something with this project">
+         </command>
+      </menuContribution>
+   </extension>
 
 </plugin>

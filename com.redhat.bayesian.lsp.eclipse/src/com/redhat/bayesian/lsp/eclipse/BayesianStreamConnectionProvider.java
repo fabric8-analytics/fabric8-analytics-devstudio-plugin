@@ -28,7 +28,7 @@ public class BayesianStreamConnectionProvider extends ProcessStreamConnectionPro
 		implements StreamConnectionProvider {
 
 	static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
-	private String token;
+	static String token;
 
 	public BayesianStreamConnectionProvider() {
 		super();
