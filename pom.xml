@@ -6,8 +6,12 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
+		<eclipseReleaseName>oxygen</eclipseReleaseName>
+		
 		<tycho-version>1.0.0</tycho-version>
 		<tychoExtrasVersion>${tycho-version}</tychoExtrasVersion>
+		<jbosstoolsRelengPublishVersion>4.5.1.Final</jbosstoolsRelengPublishVersion>
+
 		<oxygenURL>http://download.jboss.org/jbosstools/updates/requirements/oxygen/201706161000-Oxygen.0.RC4a/</oxygenURL>
 		<!-- <oxygenURL>http://download.eclipse.org/releases/oxygen/</oxygenURL> -->
 		<tycho.scmUrl>scm:git:https://github.com/fabric8-analytics/POC-Devstudio-plugin.git</tycho.scmUrl>
