@@ -40,6 +40,7 @@ import org.json.JSONObject;
 import com.redhat.fabric8analytics.lsp.eclipse.CustomView;
 import com.redhat.fabric8analytics.lsp.eclipse.Utils;
 import com.redhat.fabric8analytics.lsp.eclipse.JobIdNullException;
+import com.redhat.fabric8analytics.lsp.eclipse.TokenCheck;
 
 public class ExitHandler extends AbstractHandler {
 
@@ -47,9 +48,9 @@ public class ExitHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String jobId = null;
 		Shell mapComposite = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
-		String RECOMMENDER_API_TOKEN =  "Bearer " + Fabric8AnalyticsStreamConnectionProvider.token;
+		String RECOMMENDER_API_TOKEN =  "Bearer ";
 		try {
-				
+
 			ISelectionService service = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
 
 			ISelection selection = service.getSelection();
@@ -57,10 +58,18 @@ public class ExitHandler extends AbstractHandler {
 			if (selection instanceof IStructuredSelection)
 			{
 				Object selected = ((IStructuredSelection)selection).getFirstElement();
-			
+
 				IFile file = (IFile)Platform.getAdapterManager().getAdapter(selected, IFile.class);
 				IPath filePath = file.getLocation();
-				
+
+
+				String token = TokenCheck.getToken();
+				while(token==null || token.isEmpty()) {					
+					TokenCheck.checkToken();	
+					token = TokenCheck.getToken();
+				}
+				RECOMMENDER_API_TOKEN = RECOMMENDER_API_TOKEN + token;
+
 				String viewId = "de.vogella.rcp.commands.first.commands.Exit";
 				IViewPart temp=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewId); 
 				Browser browser =  ((CustomView) temp).getBrowser();
@@ -72,15 +81,15 @@ public class ExitHandler extends AbstractHandler {
 				MultipartEntityBuilder builder = MultipartEntityBuilder.create()
 						.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
 						.addPart("manifest[]", fileBody);
-				
+
 				HttpEntity multipart = builder.build();
 				post.setEntity(multipart);
 				HttpResponse response = client.execute(post);
 				JSONObject jsonObj = Utils.jsonObj(response);
 				if (response.getStatusLine().getStatusCode()==200) {
-					 
-					 jobId = jsonObj.getString("id");
-					
+
+					jobId = jsonObj.getString("id");
+
 				}
 				else {
 					new UIJob(PlatformUI.getWorkbench().getDisplay(), jsonObj.toString()) {
@@ -92,37 +101,37 @@ public class ExitHandler extends AbstractHandler {
 					}.schedule();
 					return mapComposite;
 				}
-				
-			
-			if(jobId  != null) {
-				int getResponseStatus = 202;
-				while(getResponseStatus==202) {
-					
-					TimeUnit.SECONDS.sleep(30);
-					HttpGet get = new HttpGet("https://recommender.api.openshift.io/api/v1/stack-analyses-v2/" + jobId);
-					get.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
-					HttpResponse getResponse = client.execute(get);
-					getResponseStatus = getResponse.getStatusLine().getStatusCode();
+
+
+				if(jobId  != null) {
+					int getResponseStatus = 202;
+					while(getResponseStatus==202) {
+
+						TimeUnit.SECONDS.sleep(30);
+						HttpGet get = new HttpGet("https://recommender.api.openshift.io/api/v1/stack-analyses-v2/" + jobId);
+						get.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
+						HttpResponse getResponse = client.execute(get);
+						getResponseStatus = getResponse.getStatusLine().getStatusCode();
+					}
+					if(getResponseStatus==200) {
+						browser.setUrl("http://ops-portal-v2-ops-portal-ide.dev.rdu2c.fabric8.io/#/analyze/" + jobId);
+					}
+
 				}
-				if(getResponseStatus==200) {
-					browser.setUrl("http://ops-portal-v2-ops-portal-ide.dev.rdu2c.fabric8.io/#/analyze/" + jobId);
+				else {
+					throw new JobIdNullException("Job Id is Null");
 				}
-				
-			}
-			else {
-				throw new JobIdNullException("Job Id is Null");
-			}
 
 			}
-			
-		
 
-	} catch (SWTError | CoreException | IOException | InterruptedException | JobIdNullException e) {
-		e.printStackTrace();
+
+
+		} catch (SWTError | CoreException | IOException | InterruptedException | JobIdNullException e) {
+			e.printStackTrace();
+		}
+
+
+
+		return mapComposite;
 	}
-
-	
-
-	return mapComposite;
-}
 }
