@@ -1,4 +1,4 @@
-package com.redhat.bayesian.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

@@ -1,4 +1,4 @@
-package com.redhat.bayesian.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse;
 
 public class JobIdNullException extends Exception {
 	public JobIdNullException(String message)

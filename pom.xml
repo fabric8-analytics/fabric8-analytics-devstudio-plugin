@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.redhat.bayesian.eclipse</groupId>
-	<artifactId>com.redhat.bayesian.parent</artifactId>
+	<groupId>com.redhat.fabric8analytics.eclipse</groupId>
+	<artifactId>com.redhat.fabric8analytics.parent</artifactId>
 	<packaging>pom</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 
@@ -14,7 +14,7 @@
 
 		<oxygenURL>http://download.jboss.org/jbosstools/updates/requirements/oxygen/201706161000-Oxygen.0.RC4a/</oxygenURL>
 		<!-- <oxygenURL>http://download.eclipse.org/releases/oxygen/</oxygenURL> -->
-		<tycho.scmUrl>scm:git:https://github.com/fabric8-analytics/POC-Devstudio-plugin.git</tycho.scmUrl>
+		<tycho.scmUrl>scm:git:https://github.com/fabric8-analytics/fabric8-analytics-devstudio-plugin.git</tycho.scmUrl>
 
 		<!-- if https://issues.jboss.org/browse/JBIDE-22248 comes back, use <jbossNexus>origin-repository.jboss.org</jbossNexus> -->
 		<jbossNexus>repository.jboss.org</jbossNexus>
@@ -187,9 +187,9 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:git:git://git@github.com:fabric8-analytics/POC-Devstudio-Plugin.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:fabric8-analytics/POC-Devstudio-Plugin.git</developerConnection>
-		<url>git://github.com/fabric8-analytics/POC-Devstudio-Plugin.git</url>
+		<connection>scm:git:git://git@github.com:fabric8-analytics/fabric8-analytics-devstudio-plugin.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:fabric8-analytics/fabric8-analytics-devstudio-plugin.git</developerConnection>
+		<url>git://github.com/fabric8-analytics/fabric8-analytics-devstudio-plugin.git</url>
 	</scm>
 
 	<!-- TODO set correct tracker URL here -->

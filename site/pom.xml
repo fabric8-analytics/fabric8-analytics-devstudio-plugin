@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.redhat.bayesian.eclipse</groupId>
-		<artifactId>com.redhat.bayesian.parent</artifactId>
+		<groupId>com.redhat.fabric8analytics.eclipse</groupId>
+		<artifactId>com.redhat.fabric8analytics.parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.redhat.bayesian.eclipse</groupId>
+	<groupId>com.redhat.fabric8analytics.eclipse</groupId>
 	<artifactId>site</artifactId>
 	<packaging>eclipse-repository</packaging>
 	<properties>

@@ -1,4 +1,4 @@
-package com.redhat.bayesian.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse;
 
 import org.eclipse.jface.layout.GridDataFactory;
 
@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.part.ViewPart;
 
-import com.redhat.bayesian.lsp.eclipse.URLSetter;
+import com.redhat.fabric8analytics.lsp.eclipse.URLSetter;
 
 
 public class CustomView extends ViewPart implements URLSetter {

@@ -1,4 +1,4 @@
-package com.redhat.bayesian.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse;
 
 import java.net.URL;
 
@@ -31,7 +31,7 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 
 	@Override
 	protected void createFieldEditors() {
-		addField(new StringFieldEditor(BayesianStreamConnectionProvider.RECOMMENDER_API_TOKEN, "RECOMMENDER_API_TOKEN", getFieldEditorParent()));
+		addField(new StringFieldEditor(Fabric8AnalyticsStreamConnectionProvider.RECOMMENDER_API_TOKEN, "RECOMMENDER_API_TOKEN", getFieldEditorParent()));
 		// TODO:
 		// * multi-line text area
 		// * Explanation of how to get the token

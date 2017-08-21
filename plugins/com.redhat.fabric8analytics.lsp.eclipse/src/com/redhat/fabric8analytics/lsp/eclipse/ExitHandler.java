@@ -1,4 +1,5 @@
-package com.redhat.bayesian.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -36,9 +37,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.progress.UIJob;
 import org.json.JSONObject;
-import com.redhat.bayesian.lsp.eclipse.CustomView;
-import com.redhat.bayesian.lsp.eclipse.Utils;
-import com.redhat.bayesian.lsp.eclipse.JobIdNullException;
+import com.redhat.fabric8analytics.lsp.eclipse.CustomView;
+import com.redhat.fabric8analytics.lsp.eclipse.Utils;
+import com.redhat.fabric8analytics.lsp.eclipse.JobIdNullException;
 
 public class ExitHandler extends AbstractHandler {
 
@@ -46,7 +47,7 @@ public class ExitHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String jobId = null;
 		Shell mapComposite = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
-		String RECOMMENDER_API_TOKEN =  "Bearer " + BayesianStreamConnectionProvider.token;
+		String RECOMMENDER_API_TOKEN =  "Bearer " + Fabric8AnalyticsStreamConnectionProvider.token;
 		try {
 				
 			ISelectionService service = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
