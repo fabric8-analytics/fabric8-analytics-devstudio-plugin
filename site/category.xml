@@ -11,6 +11,6 @@
 	</description>
 </category-def>
 
-<bundle id="com.redhat.fabric8analytics.lsp.eclipse"><category name="site"/></bundle>
+<feature id="com.redhat.fabric8analytics.lsp.eclipse.feature"><category name="site"/></feature>
 
 </site>
