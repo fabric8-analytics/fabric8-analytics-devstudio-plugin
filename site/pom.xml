@@ -22,7 +22,7 @@
 			<plugin>
 			<groupId>org.eclipse.tycho</groupId>
 			<artifactId>target-platform-configuration</artifactId>
-			<version>${tycho-version}</version>
+			<version>${tychoVersion}</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -110,7 +110,7 @@
 
 	<!-- 
 		mvn verify -DBUILD_TIMESTAMP=2017-08-10_01-02-03 -DBUILD_NUMBER=314 \
-			-DJOB_NAME=com.redhat.bayesian.eclipse-site_master
+			-DJOB_NAME=jbosstools-fabric8analytics_master
 	-->
 
 </project>
