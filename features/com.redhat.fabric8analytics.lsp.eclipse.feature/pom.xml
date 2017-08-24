@@ -3,11 +3,11 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.redhat.bayesian.eclipse</groupId>
+		<groupId>com.redhat.fabric8analytics.eclipse</groupId>
 		<artifactId>features</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>com.redhat.fabric8analytics.lsp.eclipse.features</groupId>
+	<groupId>com.redhat.fabric8analytics.eclipse</groupId>
 	<artifactId>com.redhat.fabric8analytics.lsp.eclipse.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>
