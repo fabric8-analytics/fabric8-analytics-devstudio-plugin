@@ -10,7 +10,7 @@
 	<groupId>com.redhat.fabric8analytics.eclipse</groupId>
 	<artifactId>features</artifactId>
 	
-	<name>plugins</name>	
+	<name>com.redhat.fabric8analytics.eclipse features</name>	
 	<packaging>pom</packaging>
 	<modules>
 		<module>com.redhat.fabric8analytics.lsp.eclipse.feature</module>
