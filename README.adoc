@@ -1,0 +1,22 @@
+
+= Fabric8Analytics Language Server integration
+
+TODO: write introduction to this project & its purpose
+
+== Usage
+
+* Import a project
+* Open manifest file (errors will show the component analyses)
+* For Stack Analyses, right click on pom.xml and click Stack Analyses
+
+
+== Installation
+
+* Start link:https://developers.redhat.com/products/devstudio/download/[Devstudio 11] (or link:https://www.eclipse.org/downloads/eclipse-packages/[Eclipse Oxygen 4.7] with link:http://tools.jboss.org/downloads/[JBoss Tools 4.5] installed)
+* Help -> Install New Software...
+* Work with: http://download.jboss.org/jbosstools/oxygen/snapshots/builds/jbosstools-fabric8analytics_master/latest/all/repo/
+* Install Fabric8Analytics Language Server integration and Language Sever Protocol client
+* Restarted when prompted
+
+image:docs/images/fabric8analytics-install.png[title="installation", alt="installation"]
+
