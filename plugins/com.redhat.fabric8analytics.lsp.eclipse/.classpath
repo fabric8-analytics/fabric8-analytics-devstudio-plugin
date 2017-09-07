@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="templates/"/>
+	<classpathentry exported="true" kind="lib" path="library/"/>
 	<classpathentry exported="true" kind="lib" path="library/commons-logging-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="library/httpclient-4.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="library/httpcore-4.4.1.jar"/>

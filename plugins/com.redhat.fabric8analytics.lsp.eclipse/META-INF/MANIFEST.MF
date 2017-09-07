@@ -22,7 +22,9 @@ Bundle-ClassPath: library/commons-logging-1.1.1.jar,
  library/httpcore-4.4.1.jar,
  library/httpmime-4.3.jar,
  library/json-20140107.jar,
- .
+ .,
+ library/,
+ templates/
 Export-Package: com.redhat.fabric8analytics.lsp.eclipse,
  org.apache.commons.logging,
  org.apache.commons.logging.impl,
