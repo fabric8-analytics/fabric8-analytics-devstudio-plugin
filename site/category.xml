@@ -15,5 +15,8 @@
 
 <!-- required at build + install time; should eventually be added to the JBoss Tools target platform instead -->
 <bundle id="org.eclipse.lsp4e"><category name="site"/></bundle>
+<bundle id="org.eclipse.xtext.xbase.lib"><category name="site"/></bundle>
+
+
 
 </site>
