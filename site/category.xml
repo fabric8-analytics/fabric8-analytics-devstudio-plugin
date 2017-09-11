@@ -15,6 +15,7 @@
 <bundle id="org.eclipse.lsp4e"><category name="site"/></bundle>
 <!-- required at build + install time; should eventually be added to the JBoss Tools target platform instead -->
 <bundle id="org.eclipse.lsp4e"><category name="site"/></bundle>
+<bundle id="org.eclipse.lsp4j"><category name="site"/></bundle>
 <feature id="com.redhat.fabric8analytics.lsp.eclipse.feature"><category name="site"/></feature>
 
 </site>
