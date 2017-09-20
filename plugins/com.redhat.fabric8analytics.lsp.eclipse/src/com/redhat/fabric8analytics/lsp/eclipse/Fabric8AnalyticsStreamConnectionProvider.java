@@ -33,9 +33,15 @@ implements StreamConnectionProvider {
 
 	public Fabric8AnalyticsStreamConnectionProvider() {
 		super();
+		File nodeJsLocation = getNodeJsLocation();
+		
+		if (nodeJsLocation == null) {
+			return;
+		}
+		
 		try {
 			setCommands(Arrays.asList(new String[] {
-					getNodeJsLocation().getAbsolutePath(),
+					nodeJsLocation.getAbsolutePath(),
 					FileLocator.toFileURL(Fabric8AnalyticsStreamConnectionProvider.class.getResource("/fabric8-analytics-lsp-server-test-devstudio/output/server.js")).getPath(),
 					"--stdio"
 			}));
@@ -95,7 +101,7 @@ implements StreamConnectionProvider {
 			location = "/usr/local/bin/node";
 		}
 
-		if (Files.exists(Paths.get(location))) {
+		if (location != null && Files.exists(Paths.get(location))) {
 			return new File(location);
 		}
 		new UIJob(PlatformUI.getWorkbench().getDisplay(), "Missing `node` in PATH") {
