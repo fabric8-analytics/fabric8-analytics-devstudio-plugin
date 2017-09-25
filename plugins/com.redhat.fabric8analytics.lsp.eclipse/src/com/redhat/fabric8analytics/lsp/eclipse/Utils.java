@@ -11,12 +11,13 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.eclipse.ui.PartInitException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Utils {
 
 
-	public static JSONObject jsonObj(HttpResponse response) throws UnsupportedOperationException, IOException {
+	public static JSONObject jsonObj(HttpResponse response) throws JSONException, UnsupportedOperationException, IOException {
 		InputStream responseContent = response.getEntity().getContent();
 
 		StringBuilder sb = new StringBuilder();
