@@ -30,18 +30,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.swt.*;
-
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
+import org.json.JSONException;
 import org.json.JSONObject;
-import com.redhat.fabric8analytics.lsp.eclipse.CustomView;
-import com.redhat.fabric8analytics.lsp.eclipse.Utils;
-import com.redhat.fabric8analytics.lsp.eclipse.TokenCheck;
 
 public class ExitHandler extends AbstractHandler {
 	private String RECOMMENDER_API_TOKEN = "";
@@ -144,7 +140,7 @@ public class ExitHandler extends AbstractHandler {
 				return mapComposite;
 			}
 
-		} catch (SWTError | IOException | CoreException e) {
+		} catch (SWTError | IOException | CoreException | JSONException e) {
 			e.printStackTrace();
 		}
 
