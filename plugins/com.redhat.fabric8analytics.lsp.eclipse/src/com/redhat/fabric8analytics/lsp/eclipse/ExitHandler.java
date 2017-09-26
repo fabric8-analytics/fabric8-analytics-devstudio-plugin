@@ -102,7 +102,7 @@ public class ExitHandler extends AbstractHandler {
 
 			}
 			String token = TokenCheck.getToken();
-			while(token==null || token.isEmpty()) {					
+			if(token==null || token.isEmpty()) {					
 				TokenCheck.checkToken();	
 				token = TokenCheck.getToken();
 			}
