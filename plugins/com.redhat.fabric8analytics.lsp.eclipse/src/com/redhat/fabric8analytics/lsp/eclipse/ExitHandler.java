@@ -2,10 +2,12 @@ package com.redhat.fabric8analytics.lsp.eclipse;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -26,11 +28,13 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -109,8 +113,6 @@ public class ExitHandler extends AbstractHandler {
 			if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 				RECOMMENDER_API_TOKEN = "Bearer "+ token;
 			}
-			String viewId = "de.vogella.rcp.commands.first.commands.Exit";
-			IViewPart temp=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewId); 
 			CloseableHttpClient client = HttpClients.createDefault();
 			HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/stack-analyses/");		
 			post.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
@@ -129,8 +131,41 @@ public class ExitHandler extends AbstractHandler {
 			JSONObject jsonObj = Utils.jsonObj(response);
 			if (response.getStatusLine().getStatusCode()==200) {
 				setJobId(jsonObj.getString("id"));
-				WorkerThread workerThread = new WorkerThread((CustomView)temp);
-				workerThread.go();
+				String jobId = getJobId();
+
+
+				UIJob test = new UIJob(PlatformUI.getWorkbench().getDisplay(), jobId) {
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						try {
+							String viewId = "de.vogella.rcp.commands.first.commands.Exit";
+							IViewPart stackView=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewId); 
+							int getResponseStatus = 202;
+							URL url = new URL("platform:/plugin/com.redhat.fabric8analytics.lsp.eclipse/templates/index.html");
+
+							url = FileLocator.toFileURL(url);
+							((CustomView) stackView).updatebrowserUrl(url.toString());
+							while(getResponseStatus==202)
+							{
+								TimeUnit.SECONDS.sleep(10);
+								getResponseStatus = Utils.checkStackProgress(jobId);
+							}
+
+							if(getResponseStatus==200) {
+
+
+								((CustomView) stackView).updatebrowserUrl("http://ops-portal-v2-ops-portal-ide.dev.rdu2c.fabric8.io/#/analyze/" + jobId);
+							}
+						} catch (PartInitException | IOException | InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} 
+						return Status.OK_STATUS;
+					}
+				};
+				test.schedule();
+				//				WorkerThread workerThread = new WorkerThread((CustomView)temp);
+				//				workerThread.go();
 
 			}
 			else {
