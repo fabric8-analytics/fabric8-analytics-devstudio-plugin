@@ -35,11 +35,7 @@ public class Utils {
 		CloseableHttpClient client = HttpClients.createDefault();
 		String recommendUrl = "https://recommender.api.openshift.io/api/v1/stack-analyses/";
 		String RECOMMENDER_API_TOKEN = "Bearer ";
-		String token = TokenCheck.getToken();
-		while(token==null || token.isEmpty()) {					
-			TokenCheck.checkToken();	
-			token = TokenCheck.getToken();
-		}
+		String token = TokenCheck.get().getToken();
 		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 		}

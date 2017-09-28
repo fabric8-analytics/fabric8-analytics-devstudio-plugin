@@ -67,7 +67,9 @@ public class ExitHandler extends AbstractHandler {
 			List<IFile> projectfiles = new ArrayList<>();
 			for (IProject project : projects) {
 
-				projectfiles =findAllProjectFiles(project);
+				if (project.isAccessible()) {
+					projectfiles =findAllProjectFiles(project);
+				}
 			}
 			Map<String, FileBody> manifestLocationMap = new HashMap<>();
 			for(IFile temp_file : projectfiles) {
@@ -97,11 +99,7 @@ public class ExitHandler extends AbstractHandler {
 
 
 			}
-			String token = TokenCheck.getToken();
-			while(token==null || token.isEmpty()) {					
-				TokenCheck.checkToken();	
-				token = TokenCheck.getToken();
-			}
+			String token = TokenCheck.get().getToken();
 			if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 				RECOMMENDER_API_TOKEN = "Bearer "+ token;
 			}

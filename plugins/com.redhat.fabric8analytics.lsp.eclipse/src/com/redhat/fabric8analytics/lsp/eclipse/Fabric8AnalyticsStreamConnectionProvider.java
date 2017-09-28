@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -42,10 +43,10 @@ implements StreamConnectionProvider {
 		try {
 			setCommands(Arrays.asList(new String[] {
 					nodeJsLocation.getAbsolutePath(),
-					FileLocator.toFileURL(Fabric8AnalyticsStreamConnectionProvider.class.getResource("/fabric8-analytics-lsp-server-test-devstudio/output/server.js")).getPath(),
+					Paths.get(FileLocator.toFileURL(Fabric8AnalyticsStreamConnectionProvider.class.getResource("/fabric8-analytics-lsp-server-test-devstudio/output/server.js")).toURI()).toString(),
 					"--stdio"
 			}));
-		} catch (IOException e) {
+		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 		}
 		setWorkingDirectory(System.getProperty("user.dir"));
@@ -58,17 +59,11 @@ implements StreamConnectionProvider {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (RECOMMENDER_API_TOKEN.equals(event.getProperty())) {
-					token = (String)event.getNewValue();
 					stop();
 				}
 			}
 		});
-
-		token = TokenCheck.getToken();
-		if (token == null || token.isEmpty()) {
-			TokenCheck.checkToken();
-
-		}
+		token = TokenCheck.get().getToken();
 	}
 
 	@Override
