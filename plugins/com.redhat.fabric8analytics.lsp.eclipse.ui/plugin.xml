@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.lsp4e.languageServer">
       <server
-            class="com.redhat.fabric8analytics.lsp.eclipse.Fabric8AnalyticsStreamConnectionProvider"
+            class="com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalyticsStreamConnectionProvider"
             id="com.redhat.fabric8analytics.lsp.eclipse.server"
             label="Fabric8Analytics">
       </server>
@@ -20,7 +20,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="com.redhat.fabric8analytics.lsp.eclipse.Fabric8AnalysisPreferencePage"
+            class="com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisPreferencePage"
             id="com.redhat.fabric8analytics.lsp.eclipse.preferences"
             name="Fabric8 Analysis">
       </page>
@@ -28,7 +28,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="com.redhat.fabric8analytics.lsp.eclipse.CustomView"
+            class="com.redhat.fabric8analytics.lsp.eclipse.ui.CustomView"
             id="de.vogella.rcp.commands.first.commands.Exit"
             name="Stack Analyses">
       </view>
@@ -36,7 +36,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="com.redhat.fabric8analytics.lsp.eclipse.ExitHandler"
+            defaultHandler="com.redhat.fabric8analytics.lsp.eclipse.ui.ExitHandler"
             id="myplugin.command.mycommand"
             name="Exit">
             

@@ -1,4 +1,4 @@
-package com.redhat.fabric8analytics.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import java.util.function.Function;
 
@@ -32,7 +32,7 @@ public class TokenCheck {
 	
 	private TokenCheck() {
 		provider = getProvider();
-		IPreferenceStore preferenceStore = Fabric8AnalysisLSActivator.getDefault().getPreferenceStore();
+		IPreferenceStore preferenceStore = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
@@ -49,7 +49,7 @@ public class TokenCheck {
 			try {
 				return (Function<IResource, String>) element.createExecutableExtension("class");
 			} catch (CoreException e) {
-				Fabric8AnalysisLSActivator.getDefault().getLog().log(new Status(IStatus.ERROR, Fabric8AnalysisLSActivator.getDefault().getBundle().getSymbolicName(), e.getLocalizedMessage(), e));
+				Fabric8AnalysisLSUIActivator.getDefault().getLog().log(new Status(IStatus.ERROR, Fabric8AnalysisLSUIActivator.getDefault().getBundle().getSymbolicName(), e.getLocalizedMessage(), e));
 			}
 		}
 		return null;
@@ -67,7 +67,7 @@ public class TokenCheck {
 	}
 	
 	private void ensureToken() {
-		token = Fabric8AnalysisLSActivator.getDefault().getPreferenceStore().getString(RECOMMENDER_API_TOKEN);
+		token = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore().getString(RECOMMENDER_API_TOKEN);
 		if (null == token) {
 			getTokenFromUI();
 		}

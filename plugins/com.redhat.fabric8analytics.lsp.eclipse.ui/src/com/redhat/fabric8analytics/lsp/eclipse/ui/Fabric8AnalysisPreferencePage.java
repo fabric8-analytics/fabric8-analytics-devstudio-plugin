@@ -1,4 +1,4 @@
-package com.redhat.fabric8analytics.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import java.net.URL;
 
@@ -22,11 +22,11 @@ import org.eclipse.ui.browser.IWebBrowser;
 
 public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	static final String PREFERENCE_PAGE_ID = Fabric8AnalysisLSActivator.getDefault().getBundle().getSymbolicName() + ".preferences"; //$NON-NLS-1$
+	static final String PREFERENCE_PAGE_ID = Fabric8AnalysisLSUIActivator.getDefault().getBundle().getSymbolicName() + ".preferences"; //$NON-NLS-1$
 
 	public Fabric8AnalysisPreferencePage() {
 		super("Fabric8 analysis", null, SWT.FLAT);
-		setPreferenceStore(Fabric8AnalysisLSActivator.getDefault().getPreferenceStore());
+		setPreferenceStore(Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore());
 	}
 
 	@Override
@@ -52,9 +52,9 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 					final IWebBrowser browser = PlatformUI.getWorkbench().getBrowserSupport().createBrowser(PREFERENCE_PAGE_ID);
 					browser.openURL(new URL("http://openshift.io"));
 				} catch (Exception ex) {
-					Fabric8AnalysisLSActivator.getDefault().getLog().log(new Status(
+					Fabric8AnalysisLSUIActivator.getDefault().getLog().log(new Status(
 						IStatus.ERROR,
-						Fabric8AnalysisLSActivator.getDefault().getBundle().getSymbolicName(),
+						Fabric8AnalysisLSUIActivator.getDefault().getBundle().getSymbolicName(),
 						ex.getMessage(),
 						ex
 					));
