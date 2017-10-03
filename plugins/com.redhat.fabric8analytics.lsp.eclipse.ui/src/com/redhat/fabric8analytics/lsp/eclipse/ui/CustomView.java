@@ -1,4 +1,4 @@
-package com.redhat.fabric8analytics.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import org.eclipse.jface.layout.GridDataFactory;
 
@@ -9,7 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.ui.part.ViewPart;
 
-import com.redhat.fabric8analytics.lsp.eclipse.URLSetter;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.URLSetter;
 
 
 public class CustomView extends ViewPart implements URLSetter {

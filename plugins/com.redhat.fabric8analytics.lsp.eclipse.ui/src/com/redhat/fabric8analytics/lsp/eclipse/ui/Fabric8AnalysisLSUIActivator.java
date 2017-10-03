@@ -1,4 +1,4 @@
-package com.redhat.fabric8analytics.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -6,15 +6,15 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Fabric8AnalysisLSActivator extends AbstractUIPlugin {
+public class Fabric8AnalysisLSUIActivator extends AbstractUIPlugin {
 
 	// The shared instance
-	private static Fabric8AnalysisLSActivator plugin;
+	private static Fabric8AnalysisLSUIActivator plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public Fabric8AnalysisLSActivator() {
+	public Fabric8AnalysisLSUIActivator() {
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class Fabric8AnalysisLSActivator extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static Fabric8AnalysisLSActivator getDefault() {
+	public static Fabric8AnalysisLSUIActivator getDefault() {
 		return plugin;
 	}
 

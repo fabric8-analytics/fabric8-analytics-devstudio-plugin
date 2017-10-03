@@ -1,4 +1,4 @@
-package com.redhat.fabric8analytics.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 
 import java.io.BufferedReader;
@@ -12,8 +12,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PartInitException;
 import org.osgi.framework.Bundle;
 
-import com.redhat.fabric8analytics.lsp.eclipse.ExitHandler;
-import com.redhat.fabric8analytics.lsp.eclipse.Utils;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.ExitHandler;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.Utils;
 
 class WorkerThread implements Runnable{
 
@@ -59,7 +59,7 @@ class WorkerThread implements Runnable{
 //			}
 
 //			mainView.updatebrowserUrl((fileURL).toURI().toString());
-			URL url = new URL("platform:/plugin/com.redhat.fabric8analytics.lsp.eclipse/templates/index.html");
+			URL url = new URL("platform:/plugin/com.redhat.fabric8analytics.lsp.eclipse.ui/templates/index.html");
 			url = FileLocator.toFileURL(url);
 			mainView.updatebrowserUrl(url.toString());
 			while(mainView != null &&  getResponseStatus==202){

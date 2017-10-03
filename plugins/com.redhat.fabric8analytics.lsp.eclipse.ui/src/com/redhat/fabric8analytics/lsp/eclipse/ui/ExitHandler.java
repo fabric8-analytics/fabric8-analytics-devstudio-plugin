@@ -1,4 +1,4 @@
-package com.redhat.fabric8analytics.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import java.io.File;
 import java.io.IOException;

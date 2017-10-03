@@ -6,8 +6,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.redhat.fabric8analytics.eclipse</groupId>
-	<artifactId>com.redhat.fabric8analytics.lsp.eclipse</artifactId>
+	<artifactId>com.redhat.fabric8analytics.lsp.eclipse.ui</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
 	<build>

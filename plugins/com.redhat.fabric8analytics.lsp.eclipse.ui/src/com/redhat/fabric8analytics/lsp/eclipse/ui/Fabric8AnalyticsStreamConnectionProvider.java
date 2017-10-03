@@ -1,4 +1,4 @@
-package com.redhat.fabric8analytics.lsp.eclipse;
+package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,7 +24,8 @@ import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.eclipse.ui.PlatformUI;
 //import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
-import com.redhat.fabric8analytics.lsp.eclipse.TokenCheck;
+
+import com.redhat.fabric8analytics.lsp.eclipse.ui.TokenCheck;
 
 public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConnectionProvider
 implements StreamConnectionProvider {
@@ -54,7 +55,7 @@ implements StreamConnectionProvider {
 	}
 
 	private void checkPreferences() {
-		IPreferenceStore preferenceStore = Fabric8AnalysisLSActivator.getDefault().getPreferenceStore();
+		IPreferenceStore preferenceStore = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
