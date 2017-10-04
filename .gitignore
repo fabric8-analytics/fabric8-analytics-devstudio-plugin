@@ -1,2 +1,7 @@
+/bin/
 target/
-fabric8-analytics-devstudio-plugin/plugins/com.redhat.fabric8analytics.lsp.eclipse.ui/server
+**/.settings
+**/target
+**/.project
+**/.DS_Store
+**/.classpath
