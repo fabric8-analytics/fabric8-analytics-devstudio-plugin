@@ -1,28 +1,20 @@
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.PartInitException;
-import org.osgi.framework.Bundle;
 
-import com.redhat.fabric8analytics.lsp.eclipse.ui.ExitHandler;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.Utils;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.ui.PartInitException;
 
 class WorkerThread implements Runnable{
 
 	// The timer interval in milliseconds
 	private static final int   TIMER_INTERVAL = 10000;
 
-	private CustomView mainView;
+	private StackAnalysesView mainView;
 
-	public WorkerThread(CustomView mainView){
+	public WorkerThread(StackAnalysesView mainView){
 		this.mainView = mainView;
 	}
 
@@ -65,8 +57,6 @@ class WorkerThread implements Runnable{
 			while(mainView != null &&  getResponseStatus==202){
 				Thread.sleep(TIMER_INTERVAL);
 				getResponseStatus = Utils.checkStackProgress(jobId);
-
-
 			}
 			if(getResponseStatus==200) {
 
