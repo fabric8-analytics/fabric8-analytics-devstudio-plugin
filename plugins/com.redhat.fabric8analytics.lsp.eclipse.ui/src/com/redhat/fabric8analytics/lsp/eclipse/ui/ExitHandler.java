@@ -103,8 +103,8 @@ public class ExitHandler extends AbstractHandler {
 			if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 				RECOMMENDER_API_TOKEN = "Bearer "+ token;
 			}
-			String viewId = "de.vogella.rcp.commands.first.commands.Exit";
-			IViewPart temp=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewId); 
+			
+			IViewPart temp=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(StackAnalysesView.NAME); 
 			CloseableHttpClient client = HttpClients.createDefault();
 			HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/stack-analyses/");		
 			post.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
@@ -123,7 +123,7 @@ public class ExitHandler extends AbstractHandler {
 			JSONObject jsonObj = Utils.jsonObj(response);
 			if (response.getStatusLine().getStatusCode()==200) {
 				setJobId(jsonObj.getString("id"));
-				WorkerThread workerThread = new WorkerThread((CustomView)temp);
+				WorkerThread workerThread = new WorkerThread((StackAnalysesView)temp);
 				workerThread.go();
 
 			}
