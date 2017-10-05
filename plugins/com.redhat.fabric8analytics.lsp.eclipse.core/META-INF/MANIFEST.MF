@@ -18,4 +18,6 @@ Eclipse-BundleShape: dir
 Bundle-Activator: com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisLSCoreActivator
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath:  .
+Export-Package: com.redhat.fabric8analytics.lsp.eclipse.core
+
 
