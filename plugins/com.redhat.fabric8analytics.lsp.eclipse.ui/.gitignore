@@ -4,3 +4,4 @@
 .settings/
 target/
 server/
+**/.DS_Store

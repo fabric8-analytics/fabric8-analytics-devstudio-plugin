@@ -40,7 +40,6 @@ implements StreamConnectionProvider {
 		if (nodeJsLocation == null) {
 			return;
 		}
-		
 		try {
 			setCommands(Arrays.asList(new String[] {
 					nodeJsLocation.getAbsolutePath(),
