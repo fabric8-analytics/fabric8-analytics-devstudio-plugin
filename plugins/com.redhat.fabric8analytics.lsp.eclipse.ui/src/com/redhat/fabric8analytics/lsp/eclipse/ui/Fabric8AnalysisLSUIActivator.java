@@ -1,5 +1,7 @@
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -7,6 +9,8 @@ import org.osgi.framework.BundleContext;
  * The activator class controls the plug-in life cycle
  */
 public class Fabric8AnalysisLSUIActivator extends AbstractUIPlugin {
+	
+	private static final String PLUGIN_ID = "com.redhat.fabric8analytics.lsp.eclipse.ui";
 
 	// The shared instance
 	private static Fabric8AnalysisLSUIActivator plugin;
@@ -38,4 +42,13 @@ public class Fabric8AnalysisLSUIActivator extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	public void logInfo(String msg) {
+		IStatus status = new Status(Status.INFO, PLUGIN_ID, msg);
+		getLog().log(status);
+	}
+
+	public void logError(String msg, Throwable t) {
+		IStatus status = new Status(Status.ERROR, PLUGIN_ID, msg, t);
+		getLog().log(status);
+	}
 }

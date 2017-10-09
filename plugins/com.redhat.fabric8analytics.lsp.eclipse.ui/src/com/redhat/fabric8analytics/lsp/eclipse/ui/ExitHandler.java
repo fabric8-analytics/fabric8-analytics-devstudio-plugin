@@ -1,20 +1,12 @@
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -30,14 +22,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.progress.UIJob;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
+import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 
 public class ExitHandler extends AbstractHandler {
 	private String RECOMMENDER_API_TOKEN = "";
@@ -105,45 +97,35 @@ public class ExitHandler extends AbstractHandler {
 			}
 			
 			IViewPart temp=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(StackAnalysesView.NAME); 
-			CloseableHttpClient client = HttpClients.createDefault();
-			HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/stack-analyses/");		
-			post.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
-			MultipartEntityBuilder builder = MultipartEntityBuilder.create()
-					.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-			for (Map.Entry<String, FileBody>  entry : manifestLocationMap.entrySet())
-			{
-				builder.addPart("manifest[]", entry.getValue())
-				.addTextBody("filePath[]", entry.getKey());
-			}
-
-
-			HttpEntity multipart = builder.build();
-			post.setEntity(multipart);
-			HttpResponse response = client.execute(post);
-			JSONObject jsonObj = Utils.jsonObj(response);
-			if (response.getStatusLine().getStatusCode()==200) {
-				setJobId(jsonObj.getString("id"));
+			
+			try {
+				String jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, manifestLocationMap);
+				setJobId(jobID);
 				WorkerThread workerThread = new WorkerThread((StackAnalysesView)temp);
 				workerThread.go();
-
-			}
-			else {
-				new UIJob(PlatformUI.getWorkbench().getDisplay(), jsonObj.toString()) {
+			} catch (RecommenderAPIException e) {
+				Fabric8AnalysisLSUIActivator.getDefault().logError("Error while running stack analyses", e);
+				
+				new UIJob(PlatformUI.getWorkbench().getDisplay(), "Error") {
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						MessageDialog.openError(getDisplay().getActiveShell(), "ERROR", jsonObj.toString());
+						MessageDialog.openError(getDisplay().getActiveShell(), "ERROR", e.getMessage());
 						return Status.OK_STATUS;
 					}
 				}.schedule();
 				return mapComposite;
 			}
-
-		} catch (SWTError | IOException | CoreException | JSONException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			Fabric8AnalysisLSUIActivator.getDefault().logError("Error while running stack analyses", e);
+			
+			new UIJob(PlatformUI.getWorkbench().getDisplay(), "Error") {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					MessageDialog.openError(getDisplay().getActiveShell(), "ERROR", e.getMessage());
+					return Status.OK_STATUS;
+				}
+			}.schedule();
 		}
-
-
-
 		return mapComposite;
 	}
 

@@ -1,4 +1,4 @@
-package com.redhat.fabric8analytics.lsp.eclipse.ui;
+package com.redhat.fabric8analytics.lsp.eclipse.core.internal;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,23 +30,4 @@ public class Utils {
 		JSONObject json = new JSONObject(sb.toString());
 		return json;
 	}
-
-	public static int checkStackProgress(String jobId) throws ClientProtocolException, IOException, PartInitException{
-		CloseableHttpClient client = HttpClients.createDefault();
-		String recommendUrl = "https://recommender.api.openshift.io/api/v1/stack-analyses/";
-		String RECOMMENDER_API_TOKEN = "Bearer ";
-		String token = TokenCheck.get().getToken();
-		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
-			RECOMMENDER_API_TOKEN = "Bearer "+ token;
-		}
-		HttpGet get = new HttpGet(recommendUrl + jobId);
-		get.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
-		HttpResponse getResponse = client.execute(get);
-		return getResponse.getStatusLine().getStatusCode();
-		
-	}
-	 
-
-	
-
 }

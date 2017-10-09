@@ -5,7 +5,15 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
+
+import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
+import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 
 class WorkerThread implements Runnable{
 
@@ -26,45 +34,29 @@ class WorkerThread implements Runnable{
 	}
 
 	public void run() {
-		int getResponseStatus=202;
 		String jobId = ExitHandler.getJobId();
+		
 		try {
-//			Bundle bundle = Platform.getBundle("com.redhat.fabric8analytics.lsp.eclipse");
-//			URL fileURL = bundle.getEntry("library/index.html");
-//			File file = null;
-//			try {
-//			    file = new File(FileLocator.resolve(fileURL).toURI());
-//			} catch (URISyntaxException e1) {
-//			    e1.printStackTrace();
-//			} catch (IOException e1) {
-//			    e1.printStackTrace();
-//			}
-//			BufferedReader br = null;
-//			FileReader fr = null;
-//			fr = new FileReader(FileLocator.resolve(fileURL).toURI().toString());
-//			br = new BufferedReader(fr);
-//
-//			String sCurrentLine;
-//
-//			while ((sCurrentLine = br.readLine()) != null) {
-//				System.out.println(sCurrentLine);
-//			}
-
-//			mainView.updatebrowserUrl((fileURL).toURI().toString());
 			URL url = new URL("platform:/plugin/com.redhat.fabric8analytics.lsp.eclipse.ui/templates/index.html");
 			url = FileLocator.toFileURL(url);
 			mainView.updatebrowserUrl(url.toString());
-			while(mainView != null &&  getResponseStatus==202){
+			
+			while(!RecommenderAPIProvider.getInstance().analysesFinished(jobId, TokenCheck.get().getToken())){
 				Thread.sleep(TIMER_INTERVAL);
-				getResponseStatus = Utils.checkStackProgress(jobId);
 			}
-			if(getResponseStatus==200) {
 
-				mainView.updatebrowserUrl("http://ops-portal-v2-ops-portal-ide.dev.rdu2c.fabric8.io/#/analyze/" + jobId);
-			}
-		} catch (InterruptedException | PartInitException | IOException e) {
-			e.printStackTrace();
-		} 
+			mainView.updatebrowserUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId));
+		} catch (InterruptedException | IOException | RecommenderAPIException e) {
+			Fabric8AnalysisLSUIActivator.getDefault().logError("Error while running stack analyses", e);
+			
+			new UIJob(PlatformUI.getWorkbench().getDisplay(), "Error") {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					MessageDialog.openError(getDisplay().getActiveShell(), "ERROR", e.getMessage());
+					return Status.OK_STATUS;
+				}
+			}.schedule();
+		}
 	}
 }
 
