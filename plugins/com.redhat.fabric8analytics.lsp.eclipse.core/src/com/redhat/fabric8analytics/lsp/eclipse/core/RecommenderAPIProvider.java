@@ -1,7 +1,9 @@
 package com.redhat.fabric8analytics.lsp.eclipse.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -13,6 +15,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.eclipse.core.resources.IFile;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,16 +45,16 @@ public class RecommenderAPIProvider {
 	 * @param pomFiles
 	 * @return jobID
 	 */
-	public String requestAnalyses(String token, Map<String, FileBody> files) throws RecommenderAPIException {
+	public String requestAnalyses(String token, Set<IFile> files) throws RecommenderAPIException {
 		HttpPost post = new HttpPost(SERVER_URL);
 		post.addHeader("Authorization" , token);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
 				.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-		for (Map.Entry<String, FileBody>  entry : files.entrySet())
+		for (IFile file : files)
 		{
-			builder.addPart("manifest[]", entry.getValue())
-			.addTextBody("filePath[]", entry.getKey());
+			builder.addPart("manifest[]", new FileBody(new File(file.getLocation().toString())))
+			.addTextBody("filePath[]", file.toString());
 		}
 
 		HttpEntity multipart = builder.build();
