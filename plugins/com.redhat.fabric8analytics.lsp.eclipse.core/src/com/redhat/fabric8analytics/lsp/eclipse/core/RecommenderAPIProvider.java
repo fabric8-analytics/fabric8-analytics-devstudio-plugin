@@ -31,7 +31,8 @@ public class RecommenderAPIProvider {
 
 	private static final String SERVER_URL = "https://recommender.api.openshift.io/api/v1/stack-analyses/";
 	
-	private static final String ANALYSES_REPORT_URL = "http://ops-portal-v2-ops-portal-ide.dev.rdu2c.fabric8.io/#/analyze/";
+	private static final String ANALYSES_REPORT_URL =  "http://fabric8-analytics-stack-report-ui-bayesian-preview.b6ff.rh-idev.openshiftapps.com/#/analyze/";
+	private static final String POST_ANALYSES_REPORT_URL	= "?api_data={\"access_token\":\"%s\"}";
 
 	private static final RecommenderAPIProvider INSTANCE = new RecommenderAPIProvider();
 
@@ -106,7 +107,9 @@ public class RecommenderAPIProvider {
 		}
 	}
 	
-	public String getAnalysesURL(String jobID) {
-		return ANALYSES_REPORT_URL + jobID;
+	public String getAnalysesURL(String jobID, String token) {
+		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token);
+		System.out.println(ANALYSES_REPORT_URL + jobID + postURLFormat);
+		return ANALYSES_REPORT_URL + jobID + postURLFormat;
 	}
 }

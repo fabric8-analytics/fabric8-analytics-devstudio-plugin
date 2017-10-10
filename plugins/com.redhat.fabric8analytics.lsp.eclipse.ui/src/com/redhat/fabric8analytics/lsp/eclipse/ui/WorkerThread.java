@@ -45,7 +45,7 @@ class WorkerThread implements Runnable{
 				Thread.sleep(TIMER_INTERVAL);
 			}
 
-			mainView.updatebrowserUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId));
+			mainView.updatebrowserUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId, TokenCheck.get().getToken()));
 		} catch (InterruptedException | IOException | RecommenderAPIException e) {
 			Fabric8AnalysisLSUIActivator.getDefault().logError("Error while running stack analyses", e);
 			MessageDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "ERROR", e.getMessage());

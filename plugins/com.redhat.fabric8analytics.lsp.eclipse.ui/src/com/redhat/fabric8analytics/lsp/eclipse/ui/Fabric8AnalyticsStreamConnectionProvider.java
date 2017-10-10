@@ -44,7 +44,7 @@ implements StreamConnectionProvider {
 		try {
 			setCommands(Arrays.asList(new String[] {
 					nodeJsLocation.getAbsolutePath(),
-					Paths.get(FileLocator.toFileURL(Fabric8AnalyticsStreamConnectionProvider.class.getResource("/server/fabric8-analytics-lsp-server-test-devstudio/output/server.js")).toURI()).toString(),
+					Paths.get(FileLocator.toFileURL(Fabric8AnalyticsStreamConnectionProvider.class.getResource("/server/fabric8-analytics-lsp-server-master/output/server.js")).toURI()).toString(),
 					"--stdio"
 			}));
 		} catch (URISyntaxException | IOException e) {
