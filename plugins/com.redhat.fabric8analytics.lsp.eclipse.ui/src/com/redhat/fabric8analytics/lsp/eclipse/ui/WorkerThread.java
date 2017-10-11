@@ -48,14 +48,7 @@ class WorkerThread implements Runnable{
 			mainView.updatebrowserUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId));
 		} catch (InterruptedException | IOException | RecommenderAPIException e) {
 			Fabric8AnalysisLSUIActivator.getDefault().logError("Error while running stack analyses", e);
-			
-			new UIJob(PlatformUI.getWorkbench().getDisplay(), "Error") {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					MessageDialog.openError(getDisplay().getActiveShell(), "ERROR", e.getMessage());
-					return Status.OK_STATUS;
-				}
-			}.schedule();
+			MessageDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "ERROR", e.getMessage());
 		}
 	}
 }
