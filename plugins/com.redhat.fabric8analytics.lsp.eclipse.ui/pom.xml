@@ -30,7 +30,7 @@
 						<configuration>
 							<url>https://github.com/invinciblejai/fabric8-analytics-lsp-server/archive/test-devstudio.zip</url>
 							<unpack>true</unpack>
-							<outputDirectory>${project.basedir}</outputDirectory>
+							<outputDirectory>../../server/</outputDirectory>
 							<skip>false</skip>
 						</configuration>
 					</execution>
@@ -52,7 +52,7 @@
 							<arguments>
 								<argument>install</argument>
 							</arguments>
-							<workingDirectory>fabric8-analytics-lsp-server-test-devstudio/</workingDirectory>
+							<workingDirectory>../../server/fabric8-analytics-lsp-server-test-devstudio/</workingDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -67,7 +67,7 @@
 								<argument>run-script</argument>
 								<argument>build</argument>
 							</arguments>
-							<workingDirectory>fabric8-analytics-lsp-server-test-devstudio/</workingDirectory>
+							<workingDirectory>../../server/fabric8-analytics-lsp-server-test-devstudio/</workingDirectory>
 						</configuration>
 					</execution>
 				</executions>
