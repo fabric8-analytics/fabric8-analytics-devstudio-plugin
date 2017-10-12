@@ -28,9 +28,9 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://github.com/invinciblejai/fabric8-analytics-lsp-server/archive/test-devstudio.zip</url>
+							<url>https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/archive/master.zip</url>
 							<unpack>true</unpack>
-							<outputDirectory>${project.basedir}</outputDirectory>
+							<outputDirectory>server/</outputDirectory>
 							<skip>false</skip>
 						</configuration>
 					</execution>
@@ -52,7 +52,7 @@
 							<arguments>
 								<argument>install</argument>
 							</arguments>
-							<workingDirectory>fabric8-analytics-lsp-server-test-devstudio/</workingDirectory>
+							<workingDirectory>server/fabric8-analytics-lsp-server-master/</workingDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -67,7 +67,7 @@
 								<argument>run-script</argument>
 								<argument>build</argument>
 							</arguments>
-							<workingDirectory>fabric8-analytics-lsp-server-test-devstudio/</workingDirectory>
+							<workingDirectory>server/fabric8-analytics-lsp-server-master/</workingDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -77,7 +77,7 @@
 				<artifactId>tycho-packaging-plugin</artifactId>
 				<version>${tychoVersion}</version>
 				<configuration>
-					<jgit.ignore>pom.xml,fabric8-analytics-lsp-server-test-devstudio/</jgit.ignore>
+					<jgit.ignore>pom.xml,server/fabric8-analytics-lsp-server-master/</jgit.ignore>
 				</configuration>
 			</plugin>
 		</plugins>
