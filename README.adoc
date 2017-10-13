@@ -20,3 +20,17 @@ TODO: write introduction to this project & its purpose
 
 image:docs/images/fabric8analytics-install.png[title="installation", alt="installation"]
 
+
+== Features
+
+* This extension helps to analyze your application stack.
+
+image:docs/images/stackAnalyses.png[title="stack_analyses", alt="stack_analyses"]
+
+* This extension helps to analyze your components of application stack as and when you type.
+
+image:docs/images/component_analyses.png[title="componentAnalyses", alt="componentAnalyses"]
+
+
+
+
