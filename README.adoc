@@ -25,6 +25,8 @@ image:docs/images/fabric8analytics-install.png[title="installation", alt="instal
 
 * This extension helps to analyze your application stack.
 
+image:docs/images/stack_menu.png[title="stack_menu", alt="stack_menu"]
+
 image:docs/images/stackAnalyses.png[title="stack_analyses", alt="stack_analyses"]
 
 * This extension helps to analyze your components of application stack as and when you type.
