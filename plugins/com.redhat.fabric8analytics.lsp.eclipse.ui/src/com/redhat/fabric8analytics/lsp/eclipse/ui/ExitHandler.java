@@ -1,20 +1,12 @@
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -79,26 +71,6 @@ public class ExitHandler extends AbstractHandler {
 		return ExitHandler.jobId;
 	}
 
-	private void setTimerAnalyses() {
-		try {
-			while(!RecommenderAPIProvider.getInstance().analysesFinished(jobId, TokenCheck.get().getToken())){
-				Thread.sleep(TIMER_INTERVAL);
-			}
-		} catch (RecommenderAPIException | InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	private void syncWithUi(IViewPart mainView) {
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				((StackAnalysesView) mainView).updatebrowserUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId, TokenCheck.get().getToken()));
-			}
-		});
-
-	}
 
 	public static void setView(IViewPart mainView) {
 		ExitHandler.mainView = mainView;
