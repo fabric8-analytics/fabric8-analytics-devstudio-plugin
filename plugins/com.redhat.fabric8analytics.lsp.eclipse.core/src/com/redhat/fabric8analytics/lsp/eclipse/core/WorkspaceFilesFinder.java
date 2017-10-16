@@ -68,7 +68,11 @@ public class WorkspaceFilesFinder {
 		IProject project = (IProject) ((IAdaptable) adaptable).getAdapter(IProject.class);
 
 		if (project != null) {
-			return project.getFile("pom.xml");
+			if (project.isAccessible()) {
+				return project.getFile("pom.xml");
+			} else {
+				return null;
+			}
 		} 
 
 		IFile file = (IFile) ((IAdaptable) adaptable).getAdapter(IFile.class);
