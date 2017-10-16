@@ -16,13 +16,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.eclipse.ui.PlatformUI;
-//import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
 
 import com.redhat.fabric8analytics.lsp.eclipse.ui.TokenCheck;
@@ -51,19 +47,6 @@ implements StreamConnectionProvider {
 			e.printStackTrace();
 		}
 		setWorkingDirectory(System.getProperty("user.dir"));
-		checkPreferences();
-	}
-
-	private void checkPreferences() {
-		IPreferenceStore preferenceStore = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore();
-		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (RECOMMENDER_API_TOKEN.equals(event.getProperty())) {
-					stop();
-				}
-			}
-		});
 		token = TokenCheck.get().getToken();
 	}
 

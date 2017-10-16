@@ -14,6 +14,8 @@ import org.eclipse.ui.IViewPart;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.ExitHandler;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.StackAnalysesView;
+
 
 public class AnalysesJobHandler extends Job{
 			

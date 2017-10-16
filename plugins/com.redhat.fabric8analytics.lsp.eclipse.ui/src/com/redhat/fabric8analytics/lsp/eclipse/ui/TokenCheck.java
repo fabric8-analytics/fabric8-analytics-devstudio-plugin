@@ -14,6 +14,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisLSUIActivator;
 
 public class TokenCheck {
 
@@ -93,8 +94,7 @@ public class TokenCheck {
 		MessageDialog.openError(display.getActiveShell(), "Incorrect RECOMMENDER_API_TOKEN",
 				"You need to set the RECOMMENDER_API_TOKEN to the API token of your OpenShift.io account for Fabric8 analysis to work.\n" +
 				"You're going to be redirected to the Preference page for that.");
-		PreferencesUtil.createPreferenceDialogOn(display.getActiveShell(),
-				Fabric8AnalysisPreferencePage.PREFERENCE_PAGE_ID,
+		PreferencesUtil.createPreferenceDialogOn(display.getActiveShell(),null,
 				null, null).open();
 	}
 }
