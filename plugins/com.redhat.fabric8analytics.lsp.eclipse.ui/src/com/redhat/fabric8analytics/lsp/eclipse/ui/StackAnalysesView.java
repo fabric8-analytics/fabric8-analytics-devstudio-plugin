@@ -33,7 +33,7 @@ public class StackAnalysesView extends ViewPart implements URLSetter {
 		Display.getDefault().asyncExec(new Runnable(){
 			public void run(){
 				if (!browser.isDisposed()) {
-					browser.setUrl(browseUrl);					
+					browser.setUrl(browseUrl);
 				}
 			}
 		});

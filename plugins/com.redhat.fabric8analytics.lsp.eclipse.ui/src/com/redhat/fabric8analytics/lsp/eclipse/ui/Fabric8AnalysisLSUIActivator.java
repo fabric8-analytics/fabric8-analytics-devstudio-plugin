@@ -10,7 +10,7 @@ import org.osgi.framework.BundleContext;
  */
 public class Fabric8AnalysisLSUIActivator extends AbstractUIPlugin {
 	
-	private static final String PLUGIN_ID = "com.redhat.fabric8analytics.lsp.eclipse.ui";
+	public static final String PLUGIN_ID = "com.redhat.fabric8analytics.lsp.eclipse.ui";
 
 	// The shared instance
 	private static Fabric8AnalysisLSUIActivator plugin;
@@ -47,6 +47,11 @@ public class Fabric8AnalysisLSUIActivator extends AbstractUIPlugin {
 		getLog().log(status);
 	}
 
+	public void logError(String msg) {
+		IStatus status = new Status(Status.ERROR, PLUGIN_ID, msg);
+		getLog().log(status);
+	}
+	
 	public void logError(String msg, Throwable t) {
 		IStatus status = new Status(Status.ERROR, PLUGIN_ID, msg, t);
 		getLog().log(status);

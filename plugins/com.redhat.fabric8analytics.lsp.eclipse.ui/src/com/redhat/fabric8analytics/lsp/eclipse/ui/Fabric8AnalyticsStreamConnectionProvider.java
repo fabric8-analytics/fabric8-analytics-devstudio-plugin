@@ -4,17 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -22,34 +18,38 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.eclipse.ui.PlatformUI;
-//import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.progress.UIJob;
+import org.osgi.framework.Bundle;
 
-import com.redhat.fabric8analytics.lsp.eclipse.ui.TokenCheck;
+import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 
 public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConnectionProvider
 implements StreamConnectionProvider {
 
-	static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
+	public static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
+
+	private static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
+
 	static String token;
 
 	public Fabric8AnalyticsStreamConnectionProvider() {
 		super();
+
 		File nodeJsLocation = getNodeJsLocation();
-		
 		if (nodeJsLocation == null) {
 			return;
 		}
-		
-		try {
-			setCommands(Arrays.asList(new String[] {
-					nodeJsLocation.getAbsolutePath(),
-					Paths.get(FileLocator.toFileURL(Fabric8AnalyticsStreamConnectionProvider.class.getResource("/server/fabric8-analytics-lsp-server-master/output/server.js")).toURI()).toString(),
-					"--stdio"
-			}));
-		} catch (URISyntaxException | IOException e) {
-			e.printStackTrace();
+
+		File serverLocation = getServerLocation();
+		if (serverLocation == null) {
+			return;
 		}
+
+		setCommands(Arrays.asList(new String[] {
+				nodeJsLocation.getAbsolutePath(),
+				serverLocation.getAbsolutePath(),
+				"--stdio"
+		}));
+
 		setWorkingDirectory(System.getProperty("user.dir"));
 		checkPreferences();
 	}
@@ -71,7 +71,7 @@ implements StreamConnectionProvider {
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
 		res.environment().put(RECOMMENDER_API_TOKEN, token);
-		res.environment().put("RECOMMENDER_API_URL", "https://recommender.api.openshift.io/api/v1");
+		res.environment().put(RECOMMENDER_API_URL, RecommenderAPIProvider.SERVER_URL);
 		return res;
 	}
 
@@ -87,7 +87,7 @@ implements StreamConnectionProvider {
 			reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			location = reader.readLine();
 		} catch (IOException e) {
-			e.printStackTrace();
+			// no problem, try default install path
 		} finally {
 			IOUtils.closeQuietly(reader);
 		}
@@ -100,16 +100,22 @@ implements StreamConnectionProvider {
 		if (location != null && Files.exists(Paths.get(location))) {
 			return new File(location);
 		}
-		new UIJob(PlatformUI.getWorkbench().getDisplay(), "Missing `node` in PATH") {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				MessageDialog.openError(getDisplay().getActiveShell(), "Missing Node.js",
-						"`node` is missing in your PATH, C# editor won't work fully.\n" +
-						"Please install `node` and make it available in your PATH");
-				return Status.OK_STATUS;
-			}
-		}.schedule();
+		
+		String message = "`node` is missing in your PATH, Fabric8 LSP server won't work.\n" +
+				"Please install `node` and make it available in your PATH";
+		
+		Fabric8AnalysisLSUIActivator.getDefault().logError(message);
+		MessageDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "Missing `node` in PATH", message);
 		return null;
 	}
 
+	private static File getServerLocation() {
+		try {
+			Bundle bundle = Platform.getBundle(Fabric8AnalysisLSUIActivator.PLUGIN_ID);
+			return new File(FileLocator.getBundleFile(bundle), "/server/fabric8-analytics-lsp-server-master/output/server.js");
+		} catch (IOException e) {
+			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the LSP server location", e);
+			return null;
+		}
+	}
 }

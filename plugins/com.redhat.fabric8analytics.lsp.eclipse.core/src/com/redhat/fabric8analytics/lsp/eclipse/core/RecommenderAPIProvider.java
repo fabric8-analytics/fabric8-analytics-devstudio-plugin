@@ -2,7 +2,6 @@ package com.redhat.fabric8analytics.lsp.eclipse.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.http.HttpEntity;
@@ -29,9 +28,12 @@ import com.redhat.fabric8analytics.lsp.eclipse.core.internal.Utils;
  */
 public class RecommenderAPIProvider {
 
-	private static final String SERVER_URL = "https://recommender.api.openshift.io/api/v1/stack-analyses/";
+	public static final String SERVER_URL = "https://recommender.api.openshift.io/api/v1/";
+	
+	private static final String SERVER_ANALYZER_URL = SERVER_URL + "stack-analyses/";
 	
 	private static final String ANALYSES_REPORT_URL =  "http://fabric8-analytics-stack-report-ui-bayesian-preview.b6ff.rh-idev.openshiftapps.com/#/analyze/";
+	
 	private static final String POST_ANALYSES_REPORT_URL	= "?api_data={\"access_token\":\"%s\"}";
 
 	private static final RecommenderAPIProvider INSTANCE = new RecommenderAPIProvider();
@@ -47,7 +49,7 @@ public class RecommenderAPIProvider {
 	 * @return jobID
 	 */
 	public String requestAnalyses(String token, Set<IFile> files) throws RecommenderAPIException {
-		HttpPost post = new HttpPost(SERVER_URL);
+		HttpPost post = new HttpPost(SERVER_ANALYZER_URL);
 		post.addHeader("Authorization" , token);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
@@ -82,7 +84,7 @@ public class RecommenderAPIProvider {
 		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 		}
-		HttpGet get = new HttpGet(SERVER_URL + jobId);
+		HttpGet get = new HttpGet(SERVER_ANALYZER_URL + jobId);
 		get.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
 
 		//TODO - for debug purposes - should be removed later
