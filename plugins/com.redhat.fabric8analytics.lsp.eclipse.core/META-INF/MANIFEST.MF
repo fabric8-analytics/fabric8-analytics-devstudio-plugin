@@ -1,9 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Fabric8Analytics Language Server integration
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: com.redhat.fabric8analytics.lsp.eclipse.core;singleton:=true
 Bundle-Version: 0.0.1.qualifier
-Bundle-Vendor: Red Hat Inc.
+Bundle-Vendor: %Bundle-Vendor
+Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.lsp4e;bundle-version="0.3.0",
  org.eclipse.ui,
