@@ -31,7 +31,12 @@ public class ExitHandler extends AbstractHandler {
 			return null;
 		}
 
-		String token = TokenCheck.get().getToken();
+		String token = TokenCheck.getInstance().getToken();
+		if (token == null) {
+			displayInfoMessage("Cannot run analyses because login into OSIO failed");
+			return null;
+		}
+		
 		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 		}

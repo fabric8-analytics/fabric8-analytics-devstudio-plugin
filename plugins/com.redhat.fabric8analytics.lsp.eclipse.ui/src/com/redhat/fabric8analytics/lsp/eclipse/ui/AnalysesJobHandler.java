@@ -13,7 +13,6 @@ import org.eclipse.ui.IViewPart;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.ExitHandler;
 
 public class AnalysesJobHandler extends Job{
 			
@@ -42,7 +41,7 @@ public class AnalysesJobHandler extends Job{
 		}
 		private void setTimerAnalyses() {
 			try {
-				while(!RecommenderAPIProvider.getInstance().analysesFinished(jobId, TokenCheck.get().getToken())){
+				while(!RecommenderAPIProvider.getInstance().analysesFinished(jobId, TokenCheck.getInstance().getToken())){
 					Thread.sleep(TIMER_INTERVAL);
 				}
 			} catch (RecommenderAPIException | InterruptedException e) {
@@ -55,7 +54,7 @@ public class AnalysesJobHandler extends Job{
 		private void syncWithUi(IViewPart mainView) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					((StackAnalysesView) mainView).updatebrowserUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId, TokenCheck.get().getToken()));
+					((StackAnalysesView) mainView).updatebrowserUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId, TokenCheck.getInstance().getToken()));
 				}
 			});
 
