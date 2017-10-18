@@ -31,7 +31,12 @@ public class ExitHandler extends AbstractHandler {
 			return null;
 		}
 
-		String token = TokenCheck.get().getToken();
+		String token = TokenCheck.getInstance().getToken();
+		if (token == null) {
+			displayInfoMessage("Cannot run analyses because login into OSIO failed");
+			return null;
+		}
+		
 		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 		}
@@ -46,7 +51,7 @@ public class ExitHandler extends AbstractHandler {
 		try {
 			String jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, pomFiles);
 			setJobId(jobID);
-			new AnalysesJobHandler("Analyses check Job").schedule();
+			new AnalysesJobHandler("Analyses check Job", token).schedule();
 		} catch (RecommenderAPIException e) {
 			displayErrorMessage("Error while running stack analyses", e);
 		}
