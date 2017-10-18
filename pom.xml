@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.jboss.tools</groupId>
 		<artifactId>parent</artifactId>
-		<version>4.5.1.AM1-SNAPSHOT</version>
+		<version>4.5.1.Final-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.redhat.fabric8analytics.eclipse</groupId>
@@ -48,6 +48,11 @@
 			<id>jbosstools-base</id>
 			<layout>p2</layout>
 			<url>${jbosstools-base-site}</url>
+		</repository>
+		<repository>
+			<id>jbosstools-openshift-site</id>
+			<layout>p2</layout>
+			<url>${jbosstools-openshift-site}</url>
 		</repository>
 		<repository>
 			<id>oxygen</id>
