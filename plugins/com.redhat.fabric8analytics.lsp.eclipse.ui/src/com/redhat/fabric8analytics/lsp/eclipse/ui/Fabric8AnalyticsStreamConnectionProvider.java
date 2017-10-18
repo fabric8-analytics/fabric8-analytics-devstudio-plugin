@@ -12,9 +12,6 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.eclipse.ui.PlatformUI;
@@ -28,8 +25,6 @@ implements StreamConnectionProvider {
 	public static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
 
 	private static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
-
-	static String token;
 
 	public Fabric8AnalyticsStreamConnectionProvider() {
 		super();
@@ -51,26 +46,21 @@ implements StreamConnectionProvider {
 		}));
 
 		setWorkingDirectory(System.getProperty("user.dir"));
-		checkPreferences();
 	}
-
-	private void checkPreferences() {
-		IPreferenceStore preferenceStore = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore();
-		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (RECOMMENDER_API_TOKEN.equals(event.getProperty())) {
-					stop();
-				}
-			}
-		});
-		token = TokenCheck.get().getToken();
+	
+	@Override
+	public void start() throws IOException {
+		String token = TokenCheck.getInstance().getToken();
+		if (token == null) {
+			throw new IOException("Cannot get token from OSIO plugin");
+		}
+		super.start();
 	}
 
 	@Override
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
-		res.environment().put(RECOMMENDER_API_TOKEN, token);
+		res.environment().put(RECOMMENDER_API_TOKEN, TokenCheck.getInstance().getToken());
 		res.environment().put(RECOMMENDER_API_URL, RecommenderAPIProvider.SERVER_URL);
 		return res;
 	}
