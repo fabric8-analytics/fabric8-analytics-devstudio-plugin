@@ -12,24 +12,28 @@ import org.eclipse.core.runtime.Status;
 public class TokenCheck {
 
 	private static final TokenCheck INSTANCE = new TokenCheck();
-	
+
 	private Function<IResource, String> provider;
-	
+
 	public static TokenCheck getInstance() {
 		return INSTANCE;
 	}
-	
+
 	private TokenCheck() {
 		provider = getProvider();
 	}
-	
+
 	public String getToken() {
 		if (null != provider) {
-			return provider.apply(null);
+			try {
+				return provider.apply(null);
+			} catch (Exception e) {
+				Fabric8AnalysisLSUIActivator.getDefault().logError("Error while requesting token from OSIO plugin", e);
+			}
 		} 
 		return null;
 	}
-	
+
 	private Function<IResource, String> getProvider() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.jboss.tools.openshift.io.core.tokenProvider");
 		for(IConfigurationElement element : elements) {

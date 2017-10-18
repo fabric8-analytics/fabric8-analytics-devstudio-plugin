@@ -12,8 +12,12 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
@@ -46,23 +50,51 @@ implements StreamConnectionProvider {
 		}));
 
 		setWorkingDirectory(System.getProperty("user.dir"));
+		addPreferencesListener();
 	}
-	
+
 	@Override
 	public void start() throws IOException {
+		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
+			throw new IOException("LSP server is not enabled");
+		}
+		
 		String token = TokenCheck.getInstance().getToken();
 		if (token == null) {
-			throw new IOException("Cannot get token from OSIO plugin");
+			Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(false);
+			displayInfoMessage("Cannot run analyses because login into OSIO failed. The analyses is now disabled. You can enable it in Preferences");
+			throw new IOException("Cannot get token");
 		}
 		super.start();
 	}
-
+	
 	@Override
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
 		res.environment().put(RECOMMENDER_API_TOKEN, TokenCheck.getInstance().getToken());
 		res.environment().put(RECOMMENDER_API_URL, RecommenderAPIProvider.SERVER_URL);
 		return res;
+	}
+	
+	private void addPreferencesListener() {
+		IPreferenceStore preferenceStore = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore();
+		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (Fabric8AnalysisPreferences.LSP_SERVER_ENABLED.equals(event.getProperty())) {
+					if (Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
+						try {
+							start();
+						} catch (IOException e) {
+							Fabric8AnalysisLSUIActivator.getDefault().logError("Failed to start LSP server", e);
+						}
+						
+					} else {
+						stop();	
+					}
+				}
+			}
+		});
 	}
 
 	private static File getNodeJsLocation() {
@@ -107,5 +139,14 @@ implements StreamConnectionProvider {
 			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the LSP server location", e);
 			return null;
 		}
+	}
+	
+	private void displayInfoMessage(String message) {
+		Fabric8AnalysisLSUIActivator.getDefault().logInfo(message);
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "INFO", message);
+			}
+		});
 	}
 }

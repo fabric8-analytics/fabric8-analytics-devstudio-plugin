@@ -33,7 +33,7 @@ public class ExitHandler extends AbstractHandler {
 
 		String token = TokenCheck.getInstance().getToken();
 		if (token == null) {
-			displayInfoMessage("Cannot get token from OSIO plugin");
+			displayInfoMessage("Cannot run analyses because login into OSIO failed");
 			return null;
 		}
 		

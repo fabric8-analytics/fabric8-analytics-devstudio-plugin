@@ -44,6 +44,7 @@ public class AnalysesJobHandler extends Job{
 		}
 		return Status.OK_STATUS;
 	}
+
 	private void setTimerAnalyses() {
 		try {
 			while(!RecommenderAPIProvider.getInstance().analysesFinished(jobId, token)){
@@ -52,7 +53,6 @@ public class AnalysesJobHandler extends Job{
 		} catch (RecommenderAPIException | InterruptedException e) {
 			displayErrorMessage("Error while running stack analyses", e);
 		}
-
 	}
 
 	private void syncWithUi(IViewPart mainView) {
