@@ -29,10 +29,13 @@ implements StreamConnectionProvider {
 	public static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
 
 	private static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
+	
+	private CheckTokenJob job;
+	
+	private String token;
 
 	public Fabric8AnalyticsStreamConnectionProvider() {
 		super();
-
 		File nodeJsLocation = getNodeJsLocation();
 		if (nodeJsLocation == null) {
 			return;
@@ -59,19 +62,32 @@ implements StreamConnectionProvider {
 			throw new IOException("LSP server is not enabled");
 		}
 		
-		String token = TokenCheck.getInstance().getToken();
+		token = TokenCheck.getInstance().getToken();
 		if (token == null) {
 			Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(false);
 			displayInfoMessage("Cannot run analyses because login into OSIO failed. The analyses is now disabled. You can enable it in Preferences");
 			throw new IOException("Cannot get token");
 		}
+		
+		CheckTokenJob job = new CheckTokenJob(this, token);
+		job.schedule();
 		super.start();
+		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The LSP server is started");
+	}
+	
+	@Override
+	public void stop() {
+		if (job != null) {
+			job.cancel();
+		}
+		super.stop();
+		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The LSP server is stopped");
 	}
 	
 	@Override
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
-		res.environment().put(RECOMMENDER_API_TOKEN, TokenCheck.getInstance().getToken());
+		res.environment().put(RECOMMENDER_API_TOKEN, token);
 		res.environment().put(RECOMMENDER_API_URL, RecommenderAPIProvider.SERVER_URL);
 		return res;
 	}
@@ -148,5 +164,9 @@ implements StreamConnectionProvider {
 				MessageDialog.openInformation(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "INFO", message);
 			}
 		});
+	}
+	
+	public String getToken() {
+		return token;
 	}
 }
