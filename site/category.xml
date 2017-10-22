@@ -11,6 +11,7 @@
 </category-def>
 
 <feature id="com.redhat.fabric8analytics.lsp.eclipse.feature"><category name="site"/></feature>
+<feature id="com.redhat.fabric8analytics.lsp.eclipse.feature.source"><category name="site"/></feature>
 
 <bundle id="org.eclipse.xtext.xbase.lib"><category name="site"/></bundle>
 <bundle id="org.eclipse.lsp4j.jsonrpc"><category name="site"/></bundle>
