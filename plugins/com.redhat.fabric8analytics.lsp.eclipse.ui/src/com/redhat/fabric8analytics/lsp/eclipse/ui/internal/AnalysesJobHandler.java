@@ -9,7 +9,7 @@
  *     Red Hat Incorporated - initial API and implementation
  *******************************************************************************/
 
-package com.redhat.fabric8analytics.lsp.eclipse.ui;
+package com.redhat.fabric8analytics.lsp.eclipse.ui.internal;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,6 +24,8 @@ import org.eclipse.ui.IViewPart;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.ExitHandler;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.StackAnalysesView;
 
 public class AnalysesJobHandler extends Job{
 

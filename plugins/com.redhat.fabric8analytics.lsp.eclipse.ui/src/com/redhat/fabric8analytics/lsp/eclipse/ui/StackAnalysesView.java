@@ -18,16 +18,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
-public class StackAnalysesView extends ViewPart implements URLSetter {
+public class StackAnalysesView extends ViewPart {
 
 	public static final String NAME = "com.redhat.fabric8analytics.lsp.eclipse.ui.StackAnalysesView";
 	
 	private static Browser browser = null;
-
-	@Override
-	public Browser getBrowser() {
-		return browser;
-	}
 
 	@Override
 	public void createPartControl(Composite parent) {

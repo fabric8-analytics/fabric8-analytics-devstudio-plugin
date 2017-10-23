@@ -30,6 +30,10 @@ import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.osgi.framework.Bundle;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.CheckTokenJob;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 
 public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConnectionProvider
 implements StreamConnectionProvider {

@@ -9,7 +9,7 @@
  *     Red Hat Incorporated - initial API and implementation
  *******************************************************************************/
 
-package com.redhat.fabric8analytics.lsp.eclipse.ui;
+package com.redhat.fabric8analytics.lsp.eclipse.ui.internal;
 
 import java.util.function.Function;
 
@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisLSUIActivator;
 
 public class TokenCheck {
 

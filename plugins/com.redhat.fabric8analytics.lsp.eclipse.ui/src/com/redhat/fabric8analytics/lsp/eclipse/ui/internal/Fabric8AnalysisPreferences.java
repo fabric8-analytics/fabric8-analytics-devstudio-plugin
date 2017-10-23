@@ -9,9 +9,11 @@
  *     Red Hat Incorporated - initial API and implementation
  *******************************************************************************/
 
-package com.redhat.fabric8analytics.lsp.eclipse.ui;
+package com.redhat.fabric8analytics.lsp.eclipse.ui.internal;
 
 import java.util.concurrent.TimeUnit;
+
+import com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisLSUIActivator;
 
 public class Fabric8AnalysisPreferences {
 
