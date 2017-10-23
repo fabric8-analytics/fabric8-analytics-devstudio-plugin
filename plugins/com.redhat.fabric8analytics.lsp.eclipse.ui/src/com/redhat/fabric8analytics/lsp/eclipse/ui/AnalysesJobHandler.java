@@ -19,10 +19,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PlatformUI;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
@@ -51,7 +49,7 @@ public class AnalysesJobHandler extends Job{
 			setTimerAnalyses();
 			syncWithUi(mainView);
 		} catch (IOException e) {
-			displayErrorMessage("Error while running stack analyses", e);
+			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
 		return Status.OK_STATUS;
 	}
@@ -62,7 +60,7 @@ public class AnalysesJobHandler extends Job{
 				Thread.sleep(TIMER_INTERVAL);
 			}
 		} catch (RecommenderAPIException | InterruptedException e) {
-			displayErrorMessage("Error while running stack analyses", e);
+			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
 	}
 
@@ -73,14 +71,5 @@ public class AnalysesJobHandler extends Job{
 			}
 		});
 
-	}
-
-	private void displayErrorMessage(String message, Throwable t) {
-		Fabric8AnalysisLSUIActivator.getDefault().logError(message, t);
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				MessageDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "ERROR", t.getMessage());
-			}
-		});
 	}
 }
