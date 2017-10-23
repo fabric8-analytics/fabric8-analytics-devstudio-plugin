@@ -12,14 +12,14 @@
 package com.redhat.fabric8analytics.lsp.eclipse.core;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Fabric8AnalysisLSCoreActivator extends AbstractUIPlugin {
+public class Fabric8AnalysisLSCoreActivator extends Plugin {
 
 	private static final String PLUGIN_ID = "com.redhat.fabric8analytics.lsp.eclipse.core";
 	

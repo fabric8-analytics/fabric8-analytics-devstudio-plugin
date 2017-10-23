@@ -24,7 +24,6 @@ import org.eclipse.ui.PlatformUI;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
-import com.redhat.fabric8analytics.lsp.eclipse.core.WorkspaceFilesFinder;
 
 
 
