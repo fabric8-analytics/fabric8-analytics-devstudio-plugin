@@ -95,11 +95,13 @@ public class RecommenderAPIProvider {
 		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 		}
-		HttpGet get = new HttpGet(SERVER_ANALYZER_URL + jobId);
+		
+		String url = SERVER_ANALYZER_URL + jobId;
+		HttpGet get = new HttpGet(url);
 		get.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
 
 		//TODO - for debug purposes - should be removed later
-		Fabric8AnalysisLSCoreActivator.getDefault().logInfo("Polling url address to get analyses results: " + SERVER_URL + jobId);
+		Fabric8AnalysisLSCoreActivator.getDefault().logInfo("Polling url address to get analyses results: " + url);
 		try {
 			CloseableHttpClient client = HttpClients.createDefault();
 			HttpResponse response = client.execute(get);
@@ -122,7 +124,9 @@ public class RecommenderAPIProvider {
 	
 	public String getAnalysesURL(String jobID, String token) {
 		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token);
-		System.out.println(ANALYSES_REPORT_URL + jobID + postURLFormat);
-		return ANALYSES_REPORT_URL + jobID + postURLFormat;
+		String url = ANALYSES_REPORT_URL + jobID + postURLFormat; 
+		//TODO - for debug purposes - should be removed later
+		Fabric8AnalysisLSCoreActivator.getDefault().logInfo("Analyses URL: " + url);
+		return url;
 	}
 }

@@ -39,7 +39,7 @@ public class TokenCheck {
 			try {
 				return provider.apply(null);
 			} catch (Exception e) {
-				Fabric8AnalysisLSUIActivator.getDefault().logError("Error while requesting token from OSIO plugin", e);
+				Fabric8AnalysisLSUIActivator.getDefault().logError("Error while requesting token from OpenShift.io plugin", e);
 			}
 		} 
 		return null;

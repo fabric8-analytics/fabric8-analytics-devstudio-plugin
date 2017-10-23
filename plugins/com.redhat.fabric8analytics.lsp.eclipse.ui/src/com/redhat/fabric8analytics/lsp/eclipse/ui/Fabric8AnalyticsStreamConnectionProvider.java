@@ -22,14 +22,11 @@ import java.util.Arrays;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
@@ -70,20 +67,20 @@ implements StreamConnectionProvider {
 	@Override
 	public void start() throws IOException {
 		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
-			throw new IOException("LSP server is not enabled");
+			throw new IOException("Fabric8 analyses server is not enabled");
 		}
 		
 		token = TokenCheck.getInstance().getToken();
 		if (token == null) {
 			Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(false);
-			displayInfoMessage("Cannot run analyses because login into OSIO failed. The analyses is now disabled. You can enable it in Preferences");
-			throw new IOException("Cannot get token");
+			MessageDialogUtils.displayInfoMessage("Cannot start Fabric8 analyses server because login into OpenShift.io failed. The analyses is now disabled. You can enable it in Preferences");
+			throw new IOException("Cannot get OpenShift.io token");
 		}
 		
 		CheckTokenJob job = new CheckTokenJob(this, token);
 		job.schedule();
 		super.start();
-		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The LSP server is started");
+		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is started");
 	}
 	
 	@Override
@@ -92,7 +89,7 @@ implements StreamConnectionProvider {
 			job.cancel();
 		}
 		super.stop();
-		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The LSP server is stopped");
+		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is stopped");
 	}
 	
 	@Override
@@ -113,7 +110,7 @@ implements StreamConnectionProvider {
 						try {
 							start();
 						} catch (IOException e) {
-							Fabric8AnalysisLSUIActivator.getDefault().logError("Failed to start LSP server", e);
+							MessageDialogUtils.displayErrorMessage("Failed to start Fabric8 analyses server", e);
 						}
 						
 					} else {
@@ -150,11 +147,10 @@ implements StreamConnectionProvider {
 			return new File(location);
 		}
 		
-		String message = "`node` is missing in your PATH, Fabric8 LSP server won't work.\n" +
+		String message = "`node` is missing in your PATH, Fabric8 Fabric8 analyses server won't work.\n" +
 				"Please install `node` and make it available in your PATH";
 		
-		Fabric8AnalysisLSUIActivator.getDefault().logError(message);
-		MessageDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "Missing `node` in PATH", message);
+		MessageDialogUtils.displayErrorMessage(message);
 		return null;
 	}
 
@@ -163,18 +159,9 @@ implements StreamConnectionProvider {
 			Bundle bundle = Platform.getBundle(Fabric8AnalysisLSUIActivator.PLUGIN_ID);
 			return new File(FileLocator.getBundleFile(bundle), "/server/fabric8-analytics-lsp-server-master/output/server.js");
 		} catch (IOException e) {
-			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the LSP server location", e);
+			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the Fabric8 analyses server location", e);
 			return null;
 		}
-	}
-	
-	private void displayInfoMessage(String message) {
-		Fabric8AnalysisLSUIActivator.getDefault().logInfo(message);
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				MessageDialog.openInformation(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "INFO", message);
-			}
-		});
 	}
 	
 	public String getToken() {
