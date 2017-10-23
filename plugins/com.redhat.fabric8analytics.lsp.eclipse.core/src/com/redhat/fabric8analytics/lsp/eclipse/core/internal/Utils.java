@@ -17,11 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.eclipse.ui.PartInitException;
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -9,7 +9,7 @@
  *     Red Hat Incorporated - initial API and implementation
  *******************************************************************************/
 
-package com.redhat.fabric8analytics.lsp.eclipse.core;
+package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import java.util.Collections;
 import java.util.HashSet;
