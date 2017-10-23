@@ -23,6 +23,10 @@ import org.eclipse.ui.PlatformUI;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.AnalysesJobHandler;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.WorkspaceFilesFinder;
 
 
 

@@ -1,8 +1,10 @@
-package com.redhat.fabric8analytics.lsp.eclipse.ui;
+package com.redhat.fabric8analytics.lsp.eclipse.ui.internal;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+
+import com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisLSUIActivator;
 
 public class MessageDialogUtils {
 

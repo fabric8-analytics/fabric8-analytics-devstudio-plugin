@@ -9,7 +9,7 @@
  *     Red Hat Incorporated - initial API and implementation
  *******************************************************************************/
 
-package com.redhat.fabric8analytics.lsp.eclipse.ui;
+package com.redhat.fabric8analytics.lsp.eclipse.ui.internal;
 
 import java.io.IOException;
 
@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+
+import com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalyticsStreamConnectionProvider;
 
 /**
  * Checks if the token has changed since the server started
