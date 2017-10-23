@@ -11,8 +11,6 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
-import java.util.concurrent.TimeUnit;
-
 public class Fabric8AnalysisPreferences {
 
 	public static final String LSP_SERVER_ENABLED = "Fabric8AnalysisPreferences.LSP_SERVER_ENABLED";
@@ -23,13 +21,11 @@ public class Fabric8AnalysisPreferences {
 	// set interval to 1 hour
 	private static final int MINUTES_INTERVAL = 60;
 
-	private static final long CHECK_INTERVAL = TimeUnit.MINUTES.toMillis(MINUTES_INTERVAL);
-
 	private static final Fabric8AnalysisPreferences INSTANCE = new Fabric8AnalysisPreferences();
 
 	private Fabric8AnalysisPreferences() {
 		Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore().setDefault(LSP_SERVER_ENABLED, true);
-		Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore().setDefault(LSP_SERVER_TOKEN_CHECK_INTERVAL, CHECK_INTERVAL);
+		Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore().setDefault(LSP_SERVER_TOKEN_CHECK_INTERVAL, MINUTES_INTERVAL);
 	}
 
 	public static Fabric8AnalysisPreferences getInstance() {
@@ -44,7 +40,7 @@ public class Fabric8AnalysisPreferences {
 		Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore().setValue(LSP_SERVER_ENABLED, enabled);
 	}
 	
-	public long getTokenCheckInterval() {
+	public long getTokenCheckIntervalMinutes() {
 		return Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore().getLong(LSP_SERVER_TOKEN_CHECK_INTERVAL);
 	}
 	
