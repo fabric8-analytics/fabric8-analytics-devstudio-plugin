@@ -27,7 +27,7 @@ public class TokenCheck {
 	private static final TokenCheck INSTANCE = new TokenCheck();
 
 	private Function<IResource, String> provider;
-
+	
 	public static TokenCheck getInstance() {
 		return INSTANCE;
 	}
@@ -37,14 +37,16 @@ public class TokenCheck {
 	}
 
 	public String getToken() {
+		String token = null;
+		
 		if (null != provider) {
 			try {
-				return provider.apply(null);
+				token = provider.apply(null);
 			} catch (Exception e) {
 				Fabric8AnalysisLSUIActivator.getDefault().logError("Error while requesting token from OpenShift.io plugin", e);
 			}
-		} 
-		return null;
+		}
+		return token;
 	}
 
 	private Function<IResource, String> getProvider() {

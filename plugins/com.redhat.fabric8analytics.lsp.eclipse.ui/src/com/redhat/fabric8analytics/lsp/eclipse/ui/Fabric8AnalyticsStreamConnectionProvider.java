@@ -30,7 +30,6 @@ import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.osgi.framework.Bundle;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.CheckTokenJob;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
@@ -42,10 +41,8 @@ implements StreamConnectionProvider {
 
 	private static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
 	
-	private CheckTokenJob job;
-	
 	private String token;
-
+	
 	public Fabric8AnalyticsStreamConnectionProvider() {
 		super();
 		File nodeJsLocation = getNodeJsLocation();
@@ -81,17 +78,13 @@ implements StreamConnectionProvider {
 			throw new IOException("Cannot get OpenShift.io token");
 		}
 		
-		CheckTokenJob job = new CheckTokenJob(this, token);
-		job.schedule();
 		super.start();
-		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is started");
+		// if super.start() does not throw exception, we're started
+		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is started ");
 	}
 	
 	@Override
 	public void stop() {
-		if (job != null) {
-			job.cancel();
-		}
 		super.stop();
 		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is stopped");
 	}

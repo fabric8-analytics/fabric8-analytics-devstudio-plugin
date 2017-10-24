@@ -13,7 +13,6 @@ package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -42,12 +41,6 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 				"&Code analyses enabled", 
 		 		getFieldEditorParent());
 		addField(enableLSPField);
-		
-		IntegerFieldEditor intervalField = new IntegerFieldEditor(
-				Fabric8AnalysisPreferences.LSP_SERVER_TOKEN_CHECK_INTERVAL, 
-				"&Token check interval (in minutes)", 
-				getFieldEditorParent());
-		addField(intervalField);
 	}
 	
 	@Override
