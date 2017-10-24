@@ -3,6 +3,7 @@
 .project/
 .settings/
 target/
-server/
+ca-lsp-server.tar
+ca-lsp-server
 **/.DS_Store
 

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.redhat.fabric8analytics.eclipse</groupId>
@@ -18,66 +19,29 @@
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
-				<groupId>com.googlecode.maven-download-plugin</groupId>
-				<artifactId>download-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>fetch-grammar</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>wget</goal>
-						</goals>
-						<configuration>
-							<url>https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/archive/master.zip</url>
-							<unpack>true</unpack>
-							<outputDirectory>server/</outputDirectory>
-							<skip>false</skip>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.6.0</version>
+                <version>1.6.0</version>
 				<executions>
 					<execution>
-						<id>npm-install</id>
+						<id>LSP SERVER</id>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
-						<phase>generate-resources</phase>
 						<configuration>
-							<executable>npm</executable>
-							<arguments>
-								<argument>install</argument>
-							</arguments>
-							<workingDirectory>server/fabric8-analytics-lsp-server-master/</workingDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>npm-build</id>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<executable>npm</executable>
-							<arguments>
-								<argument>run-script</argument>
-								<argument>build</argument>
-							</arguments>
-							<workingDirectory>server/fabric8-analytics-lsp-server-master/</workingDirectory>
+							<executable>${basedir}/scripts/lsp-server.sh</executable>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-packaging-plugin</artifactId>
 				<version>${tychoVersion}</version>
 				<configuration>
-					<jgit.ignore>pom.xml,server/fabric8-analytics-lsp-server-master/</jgit.ignore>
+					<jgit.ignore>pom.xml,ca-lsp-server/,ca-lsp-server.tar</jgit.ignore>
 				</configuration>
 			</plugin>
 		</plugins>
