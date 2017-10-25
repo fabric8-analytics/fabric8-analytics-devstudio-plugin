@@ -43,7 +43,7 @@ public class RecommenderAPIProvider {
 	
 	private static final String SERVER_ANALYZER_URL = SERVER_URL + "stack-analyses/";
 	
-	private static final String ANALYSES_REPORT_URL =  "http://fabric8-analytics-stack-report-ui-bayesian-preview.b6ff.rh-idev.openshiftapps.com/#/analyze/";
+	private static final String ANALYSES_REPORT_URL =  "https://stack-analytics-report.openshift.io/#/analyze/";
 	
 	private static final String POST_ANALYSES_REPORT_URL	= "?api_data={\"access_token\":\"%s\"}";
 
