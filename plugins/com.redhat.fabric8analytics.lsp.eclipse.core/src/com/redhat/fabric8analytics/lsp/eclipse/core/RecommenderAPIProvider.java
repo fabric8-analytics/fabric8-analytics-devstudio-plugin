@@ -46,7 +46,9 @@ public class RecommenderAPIProvider {
 	private static final String ANALYSES_REPORT_URL =  "https://stack-analytics-report.openshift.io/#/analyze/";
 	
 	private static final String POST_ANALYSES_REPORT_URL	= "?api_data={\"access_token\":\"%s\"}";
-
+	
+	private static final String THREE_SCALE_URL = "http://f8a-3scale-admin-gateway-bayesian-preview.b6ff.rh-idev.openshiftapps.com/";
+	
 	private static final RecommenderAPIProvider INSTANCE = new RecommenderAPIProvider();
 
 	public static RecommenderAPIProvider getInstance() {
@@ -128,5 +130,31 @@ public class RecommenderAPIProvider {
 		//TODO - for debug purposes - should be removed later
 		Fabric8AnalysisLSCoreActivator.getDefault().logInfo("Analyses URL: " + url);
 		return url;
+	}
+	
+	/**
+	 * Registers to 3scale. 
+	 * 
+	 * @param token
+	 * @return 
+	 */
+	public JSONObject register3Scale(String token) throws RecommenderAPIException {
+		HttpPost post = new HttpPost(THREE_SCALE_URL);
+		post.addHeader("Authorization" , token);
+
+		try {
+			CloseableHttpClient client = HttpClients.createDefault();
+			HttpResponse response = client.execute(post);
+			int responseCode = response.getStatusLine().getStatusCode();
+			
+			if (responseCode==HttpStatus.SC_OK) {
+				JSONObject jsonObj = Utils.jsonObj(response);
+				return jsonObj;
+			} else {
+				throw new RecommenderAPIException("The 3scale server returned unexpected return code: " + responseCode);				
+			}
+		} catch (IOException | JSONException e) {
+			throw new RecommenderAPIException(e);				
+		}
 	}
 }
