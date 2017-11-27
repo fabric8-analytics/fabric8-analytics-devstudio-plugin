@@ -11,6 +11,7 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.core.internal;
 
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +20,7 @@ import java.io.InputStreamReader;
 import org.apache.http.HttpResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 public class Utils {
 
@@ -36,4 +38,13 @@ public class Utils {
 		JSONObject json = new JSONObject(sb.toString());
 		return json;
 	}
+	public static void setThreeScalePreferences(JSONObject response) throws JSONException, IOException{
+		String prodURL = response.getString("prod");
+		if(prodURL!=null) {
+			if (Fabric8AnalysisPreferences.getInstance().isProdURLSet()) {
+				throw new IOException("Fabric8 analyses server is not enabled");
+			}
+		}
+	}
+	
 }

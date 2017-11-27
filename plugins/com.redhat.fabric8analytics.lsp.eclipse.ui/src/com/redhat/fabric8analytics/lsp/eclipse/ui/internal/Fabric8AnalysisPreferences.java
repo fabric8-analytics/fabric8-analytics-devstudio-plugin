@@ -16,6 +16,8 @@ import com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisLSUIActivator;
 public class Fabric8AnalysisPreferences {
 
 	public static final String LSP_SERVER_ENABLED = "Fabric8AnalysisPreferences.LSP_SERVER_ENABLED";
+	public static final String PROD_URL = "Fabric8AnalysisPreferences.PROD_URL";
+	public static final String STAGE_URL = "Fabric8AnalysisPreferences.STAGE_URL";
 
 	private static final Fabric8AnalysisPreferences INSTANCE = new Fabric8AnalysisPreferences();
 
@@ -33,5 +35,13 @@ public class Fabric8AnalysisPreferences {
 
 	public void setLSPServerEnabled(boolean enabled) {
 		Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore().setValue(LSP_SERVER_ENABLED, enabled);
+	}
+	
+	public boolean isProdURLSet() {
+		return (Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore().getString(PROD_URL)!=null);
+	}
+	
+	public void setProdURL(String prodURL) {
+		Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore().setValue(PROD_URL, prodURL);
 	}
 }
