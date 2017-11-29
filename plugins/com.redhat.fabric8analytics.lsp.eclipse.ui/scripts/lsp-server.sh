@@ -1,7 +1,7 @@
 rm -rf ca-lsp-server*
 
-wget https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/releases/download/0.0.5/ca-lsp-server.tar
+wget http://download.jboss.org/jbosstools/oxygen/snapshots/builds/jbosstools-fabric8analytics-lsp-server_master/latest/ca-lsp-server-0.0.6-SNAPSHOT.tar
 
-archive=ca-lsp-server.tar
+archive=ca-lsp-server-0.0.6-SNAPSHOT.tar
 mkdir ${archive%.tar*} 
 tar --extract --file=${archive} --strip-components=1 --directory=${archive%.tar*}

@@ -154,7 +154,7 @@ implements StreamConnectionProvider {
 	private static File getServerLocation() {
 		try {
 			Bundle bundle = Platform.getBundle(Fabric8AnalysisLSUIActivator.PLUGIN_ID);
-			return new File(FileLocator.getBundleFile(bundle), "ca-lsp-server/server.js");
+			return new File(FileLocator.getBundleFile(bundle), "ca-lsp-server-0.0.6-SNAPSHOT/server.js");
 		} catch (IOException e) {
 			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the Fabric8 analyses server location", e);
 			return null;
