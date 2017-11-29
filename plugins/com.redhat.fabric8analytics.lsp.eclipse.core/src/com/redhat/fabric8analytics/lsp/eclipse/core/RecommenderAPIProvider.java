@@ -13,6 +13,7 @@ package com.redhat.fabric8analytics.lsp.eclipse.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
 import org.apache.http.HttpEntity;
@@ -20,11 +21,15 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.eclipse.core.resources.IFile;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +51,9 @@ public class RecommenderAPIProvider {
 	private static final String ANALYSES_REPORT_URL =  "https://stack-analytics-report.openshift.io/#/analyze/";
 	
 	private static final String POST_ANALYSES_REPORT_URL	= "?api_data={\"access_token\":\"%s\"}";
-
+	
+	private static final String THREE_SCALE_URL = "http://f8a-3scale-admin-gateway-bayesian-preview.b6ff.rh-idev.openshiftapps.com/register";
+	
 	private static final RecommenderAPIProvider INSTANCE = new RecommenderAPIProvider();
 
 	public static RecommenderAPIProvider getInstance() {
@@ -59,10 +66,15 @@ public class RecommenderAPIProvider {
 	 * @param pomFiles
 	 * @return jobID
 	 */
-	public String requestAnalyses(String token, Set<IFile> files) throws RecommenderAPIException {
-		HttpPost post = new HttpPost(SERVER_ANALYZER_URL);
-		post.addHeader("Authorization" , token);
-
+	public String requestAnalyses(String token, Set<IFile> files, String ServerURL, String user_key) throws RecommenderAPIException {
+		
+//		String ServerUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
+//		HttpPost post = new HttpPost(SERVER_ANALYZER_URL);
+		String recommenderURL = ServerURL +  String.format("?user_key=%s",user_key);
+		HttpPost post = new HttpPost(recommenderURL);
+				post.addHeader("Authorization" , token);
+//		post.addHeader("Authorization" , user_key);
+		System.out.println(post.toString());
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
 				.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 		for (IFile file : files)
@@ -73,14 +85,14 @@ public class RecommenderAPIProvider {
 
 		HttpEntity multipart = builder.build();
 		post.setEntity(multipart);
-
+		
 		try {
 			CloseableHttpClient client = HttpClients.createDefault();
 			HttpResponse response = client.execute(post);
 			int responseCode = response.getStatusLine().getStatusCode();
 			
 			if (responseCode==HttpStatus.SC_OK) {
-				JSONObject jsonObj = Utils.jsonObj(response);
+				JSONObject jsonObj = new JSONObject(EntityUtils.toString(response.getEntity()));
 				return jsonObj.getString("id");
 			} else {
 				throw new RecommenderAPIException("The recommender server returned unexpected return code: " + responseCode);				
@@ -128,5 +140,47 @@ public class RecommenderAPIProvider {
 		//TODO - for debug purposes - should be removed later
 		Fabric8AnalysisLSCoreActivator.getDefault().logInfo("Analyses URL: " + url);
 		return url;
+	}
+	
+	/**
+	 * Registers to 3scale. 
+	 * 
+	 * @param token
+	 * @return 
+	 * @throws UnsupportedEncodingException 
+	 * @throws JSONException 
+	 */
+	public JSONObject register3Scale(String token) throws RecommenderAPIException, UnsupportedEncodingException, JSONException {
+		JSONObject urlObject = new JSONObject();
+        urlObject.put("auth_token", token);
+		HttpPost post = new HttpPost(THREE_SCALE_URL);
+		StringEntity se = new StringEntity(urlObject.toString());
+        se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+        post.setEntity(se);
+//		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+//				.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+//		System.out.println(token);
+//		builder.addTextBody("auth_token", token, ContentType.create("application/json", Consts.UTF_8));
+
+//		HttpEntity multipart = builder.build();
+//		post.setEntity(multipart);
+		
+//		System.out.println(post.toString());
+		try {
+			CloseableHttpClient client = HttpClients.createDefault();
+			HttpResponse response = client.execute(post);
+			
+			int responseCode = response.getStatusLine().getStatusCode();
+			
+			if (responseCode==HttpStatus.SC_OK) {
+//				System.out.println(EntityUtils.toString(response.getEntity()));
+				JSONObject jsonObj = new JSONObject(EntityUtils.toString(response.getEntity()));
+				return jsonObj;
+			} else {
+				throw new RecommenderAPIException("The 3scale server returned unexpected return code: " + responseCode);				
+			}
+		} catch (IOException | JSONException e) {
+			throw new RecommenderAPIException(e);				
+		}
 	}
 }

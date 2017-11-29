@@ -13,6 +13,7 @@ package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -23,6 +24,10 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 	static final String PREFERENCE_PAGE_ID = Fabric8AnalysisLSUIActivator.getDefault().getBundle().getSymbolicName() + ".preferences"; //$NON-NLS-1$
 
 	private BooleanFieldEditor enableLSPField;
+	
+	private StringFieldEditor setProdURL;
+	
+	private StringFieldEditor setUserKey;
 	
 	public Fabric8AnalysisPreferencePage() {
 		
@@ -41,6 +46,16 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 				"&Code analyses enabled", 
 		 		getFieldEditorParent());
 		addField(enableLSPField);
+		setProdURL = new StringFieldEditor(
+				Fabric8AnalysisPreferences.PROD_URL, 
+				"&Prod URL", 
+		 		getFieldEditorParent());
+		addField(setProdURL);
+		setUserKey = new StringFieldEditor(
+				Fabric8AnalysisPreferences.USER_KEY, 
+				"&User Key", 
+		 		getFieldEditorParent());
+		addField(setUserKey);
 	}
 	
 	@Override
@@ -48,6 +63,12 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 		super.performApply();
 		if (enableLSPField != null) {
 			enableLSPField.load();
+		}
+		if (setProdURL != null) {
+			setProdURL.load();
+		}
+		if (setUserKey != null) {
+			setUserKey.load();
 		}
 	}
 }
