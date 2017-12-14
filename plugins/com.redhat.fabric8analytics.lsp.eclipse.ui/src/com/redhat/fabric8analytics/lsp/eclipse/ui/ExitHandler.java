@@ -11,27 +11,33 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.json.JSONException;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.AnalysesJobHandler;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.ThreeScaleIntegration;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.WorkspaceFilesFinder;
 
 
 
 public class ExitHandler extends AbstractHandler {
-	private String RECOMMENDER_API_TOKEN = "";
+	private String RECOMMENDER_API_TOKEN;
+	private String RECOMMENDER_3SCALE_TOKEN;
 	static  String jobId;
 	static IViewPart mainView = null;
 
@@ -51,20 +57,23 @@ public class ExitHandler extends AbstractHandler {
 		
 		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
+			RECOMMENDER_3SCALE_TOKEN = token;
 		}
 		try {
 			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(StackAnalysesView.NAME);
 			setView(view);
-		} catch (PartInitException e1) {
-			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e1);
-			return null;
-		} 
-
-		try {
-			String jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, pomFiles);
+			String serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
+			String userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
+			
+			if(serverURL == null && userKey == null) {
+				ThreeScaleIntegration.getInstance().set3ScalePreferences(RECOMMENDER_3SCALE_TOKEN);
+				serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
+				userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
+			}
+			String jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, pomFiles, serverURL, userKey);
 			setJobId(jobID);
 			new AnalysesJobHandler("Analyses check Job", token).schedule();
-		} catch (RecommenderAPIException e) {
+		} catch (RecommenderAPIException | StorageException | UnsupportedEncodingException | JSONException | PartInitException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
 		return null;
