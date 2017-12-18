@@ -20,6 +20,12 @@ import org.json.JSONObject;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 
+/**
+ * Helper class for 3scale Integration.
+ *
+ * @author Geetika Batra
+ *
+ */
 public class ThreeScaleIntegration {
 
 	private static final ThreeScaleIntegration INSTANCE = new ThreeScaleIntegration();

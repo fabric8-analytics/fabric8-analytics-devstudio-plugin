@@ -43,6 +43,14 @@
       </command>
    </extension>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="com.redhat.fabric8analytics.lsp.eclipse.ui.AuthorizeHandler"
+            id="com.redhat.fabric8analytics.lsp.eclipse.ui.authorizetoken"
+            name="Exit">
+      </command>
+   </extension>
+   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
          locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
@@ -66,7 +74,21 @@
          			</visibleWhen>
       </menuContribution>
    </extension>
-
+ <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=org.eclipse.ui.workbench.help">
+         <toolbar
+               id="com.redhat.fabric8analytics.lsp.eclipse.ui.Authorize">
+            <command
+                  commandId="com.redhat.fabric8analytics.lsp.eclipse.ui.authorizetoken"
+                  label="%F8Analytics.command.authorize"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
 <extension
          point="org.eclipse.ui.menus">
       <menuContribution

@@ -70,14 +70,6 @@ implements StreamConnectionProvider {
 		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
 			throw new IOException("Fabric8 analyses server is not enabled");
 		}
-		
-		token = TokenCheck.getInstance().getToken();
-		if (token == null) {
-			Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(false);
-			MessageDialogUtils.displayInfoMessage("Cannot start Fabric8 analyses server because login into OpenShift.io failed. The analyses is now disabled. You can enable it in Preferences");
-			throw new IOException("Cannot get OpenShift.io token");
-		}
-		
 		super.start();
 		// if super.start() does not throw exception, we're started
 		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is started ");
