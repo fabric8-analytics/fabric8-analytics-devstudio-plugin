@@ -11,17 +11,13 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -29,10 +25,8 @@ import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.osgi.framework.Bundle;
 
-import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 
 public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConnectionProvider
 implements StreamConnectionProvider {
@@ -43,20 +37,16 @@ implements StreamConnectionProvider {
 	
 	private String token;
 	
+	private String serverUrl;
+
 	public Fabric8AnalyticsStreamConnectionProvider() {
 		super();
-		File nodeJsLocation = getNodeJsLocation();
-		if (nodeJsLocation == null) {
-			return;
-		}
-
 		File serverLocation = getServerLocation();
 		if (serverLocation == null) {
 			return;
 		}
 
 		setCommands(Arrays.asList(new String[] {
-				nodeJsLocation.getAbsolutePath(),
 				serverLocation.getAbsolutePath(),
 				"--stdio"
 		}));
@@ -68,7 +58,8 @@ implements StreamConnectionProvider {
 	@Override
 	public void start() throws IOException {
 		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
-			throw new IOException("Fabric8 analyses server is not enabled");
+			stop();
+			return;
 		}
 		super.start();
 		// if super.start() does not throw exception, we're started
@@ -84,11 +75,17 @@ implements StreamConnectionProvider {
 	@Override
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
-		res.environment().put(RECOMMENDER_API_TOKEN, token);
-		res.environment().put(RECOMMENDER_API_URL, RecommenderAPIProvider.SERVER_URL);
+		try {
+			token = Fabric8AnalysisPreferences.getInstance().getToken();
+			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
+			res.environment().put(RECOMMENDER_API_TOKEN, token);
+			res.environment().put(RECOMMENDER_API_URL, serverUrl);
+		} catch (StorageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return res;
 	}
-	
 	private void addPreferencesListener() {
 		IPreferenceStore preferenceStore = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -110,39 +107,6 @@ implements StreamConnectionProvider {
 		});
 	}
 
-	private static File getNodeJsLocation() {
-		String location = null;
-		String[] command = new String[] {"/bin/bash", "-c", "which node"};
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			command = new String[] {"cmd", "/c", "where node"};
-		}
-		BufferedReader reader = null;
-		try {
-			Process p = Runtime.getRuntime().exec(command);
-			reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			location = reader.readLine();
-		} catch (IOException e) {
-			// no problem, try default install path
-		} finally {
-			IOUtils.closeQuietly(reader);
-		}
-
-		// Try default install path as last resort
-		if (location == null && Platform.getOS().equals(Platform.OS_MACOSX)) {
-			location = "/usr/local/bin/node";
-		}
-
-		if (location != null && Files.exists(Paths.get(location))) {
-			return new File(location);
-		}
-		
-		String message = "`node` is missing in your PATH, Fabric8 Fabric8 analyses server won't work.\n" +
-				"Please install `node` and make it available in your PATH";
-		
-		MessageDialogUtils.displayErrorMessage(message);
-		return null;
-	}
-
 	private static File getServerLocation() {
 		try {
 			Bundle bundle = Platform.getBundle(Fabric8AnalysisLSUIActivator.PLUGIN_ID);
@@ -151,9 +115,5 @@ implements StreamConnectionProvider {
 			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the Fabric8 analyses server location", e);
 			return null;
 		}
-	}
-	
-	public String getToken() {
-		return token;
 	}
 }
