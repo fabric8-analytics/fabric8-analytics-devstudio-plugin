@@ -5,3 +5,5 @@ wget http://download.jboss.org/jbosstools/oxygen/snapshots/builds/jbosstools-fab
 archive=ca-lsp-server-0.0.6-SNAPSHOT.tar
 mkdir ${archive%.tar*} 
 tar --extract --file=${archive} --strip-components=1 --directory=${archive%.tar*}
+
+chmod +x ${archive%.tar*}/server.js
