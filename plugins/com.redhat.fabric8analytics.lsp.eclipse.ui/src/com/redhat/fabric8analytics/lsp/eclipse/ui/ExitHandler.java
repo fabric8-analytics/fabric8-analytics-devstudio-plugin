@@ -33,8 +33,6 @@ import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.ThreeScaleIntegration
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.WorkspaceFilesFinder;
 
-
-
 public class ExitHandler extends AbstractHandler {
 	private String RECOMMENDER_API_TOKEN;
 	private String RECOMMENDER_3SCALE_TOKEN;
@@ -48,23 +46,26 @@ public class ExitHandler extends AbstractHandler {
 			MessageDialogUtils.displayInfoMessage("No POM files found in the selection");
 			return null;
 		}
-
-		String token = TokenCheck.getInstance().getToken();
-		if (token == null) {
-			MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
-			return null;
-		}
-		
-		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
+		try {
+			if(!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
+				MessageDialogUtils.displayInfoMessage("Enable Fabric8 Analyses");
+				//				TODO:
+				//				add button here and call call token
+				//				and then enable lsp in preferences also
+				return null;
+			}
+			String token = Fabric8AnalysisPreferences.getInstance().getToken();
+			if (token == null) {
+				MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
+				return null;
+			}
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 			RECOMMENDER_3SCALE_TOKEN = token;
-		}
-		try {
 			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(StackAnalysesView.NAME);
 			setView(view);
 			String serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
 			String userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
-			
+
 			if(serverURL == null && userKey == null) {
 				ThreeScaleIntegration.getInstance().set3ScalePreferences(RECOMMENDER_3SCALE_TOKEN);
 				serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
