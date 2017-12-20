@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -29,10 +30,8 @@ import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.osgi.framework.Bundle;
 
-import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 
 public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConnectionProvider
 implements StreamConnectionProvider {
@@ -40,9 +39,11 @@ implements StreamConnectionProvider {
 	public static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
 
 	private static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
-	
+
 	private String token;
-	
+
+	private String serverUrl;
+
 	public Fabric8AnalyticsStreamConnectionProvider() {
 		super();
 		File nodeJsLocation = getNodeJsLocation();
@@ -68,35 +69,38 @@ implements StreamConnectionProvider {
 	@Override
 	public void start() throws IOException {
 		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
-			throw new IOException("Fabric8 analyses server is not enabled");
+			stop();
+			return;
 		}
-		
-		token = TokenCheck.getInstance().getToken();
-		if (token == null) {
-			Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(false);
-			MessageDialogUtils.displayInfoMessage("Cannot start Fabric8 analyses server because login into OpenShift.io failed. The analyses is now disabled. You can enable it in Preferences");
-			throw new IOException("Cannot get OpenShift.io token");
-		}
-		
 		super.start();
 		// if super.start() does not throw exception, we're started
 		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is started ");
 	}
-	
+
 	@Override
 	public void stop() {
 		super.stop();
 		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is stopped");
 	}
-	
+
 	@Override
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
-		res.environment().put(RECOMMENDER_API_TOKEN, token);
-		res.environment().put(RECOMMENDER_API_URL, RecommenderAPIProvider.SERVER_URL);
+		try {
+			token = Fabric8AnalysisPreferences.getInstance().getToken();
+			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
+			String [] arrOfStr = serverUrl.split("http", 2);
+			serverUrl = "https" + arrOfStr[1];
+			String temp_server_url = "https://recommender.api.openshift.io/api/v1";
+			res.environment().put(RECOMMENDER_API_TOKEN, token);
+			//			res.environment().put(RECOMMENDER_API_URL, serverUrl);
+			res.environment().put(RECOMMENDER_API_URL, temp_server_url);
+		} catch (StorageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return res;
 	}
-	
 	private void addPreferencesListener() {
 		IPreferenceStore preferenceStore = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -109,13 +113,23 @@ implements StreamConnectionProvider {
 						} catch (IOException e) {
 							MessageDialogUtils.displayErrorMessage("Failed to start Fabric8 analyses server", e);
 						}
-						
+
 					} else {
 						stop();	
 					}
 				}
 			}
 		});
+	}
+
+	private static File getServerLocation() {
+		try {
+			Bundle bundle = Platform.getBundle(Fabric8AnalysisLSUIActivator.PLUGIN_ID);
+			return new File(FileLocator.getBundleFile(bundle), "ca-lsp-server-0.0.6-SNAPSHOT/server.js");
+		} catch (IOException e) {
+			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the Fabric8 analyses server location", e);
+			return null;
+		}
 	}
 
 	private static File getNodeJsLocation() {
@@ -143,25 +157,11 @@ implements StreamConnectionProvider {
 		if (location != null && Files.exists(Paths.get(location))) {
 			return new File(location);
 		}
-		
+
 		String message = "`node` is missing in your PATH, Fabric8 Fabric8 analyses server won't work.\n" +
 				"Please install `node` and make it available in your PATH";
-		
+
 		MessageDialogUtils.displayErrorMessage(message);
 		return null;
-	}
-
-	private static File getServerLocation() {
-		try {
-			Bundle bundle = Platform.getBundle(Fabric8AnalysisLSUIActivator.PLUGIN_ID);
-			return new File(FileLocator.getBundleFile(bundle), "ca-lsp-server-0.0.6-SNAPSHOT/server.js");
-		} catch (IOException e) {
-			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the Fabric8 analyses server location", e);
-			return null;
-		}
-	}
-	
-	public String getToken() {
-		return token;
 	}
 }
