@@ -32,6 +32,7 @@ import org.osgi.framework.Bundle;
 
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 
 public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConnectionProvider
 implements StreamConnectionProvider {
@@ -69,8 +70,7 @@ implements StreamConnectionProvider {
 	@Override
 	public void start() throws IOException {
 		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
-			stop();
-			return;
+			throw new IOException("Analyses Disabled");
 		}
 		super.start();
 		// if super.start() does not throw exception, we're started
@@ -87,14 +87,17 @@ implements StreamConnectionProvider {
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
 		try {
-			token = Fabric8AnalysisPreferences.getInstance().getToken();
-			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
-			String [] arrOfStr = serverUrl.split("http", 2);
-			serverUrl = "https" + arrOfStr[1];
-			String temp_server_url = "https://recommender.api.openshift.io/api/v1";
-			res.environment().put(RECOMMENDER_API_TOKEN, token);
-			//			res.environment().put(RECOMMENDER_API_URL, serverUrl);
-			res.environment().put(RECOMMENDER_API_URL, temp_server_url);
+			if( Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled())
+			{
+						token = TokenCheck.getInstance().getToken();
+						serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
+						String [] arrOfStr = serverUrl.split("http", 2);
+						serverUrl = "https" + arrOfStr[1];
+						String temp_server_url = "https://recommender.api.openshift.io/api/v1";
+						res.environment().put(RECOMMENDER_API_TOKEN, token);
+						//			res.environment().put(RECOMMENDER_API_URL, serverUrl);
+						res.environment().put(RECOMMENDER_API_URL, temp_server_url);
+			}
 		} catch (StorageException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
