@@ -49,12 +49,9 @@ public class ExitHandler extends AbstractHandler {
 		try {
 			if(!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
 				MessageDialogUtils.displayInfoMessage("Enable Fabric8 Analyses");
-				//				TODO:
-				//				add button here and call call token
-				//				and then enable lsp in preferences also
 				return null;
 			}
-			String token = Fabric8AnalysisPreferences.getInstance().getToken();
+			String token = TokenCheck.getInstance().getToken();
 			if (token == null) {
 				MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
 				return null;
