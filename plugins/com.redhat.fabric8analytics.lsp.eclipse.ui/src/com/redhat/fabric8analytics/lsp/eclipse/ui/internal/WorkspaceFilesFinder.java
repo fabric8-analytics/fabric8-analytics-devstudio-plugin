@@ -19,6 +19,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -46,8 +48,8 @@ public class WorkspaceFilesFinder {
 		if (window == null) {
 			return Collections.emptySet(); 
 		}
-		
-		
+		//		window.getSelectionService().
+
 		IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
 		return findPOMs(selection);
 	}
@@ -62,7 +64,8 @@ public class WorkspaceFilesFinder {
 
 		for (Object o : selection.toList()) {
 			if (o instanceof IAdaptable) {
-				IFile pom = findPOM((IAdaptable) o);
+				IProject project = (IProject) ((IAdaptable) o).getAdapter(IProject.class);
+				IFile pom = findPOM(project);
 				if (pom != null && pom.isAccessible()) {
 					files.add(pom);	
 				}
@@ -76,21 +79,49 @@ public class WorkspaceFilesFinder {
 	 * @param adaptable
 	 * @return
 	 */
-	private IFile findPOM(IAdaptable adaptable) {
-		IProject project = (IProject) ((IAdaptable) adaptable).getAdapter(IProject.class);
+	private IFile findPOM(IProject project1) {
+		IProject project = (IProject) (project1.getAdapter(IProject.class));
+		
 
 		if (project != null) {
 			if (project.isAccessible()) {
+				IFile temp = project.getFile("pom.xml");
 				return project.getFile("pom.xml");
 			} else {
 				return null;
 			}
 		} 
-
-		IFile file = (IFile) ((IAdaptable) adaptable).getAdapter(IFile.class);
-		if (file != null && file.getName().equals("pom.xml")) {
-			return file;
-		}
+		
 		return null;
+//		IFile file = (IFile) ((IAdaptable) adaptable).getAdapter(IFile.class);
+//		if (file != null && file.getName().equals("pom.xml")) {
+//			return file;
+//		}
+//		return null;
+	}
+
+//	public Set<IFile> findPOMActivePage() {
+//		Set<IFile> files = new HashSet<IFile>();
+//		IProject project = getCurrentProject();
+//		for (Object o : selection.toList()) {
+//			if (o instanceof IAdaptable) {
+//				IFile pom = findPOM((IAdaptable) o);
+//				if (pom != null && pom.isAccessible()) {
+//					files.add(pom);	
+//				}
+//			}
+//		}
+//		return files;
+//	}
+	public Set<IFile> getCurrentProject()
+	{
+		Set<IFile> files = new HashSet<IFile>();
+		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		IFileEditorInput input = (IFileEditorInput)editor.getEditorInput();
+		IFile file = input.getFile();
+		IProject project = file.getProject();
+		files.add(findPOM(project));
+		return files;
 	}
 }
+

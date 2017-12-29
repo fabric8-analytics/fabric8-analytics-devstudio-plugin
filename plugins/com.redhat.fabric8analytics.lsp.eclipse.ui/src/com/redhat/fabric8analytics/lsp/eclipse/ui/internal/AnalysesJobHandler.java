@@ -19,11 +19,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.EditorComposite;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.ExitHandler;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.StackAnalysesView;
 
@@ -34,10 +36,16 @@ public class AnalysesJobHandler extends Job{
 	private static String jobId = null;
 
 	private String token;
+	
+	private Boolean editorCheck;
+	
+	private Browser editorBrowser;
 
-	public AnalysesJobHandler(String name, String token) {
+	public AnalysesJobHandler(String name, String token, Boolean editorCheck) {
 		super(name);
 		this.token = token;
+		this.editorCheck = editorCheck;
+		
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
@@ -46,8 +54,14 @@ public class AnalysesJobHandler extends Job{
 			url = new URL("platform:/plugin/com.redhat.fabric8analytics.lsp.eclipse.ui/templates/index.html");
 			url = FileLocator.toFileURL(url);
 			IViewPart mainView = ExitHandler.getView();
-			jobId = ExitHandler.getJobId();
-			((StackAnalysesView) mainView).updatebrowserUrl(url.toString());
+			
+			if(!editorCheck) {
+				jobId = ExitHandler.getJobId();
+				((StackAnalysesView) mainView).updatebrowserUrl(url.toString());
+				
+			}
+			jobId = EditorComposite.jobID;
+			EditorComposite.updateBrowser(url.toString());
 			setTimerAnalyses();
 			syncWithUi(mainView);
 		} catch (IOException e) {
@@ -69,6 +83,11 @@ public class AnalysesJobHandler extends Job{
 	private void syncWithUi(IViewPart mainView) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
+				if(editorCheck) {
+					EditorComposite.updateBrowser(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId, token));
+					return;
+				}
+				
 				((StackAnalysesView) mainView).updatebrowserUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId, token));
 			}
 		});

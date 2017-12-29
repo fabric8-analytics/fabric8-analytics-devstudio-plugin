@@ -70,7 +70,7 @@ public class ExitHandler extends AbstractHandler {
 			}
 			String jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, pomFiles, serverURL, userKey);
 			setJobId(jobID);
-			new AnalysesJobHandler("Analyses check Job", token).schedule();
+			new AnalysesJobHandler("Analyses check Job", token, false).schedule();
 		} catch (RecommenderAPIException | StorageException | UnsupportedEncodingException | JSONException | PartInitException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}

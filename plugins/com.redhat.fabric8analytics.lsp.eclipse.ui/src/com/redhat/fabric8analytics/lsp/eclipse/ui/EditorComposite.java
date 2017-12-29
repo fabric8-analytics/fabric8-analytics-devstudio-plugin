@@ -23,6 +23,8 @@ import org.eclipse.m2e.editor.pom.MavenPomEditor;
 import org.eclipse.m2e.editor.pom.MavenPomEditorPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,73 +53,93 @@ import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.WorkspaceFilesFinder;
  *
  */
 public class EditorComposite extends Composite{
-	
+
 	protected MavenPomEditorPage editorPage;
 
-  MavenPomEditor pomEditor;
-  private FormToolkit toolkit = new FormToolkit(Display.getCurrent());
-	  
+	public static Browser editorBrowser;
+
+	public static String jobID;
+
+	MavenPomEditor pomEditor;
+	private FormToolkit toolkit = new FormToolkit(Display.getCurrent());
+
 	public EditorComposite(Composite composite, MavenPomEditorPage editorPage, int flags, MavenPomEditor pomEditor) {
-	    super(composite, flags);
-	    this.editorPage = editorPage;
-	    this.pomEditor = pomEditor;
-	    createComposite();
-	   
-	  }
+		super(composite, flags);
+		this.editorPage = editorPage;
+		this.pomEditor = pomEditor;
+		createComposite();
+
+	}
 
 
 	private void createComposite() {
 		// TODO Auto-generated method stub
 		GridLayout gridLayout = new GridLayout();
-	    gridLayout.marginWidth = 0;
-	    setLayout(gridLayout);
-	    Button b = new Button(this, SWT.NONE);
-	    b.setLayoutData(new GridData(GridData.CENTER));
-	    b.setText("Generate Stack Report");
-	    
-//		if (window == null) {
-//			return Collections.emptySet(); 
-//		}
-//		
-		
-//		IStructuredSelection selection = (IStructuredSelection) window.getSelectionService()
-	    Set<IFile> pomFiles = WorkspaceFilesFinder.getInstance().findPOMs();
-		if (pomFiles.isEmpty()) {
-			MessageDialogUtils.displayInfoMessage("No POM files found in the selection");
-			return;
-		}
-		try {
-			
-			String token = TokenCheck.getInstance().getToken();
-			
-			if (token == null) {
-				MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
-			}
-			Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
-			String RECOMMENDER_API_TOKEN = "Bearer "+ token;
-			String RECOMMENDER_3SCALE_TOKEN = token;
-			
-			String serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
-			String userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
+		gridLayout.marginWidth = 0;
+		setLayout(gridLayout);
+		Button buttonGo = new Button(this, SWT.NONE);
+		buttonGo.setLayoutData(new GridData(GridData.CENTER));
+		buttonGo.setText("Generate Stack Report");
+		editorBrowser = new Browser(this, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(editorBrowser);
+		//		if (window == null) {
+		//			return Collections.emptySet(); 
+		//		}
+		//		
 
-			if(serverURL == null && userKey == null) {
-				ThreeScaleIntegration.getInstance().set3ScalePreferences(RECOMMENDER_3SCALE_TOKEN);
-				serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
-				userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
+		//		IStructuredSelection selection = (IStructuredSelection) window.getSelectionService()
+		buttonGo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent s) {
+				System.out.println("Called!");
+				Set<IFile> pomFiles = (Set<IFile>) WorkspaceFilesFinder.getInstance().getCurrentProject();
+				if (pomFiles.isEmpty()) {
+					MessageDialogUtils.displayInfoMessage("No POM files found in the selection");
+					return;
+				}
+				try {
+
+					String token = TokenCheck.getInstance().getToken();
+
+					if (token == null) {
+						MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
+					}
+					Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
+					String RECOMMENDER_API_TOKEN = "Bearer "+ token;
+					String RECOMMENDER_3SCALE_TOKEN = token;
+
+					String serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
+					String userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
+
+					if(serverURL == null && userKey == null) {
+						ThreeScaleIntegration.getInstance().set3ScalePreferences(RECOMMENDER_3SCALE_TOKEN);
+						serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
+						userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
+					}
+					jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, pomFiles, serverURL, userKey);
+
+
+					new AnalysesJobHandler("Analyses check Job", token, true).schedule();
+
+					editorBrowser.setUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobID, token));
+
+				}	
+				catch (RecommenderAPIException | StorageException | UnsupportedEncodingException | JSONException e) {
+					MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
+				};
+
+
 			}
-			String jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, pomFiles, serverURL, userKey);
-			new AnalysesJobHandler("Analyses check Job", token).schedule();
-			Browser browser = new Browser(this, SWT.NONE);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
-			
-			browser.setUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobID, token));
-			toolkit.adapt(this);
-		} catch (RecommenderAPIException | StorageException | UnsupportedEncodingException | JSONException e) {
-			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
-		}
-	    
-		
+		});
 	}
-	
+	public static void updateBrowser(String url) {
+		Display.getDefault().asyncExec(new Runnable(){
+			public void run(){
+				if (!editorBrowser.isDisposed()) {
+					editorBrowser.setUrl(url);
+				}
+			}
+		});
 
+	}
 }

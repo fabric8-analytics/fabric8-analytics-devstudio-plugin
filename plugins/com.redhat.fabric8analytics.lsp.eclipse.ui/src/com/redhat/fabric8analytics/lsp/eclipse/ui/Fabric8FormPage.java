@@ -11,6 +11,8 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.m2e.core.project.IMavenProjectChangedListener;
@@ -20,6 +22,7 @@ import org.eclipse.m2e.editor.pom.MavenPomEditorPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -27,6 +30,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.IFileEditorInput; 
 
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 
@@ -52,7 +56,7 @@ class Fabric8FormPage extends MavenPomEditorPage implements IMavenProjectChanged
 	    form.setText("This page analyses stack of current open project. Click Generate Analyses Report to Proceed ");
 
 	    form.getBody().setLayout(new GridLayout(1, true));
-	    String window = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getLabel();
+
 	    		
 //	    IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
 	    EditorComposite dependenciesComposite = new EditorComposite(form.getBody(), this, SWT.NONE, pomEditor);
