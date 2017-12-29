@@ -46,7 +46,8 @@ public class WorkspaceFilesFinder {
 		if (window == null) {
 			return Collections.emptySet(); 
 		}
-
+		
+		
 		IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
 		return findPOMs(selection);
 	}
