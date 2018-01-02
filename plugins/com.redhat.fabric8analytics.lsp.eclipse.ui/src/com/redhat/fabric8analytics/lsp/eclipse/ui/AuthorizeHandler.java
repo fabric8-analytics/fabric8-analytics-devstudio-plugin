@@ -47,7 +47,6 @@ public class AuthorizeHandler extends AbstractHandler {
 			Fabric8AnalysisPreferences.getInstance().setToken(token);
 			ThreeScaleIntegration.getInstance().set3ScalePreferences(token);
 		} catch (UnsupportedEncodingException | RecommenderAPIException | JSONException | StorageException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);

@@ -11,8 +11,10 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui.internal;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -82,9 +84,16 @@ public class WorkspaceFilesFinder {
 	private IFile findPOM(IProject project1) {
 		IProject project = (IProject) (project1.getAdapter(IProject.class));
 		
-
+//		List<IFile> manifest_list = new ArrayList<>();
+//		IMavenProjectRegistry  registry = MavenPlugin.getMavenProjectRegistry();
+//		IMavenProjectFacade facade = registry.create(pomFile, true, monitor);
+//		MavenProject mavenProject = facade.getMavenProject(monitor);
+//		StringWriter sw = new StringWriter();
+//		new MavenXpp3Writer().write(sw, mavenProject.getModel());
+//		String effectivePom = sw.toString();
 		if (project != null) {
 			if (project.isAccessible()) {
+				project.getFileExtension();
 				IFile temp = project.getFile("pom.xml");
 				return project.getFile("pom.xml");
 			} else {
@@ -113,6 +122,12 @@ public class WorkspaceFilesFinder {
 //		}
 //		return files;
 //	}
+	
+	/**
+	 * Finds pom.xml in the project directory.
+	 * @param adaptable
+	 * @return
+	 */
 	public Set<IFile> getCurrentProject()
 	{
 		Set<IFile> files = new HashSet<IFile>();

@@ -57,8 +57,6 @@ class Fabric8FormPage extends MavenPomEditorPage implements IMavenProjectChanged
 
 	    form.getBody().setLayout(new GridLayout(1, true));
 
-	    		
-//	    IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
 	    EditorComposite dependenciesComposite = new EditorComposite(form.getBody(), this, SWT.NONE, pomEditor);
 	    dependenciesComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	    toolkit.adapt(dependenciesComposite);
@@ -70,13 +68,11 @@ class Fabric8FormPage extends MavenPomEditorPage implements IMavenProjectChanged
 
 	@Override
 	public void mavenProjectChanged(MavenProjectChangedEvent[] arg0, IProgressMonitor arg1) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void loadData() {
-		// TODO Auto-generated method stub
 		
 	}
 }

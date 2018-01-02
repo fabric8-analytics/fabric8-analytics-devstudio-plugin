@@ -60,7 +60,7 @@ public class EditorComposite extends Composite{
 
 	public static String jobID;
 
-	MavenPomEditor pomEditor;
+	private MavenPomEditor pomEditor;
 	private FormToolkit toolkit = new FormToolkit(Display.getCurrent());
 
 	public EditorComposite(Composite composite, MavenPomEditorPage editorPage, int flags, MavenPomEditor pomEditor) {
@@ -73,7 +73,6 @@ public class EditorComposite extends Composite{
 
 
 	private void createComposite() {
-		// TODO Auto-generated method stub
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginWidth = 0;
 		setLayout(gridLayout);
@@ -82,16 +81,9 @@ public class EditorComposite extends Composite{
 		buttonGo.setText("Generate Stack Report");
 		editorBrowser = new Browser(this, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(editorBrowser);
-		//		if (window == null) {
-		//			return Collections.emptySet(); 
-		//		}
-		//		
-
-		//		IStructuredSelection selection = (IStructuredSelection) window.getSelectionService()
 		buttonGo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent s) {
-				System.out.println("Called!");
 				Set<IFile> pomFiles = (Set<IFile>) WorkspaceFilesFinder.getInstance().getCurrentProject();
 				if (pomFiles.isEmpty()) {
 					MessageDialogUtils.displayInfoMessage("No POM files found in the selection");

@@ -87,17 +87,16 @@ implements StreamConnectionProvider {
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
 		try {
-			if( Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled())
-			{
-						token = TokenCheck.getInstance().getToken();
-						serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
-						String [] arrOfStr = serverUrl.split("http", 2);
-						serverUrl = "https" + arrOfStr[1];
-						String temp_server_url = "https://recommender.api.openshift.io/api/v1";
-						res.environment().put(RECOMMENDER_API_TOKEN, token);
-						//			res.environment().put(RECOMMENDER_API_URL, serverUrl);
-						res.environment().put(RECOMMENDER_API_URL, temp_server_url);
-			}
+
+			token = TokenCheck.getInstance().getToken();
+			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
+			String [] arrOfStr = serverUrl.split("http", 2);
+			serverUrl = "https" + arrOfStr[1];
+			String temp_server_url = "https://recommender.api.openshift.io/api/v1";
+			res.environment().put(RECOMMENDER_API_TOKEN, token);
+			//			res.environment().put(RECOMMENDER_API_URL, serverUrl);
+			res.environment().put(RECOMMENDER_API_URL, temp_server_url);
+
 		} catch (StorageException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
