@@ -53,6 +53,9 @@ public class WorkspaceFilesFinder {
 		//		window.getSelectionService().
 
 		IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
+		if (selection == null) {
+			return Collections.emptySet();
+		}
 		return findPOMs(selection);
 	}
 
@@ -61,7 +64,7 @@ public class WorkspaceFilesFinder {
 	 * @param selection
 	 * @return
 	 */
-	private Set<IFile> findPOMs(IStructuredSelection selection) {
+	public Set<IFile> findPOMs(IStructuredSelection selection) {
 		Set<IFile> files = new HashSet<IFile>();
 
 		for (Object o : selection.toList()) {
