@@ -113,4 +113,8 @@
          			</visibleWhen>
       </menuContribution>
    </extension>
+ <extension
+   point="org.eclipse.m2e.editor.pageFactories">
+		<factory class="com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8PomEditorFactory"> </factory>
+    </extension>
 </plugin>

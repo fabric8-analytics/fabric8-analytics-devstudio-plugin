@@ -49,12 +49,9 @@ public class ExitHandler extends AbstractHandler {
 		try {
 			if(!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
 				MessageDialogUtils.displayInfoMessage("Enable Fabric8 Analyses");
-				//				TODO:
-				//				add button here and call call token
-				//				and then enable lsp in preferences also
 				return null;
 			}
-			String token = Fabric8AnalysisPreferences.getInstance().getToken();
+			String token = TokenCheck.getInstance().getToken();
 			if (token == null) {
 				MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
 				return null;
@@ -73,7 +70,7 @@ public class ExitHandler extends AbstractHandler {
 			}
 			String jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, pomFiles, serverURL, userKey);
 			setJobId(jobID);
-			new AnalysesJobHandler("Analyses check Job", token).schedule();
+			new AnalysesJobHandler("Analyses check Job", token, false).schedule();
 		} catch (RecommenderAPIException | StorageException | UnsupportedEncodingException | JSONException | PartInitException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}

@@ -17,10 +17,15 @@ Require-Bundle: org.eclipse.lsp4e;bundle-version="0.3.0",
  org.apache.commons.io;bundle-version="2.2.0",
  com.redhat.fabric8analytics.lsp.eclipse.core;bundle-version="0.0.1",
  org.eclipse.equinox.registry,
- org.jboss.tools.openshift.io.ui;bundle-version="3.4.1"
+ org.jboss.tools.openshift.io.ui;bundle-version="3.4.1",
+ org.eclipse.m2e.core,
+ org.eclipse.m2e.editor,
+ org.eclipse.ui.forms,
+ org.eclipse.ui.ide
 Eclipse-BundleShape: dir
 Bundle-Activator: com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisLSUIActivator
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath:  .
-Import-Package: org.eclipse.equinox.security.storage
+Import-Package: org.eclipse.equinox.security.storage,
+ org.eclipse.reddeer.swt.api
 
