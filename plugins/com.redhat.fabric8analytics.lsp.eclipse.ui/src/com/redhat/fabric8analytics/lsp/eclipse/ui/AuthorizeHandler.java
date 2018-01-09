@@ -11,8 +11,6 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
-import java.io.UnsupportedEncodingException;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -21,7 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.json.JSONException;
 
-import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
+import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.ThreeScaleIntegration;
@@ -46,7 +44,7 @@ public class AuthorizeHandler extends AbstractHandler {
 		try {
 			Fabric8AnalysisPreferences.getInstance().setToken(token);
 			ThreeScaleIntegration.getInstance().set3ScalePreferences(token);
-		} catch (UnsupportedEncodingException | RecommenderAPIException | JSONException | StorageException e) {
+		} catch (ThreeScaleAPIException | JSONException | StorageException e) {
 			e.printStackTrace();
 		}
 		Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
