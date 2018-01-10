@@ -48,7 +48,7 @@ public class RecommenderAPIProvider {
 	
 	private static String SERVER_ANALYZER_URL;
 	
-	private static String USER_KEY;
+	private static String userScaleKey;
 	
 	private static final String ANALYSES_REPORT_URL =  "https://stack-analytics-report.prod-preview.openshift.io/#/analyze/";
 	
@@ -56,7 +56,7 @@ public class RecommenderAPIProvider {
 	
 	private static final String THREE_SCALE_URL = "https://3scale-connect.api.prod-preview.openshift.io/get-route";
 
-	private static final String SERVICE_ID = "2555417754383";
+	private static final String SERVICE_ID = "2555417754822";
 	
 	private static final RecommenderAPIProvider INSTANCE = new RecommenderAPIProvider();
 
@@ -110,7 +110,7 @@ public class RecommenderAPIProvider {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 		}
 		
-		String url = SERVER_ANALYZER_URL + jobId +  String.format("?user_key=%s", USER_KEY);
+		String url = SERVER_ANALYZER_URL + jobId +  String.format("?user_key=%s", userScaleKey);
 		HttpGet get = new HttpGet(url);
 		get.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
 
@@ -140,7 +140,7 @@ public class RecommenderAPIProvider {
 //		to be used once user key is enabled in analyses url
 //		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, SERVER_URL, USER_KEY);
 		String temp_server_url = "https://recommender.api.openshift.io/";
-		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, temp_server_url, USER_KEY);
+		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, temp_server_url, userScaleKey);
 		String url = ANALYSES_REPORT_URL + jobID + postURLFormat; 
 		//TODO - for debug purposes - should be removed later
 		Fabric8AnalysisLSCoreActivator.getDefault().logInfo("Analyses URL: " + url);
@@ -193,6 +193,6 @@ public class RecommenderAPIProvider {
 		SERVER_ANALYZER_URL = SERVER_URL + "/api/v1/stack-analyses/";
 	}
 	public void setUserKey(String userKey) {
-		USER_KEY = userKey;
+		userScaleKey = userKey;
 	}
 }

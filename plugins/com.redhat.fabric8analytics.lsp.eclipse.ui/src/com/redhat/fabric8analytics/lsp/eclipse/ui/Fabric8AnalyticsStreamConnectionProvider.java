@@ -41,9 +41,15 @@ implements StreamConnectionProvider {
 
 	private static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
 
+	private static final String THREE_SCALE_USER_TOKEN = "THREE_SCALE_USER_TOKEN";
+	
+	private static final String VERSION_ROUTE = "/api/v1";
+
 	private String token;
 
 	private String serverUrl;
+
+	private String userKey;
 
 	public Fabric8AnalyticsStreamConnectionProvider() {
 		super();
@@ -89,13 +95,11 @@ implements StreamConnectionProvider {
 		try {
 
 			token = TokenCheck.getInstance().getToken();
-			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
-			String [] arrOfStr = serverUrl.split("http", 2);
-			serverUrl = "https" + arrOfStr[1];
-			String temp_server_url = "https://recommender.api.openshift.io/api/v1";
+			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL() + VERSION_ROUTE ;
+			userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 			res.environment().put(RECOMMENDER_API_TOKEN, token);
-			//			res.environment().put(RECOMMENDER_API_URL, serverUrl);
-			res.environment().put(RECOMMENDER_API_URL, temp_server_url);
+			res.environment().put(RECOMMENDER_API_URL, serverUrl);
+			res.environment().put(THREE_SCALE_USER_TOKEN, userKey);
 
 		} catch (StorageException e) {
 			// TODO Auto-generated catch block
@@ -127,7 +131,7 @@ implements StreamConnectionProvider {
 	private static File getServerLocation() {
 		try {
 			Bundle bundle = Platform.getBundle(Fabric8AnalysisLSUIActivator.PLUGIN_ID);
-			return new File(FileLocator.getBundleFile(bundle), "ca-lsp-server-0.0.6-SNAPSHOT/server.js");
+			return new File(FileLocator.getBundleFile(bundle), "server/ca-lsp-server/server.js");
 		} catch (IOException e) {
 			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the Fabric8 analyses server location", e);
 			return null;
