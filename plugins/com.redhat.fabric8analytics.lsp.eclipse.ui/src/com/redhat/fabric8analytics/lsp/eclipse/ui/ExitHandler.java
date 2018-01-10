@@ -12,12 +12,14 @@
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
@@ -41,7 +43,13 @@ public class ExitHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Set<IFile> pomFiles = WorkspaceFilesFinder.getInstance().findPOMs();
+		Set<IFile> pomFiles = new HashSet<IFile>();
+		try {
+			pomFiles = WorkspaceFilesFinder.getInstance().findPOMs();
+		} catch (CoreException e1) {
+			MessageDialogUtils.displayErrorMessage("Error while searching for POM files", e1);
+			return null;
+		}
 		if (pomFiles.isEmpty()) {
 			MessageDialogUtils.displayInfoMessage("No POM files found in the selection");
 			return null;
