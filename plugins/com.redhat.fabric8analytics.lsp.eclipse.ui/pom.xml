@@ -1,50 +1,68 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.redhat.fabric8analytics.eclipse</groupId>
-		<artifactId>plugins</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.redhat.fabric8analytics.eclipse</groupId>
+        <artifactId>plugins</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
 
-	<artifactId>com.redhat.fabric8analytics.lsp.eclipse.ui</artifactId>
-	<packaging>eclipse-plugin</packaging>
+    <artifactId>com.redhat.fabric8analytics.lsp.eclipse.ui</artifactId>
+    <packaging>eclipse-plugin</packaging>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tychoVersion}</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-maven-plugin</artifactId>
+                <version>${tychoVersion}</version>
+                <extensions>true</extensions>
+            </plugin>
+            <!-- <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
-				<executions>
-					<execution>
-						<id>LSP SERVER</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>${basedir}/scripts/lsp-server.sh</executable>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-packaging-plugin</artifactId>
-				<version>${tychoVersion}</version>
-				<configuration>
-					<jgit.ignore>pom.xml,ca-lsp-server/,ca-lsp-server.tar</jgit.ignore>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+                <executions>
+                    <execution>
+                        <id>LSP SERVER</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/scripts/lsp-server.sh</executable>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin> -->
+            <plugin>
+    <groupId>com.googlecode.maven-download-plugin</groupId>
+    <artifactId>download-maven-plugin</artifactId>
+    <version>1.4.0</version>
+    <executions>
+        <execution>
+            <id>Download </id>
+            <phase>pre-integration-test</phase>
+            <goals>
+                <goal>wget</goal>
+            </goals>
+            <configuration>
+                <url>https://github.com/GeetikaBatra/lsp-server-test/releases/download/v1.0/ca-lsp-server.zip</url>
+                <unpack>true</unpack>
+                <outputDirectory>server/</outputDirectory>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-packaging-plugin</artifactId>
+                <version>${tychoVersion}</version>
+                <configuration>
+                    <jgit.ignore>pom.xml,ca-lsp-server/,ca-lsp-server.tar</jgit.ignore>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
