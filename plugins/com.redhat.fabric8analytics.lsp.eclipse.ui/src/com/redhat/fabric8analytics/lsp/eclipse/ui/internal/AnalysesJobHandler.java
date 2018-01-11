@@ -36,16 +36,16 @@ public class AnalysesJobHandler extends Job{
 	private static String jobId = null;
 
 	private String token;
-	
+
 	private Boolean editorCheck;
-	
+
 	private Browser editorBrowser;
 
 	public AnalysesJobHandler(String name, String token, Boolean editorCheck) {
 		super(name);
 		this.token = token;
 		this.editorCheck = editorCheck;
-		
+
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
@@ -54,14 +54,17 @@ public class AnalysesJobHandler extends Job{
 			url = new URL("platform:/plugin/com.redhat.fabric8analytics.lsp.eclipse.ui/templates/index.html");
 			url = FileLocator.toFileURL(url);
 			IViewPart mainView = ExitHandler.getView();
-			
+
 			if(!editorCheck) {
+
 				jobId = ExitHandler.getJobId();
 				((StackAnalysesView) mainView).updatebrowserUrl(url.toString());
 				
 			}
-			jobId = EditorComposite.jobID;
-			EditorComposite.updateBrowser(url.toString());
+			else {
+				jobId = EditorComposite.jobID;
+				EditorComposite.updateBrowser(url.toString());
+			}
 			setTimerAnalyses();
 			syncWithUi(mainView);
 		} catch (IOException e) {
@@ -87,7 +90,7 @@ public class AnalysesJobHandler extends Job{
 					EditorComposite.updateBrowser(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId, token));
 					return;
 				}
-				
+
 				((StackAnalysesView) mainView).updatebrowserUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId, token));
 			}
 		});

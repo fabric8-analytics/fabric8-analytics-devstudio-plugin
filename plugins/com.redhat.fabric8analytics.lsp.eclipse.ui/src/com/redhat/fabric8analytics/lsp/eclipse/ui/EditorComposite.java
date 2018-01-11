@@ -88,7 +88,7 @@ public class EditorComposite extends Composite{
 			public void widgetSelected(SelectionEvent s) {
 				Set<IFile> pomFiles = new HashSet<IFile>();
 				try {
-					pomFiles = (Set<IFile>) WorkspaceFilesFinder.getInstance().getCurrentProject();
+					pomFiles = WorkspaceFilesFinder.getInstance().getCurrentPom();
 				} catch (CoreException e1) {
 					MessageDialogUtils.displayErrorMessage("Error while searching for POM files", e1);
 					return;
