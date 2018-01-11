@@ -3,7 +3,6 @@ package com.redhat.fabric8analytics.lsp.eclipse.ui.tests;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -12,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -47,13 +47,13 @@ public class WorkspaceFilesFinderTest {
 	}
 	
 	@Test
-	public void testNoSelectionProvider() {
+	public void testNoSelectionProvider() throws CoreException {
 		Set<IFile> files = finder.findPOMs();
 		assertThat(files.size(), is(0));
 	}
 
 	@Test
-	public void testEmptySelection() {
+	public void testEmptySelection() throws CoreException {
 		Set<IFile> files = finder.findPOMs(createEmptySelection());
 		assertThat(files.size(), is(0));
 	}
@@ -108,9 +108,33 @@ public class WorkspaceFilesFinderTest {
 	}
 
 	@Test
+	public void testRecursiveSearch() throws CoreException {
+		IProject project1 = createProject("project1");
+		IFolder aFolder = createFolders(project1, "a");
+		IFolder bFolder = createFolders(aFolder, "b");
+		addFiles(project1, "file-1", "pom.xml", "file-2");
+		addFiles(bFolder, "file-3", "pom.xml", "file-4");
+		
+		IFolder targetFolder = createFolders(aFolder, "target");
+		addFiles(targetFolder, "file-5", "pom.xml", "file-6");
+		
+		IFolder binFolder = createFolders(aFolder, "bin");
+		addFiles(binFolder, "file-7", "pom.xml", "file-8");
+		
+		Set<IFile> files = finder.findPOMs(createSelection(project1));
+		
+		assertThat(files.size(), is(2));
+		assertThat(files, hasItem(new IFileFullPathMatcher("/project1/pom.xml")));
+		assertThat(files, hasItem(new IFileFullPathMatcher("/project1/a/b/pom.xml")));
+	}
+	
+	@Test
 	public void testCombination() throws CoreException {
 		IProject project1 = createProject("project1");
+		IFolder aFolder = createFolders(project1, "a");
+		IFolder bFolder = createFolders(aFolder, "b");
 		addFiles(project1, "file-1", "pom.xml", "file-2");
+		addFiles(bFolder, "file-3", "pom.xml", "file-4");
 		
 		IProject project2 = createProject("project2");
 		addFiles(project2, "file-1", "pom.xml", "file-2");
@@ -128,15 +152,11 @@ public class WorkspaceFilesFinderTest {
 		
 		Set<IFile> files = finder.findPOMs(createSelection(selection.toArray(new Object[selection.size()])));
 		
-		assertThat(files.size(), is(3));
+		assertThat(files.size(), is(4));
 		assertThat(files, hasItem(new IFileFullPathMatcher("/project1/pom.xml")));
+		assertThat(files, hasItem(new IFileFullPathMatcher("/project1/a/b/pom.xml")));
 		assertThat(files, hasItem(new IFileFullPathMatcher("/project2/pom.xml")));
 		assertThat(files, hasItem(new IFileFullPathMatcher("/project3/pom.xml")));
-	}
-
-	@Test
-	public void testRecursiveSearch() {
-		// TODO
 	}
 
 	@Test
@@ -184,6 +204,25 @@ public class WorkspaceFilesFinderTest {
 	private void addFiles(IProject project, String... names) throws CoreException {
 		for (String name : names) {
 			IFile file = project.getFile(name);
+			file.create(new ByteArrayInputStream("".getBytes()), IResource.NONE, null);
+		}
+	}
+	
+	private IFolder createFolders(IProject project, String name) throws CoreException {
+		IFolder folder = project.getFolder(name);
+		folder.create(true, true, null);
+		return folder;
+	}
+	
+	private IFolder createFolders(IFolder parentFolder, String name) throws CoreException {
+		IFolder folder = parentFolder.getFolder(name);
+		folder.create(true, true, null);
+		return folder;
+	}
+	
+	private void addFiles(IFolder folder, String... names) throws CoreException {
+		for (String name : names) {
+			IFile file = folder.getFile(name);
 			file.create(new ByteArrayInputStream("".getBytes()), IResource.NONE, null);
 		}
 	}

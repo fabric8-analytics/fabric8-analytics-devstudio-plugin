@@ -13,9 +13,11 @@ package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -84,8 +86,14 @@ public class EditorComposite extends Composite{
 		buttonGo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent s) {
-				Set<IFile> pomFiles = (Set<IFile>) WorkspaceFilesFinder.getInstance().getCurrentProject();
-				if (pomFiles.isEmpty()) {
+				Set<IFile> pomFiles = new HashSet<IFile>();
+				try {
+					pomFiles = (Set<IFile>) WorkspaceFilesFinder.getInstance().getCurrentProject();
+				} catch (CoreException e1) {
+					MessageDialogUtils.displayErrorMessage("Error while searching for POM files", e1);
+					return;
+				}
+				if (pomFiles == null || pomFiles.isEmpty()) {
 					MessageDialogUtils.displayInfoMessage("No POM files found in the selection");
 					return;
 				}

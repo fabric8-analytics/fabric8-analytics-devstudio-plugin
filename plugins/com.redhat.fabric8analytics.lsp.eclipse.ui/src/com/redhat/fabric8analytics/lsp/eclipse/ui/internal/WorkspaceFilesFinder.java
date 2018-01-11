@@ -11,14 +11,18 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui.internal;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -34,6 +38,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class WorkspaceFilesFinder {
 
+	private static final Set<String> EXCLUDED_FOLDERS = Stream.of("bin", "target").collect(Collectors.toSet());
+	
 	private static final WorkspaceFilesFinder INSTANCE = new WorkspaceFilesFinder();
 
 	public static WorkspaceFilesFinder getInstance() {
@@ -44,13 +50,13 @@ public class WorkspaceFilesFinder {
 	 * Finds the pom.xml files in the root of workspace selected projects + adds selected pom.xml files
 	 * 
 	 * @return
+	 * @throws CoreException 
 	 */
-	public Set<IFile> findPOMs() {
+	public Set<IFile> findPOMs() throws CoreException {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			return Collections.emptySet(); 
 		}
-		//		window.getSelectionService().
 
 		IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
 		if (selection == null) {
@@ -63,82 +69,62 @@ public class WorkspaceFilesFinder {
 	 * Finds the pom.xml files in the root of selected projects + adds selected pom.xml files
 	 * @param selection
 	 * @return
+	 * @throws CoreException 
 	 */
-	public Set<IFile> findPOMs(IStructuredSelection selection) {
+	public Set<IFile> findPOMs(IStructuredSelection selection) throws CoreException {
 		Set<IFile> files = new HashSet<IFile>();
 
 		for (Object o : selection.toList()) {
 			if (o instanceof IAdaptable) {
-				IProject project = (IProject) ((IAdaptable) o).getAdapter(IProject.class);
-				IFile pom = findPOM(project);
-				if (pom != null && pom.isAccessible()) {
-					files.add(pom);	
-				}
+				findPOMs(files, (IAdaptable) o);
 			}
 		}
 		return files;
 	}
 
 	/**
-	 * Finds the pom.xml file in the root of the project or adds the directly selected pom.xml file
+	 * Finds the pom.xml file in the the project recursively or adds the directly selected pom.xml file
 	 * @param adaptable
 	 * @return
+	 * @throws CoreException 
 	 */
-	private IFile findPOM(IProject project1) {
-		IProject project = (IProject) (project1.getAdapter(IProject.class));
-		
-//		List<IFile> manifest_list = new ArrayList<>();
-//		IMavenProjectRegistry  registry = MavenPlugin.getMavenProjectRegistry();
-//		IMavenProjectFacade facade = registry.create(pomFile, true, monitor);
-//		MavenProject mavenProject = facade.getMavenProject(monitor);
-//		StringWriter sw = new StringWriter();
-//		new MavenXpp3Writer().write(sw, mavenProject.getModel());
-//		String effectivePom = sw.toString();
-		if (project != null) {
-			if (project.isAccessible()) {
-				project.getFileExtension();
-				IFile temp = project.getFile("pom.xml");
-				return project.getFile("pom.xml");
+	private void findPOMs(Set<IFile> files, IAdaptable adaptable) throws CoreException {
+		IFile file = (IFile) adaptable.getAdapter(IFile.class);
+		if (file != null) {
+			if (file.isAccessible() && file.getName().equals("pom.xml")) {
+				files.add(file);
 			} else {
-				return null;
+				return;
 			}
-		} 
+		}
 		
-		return null;
-//		IFile file = (IFile) ((IAdaptable) adaptable).getAdapter(IFile.class);
-//		if (file != null && file.getName().equals("pom.xml")) {
-//			return file;
-//		}
-//		return null;
+		IContainer container = (IContainer) adaptable.getAdapter(IContainer.class);
+		if (container == null || !container.isAccessible()) {
+			return;
+		}
+		
+		for (IResource member : container.members()) {
+			if (member instanceof IFolder && EXCLUDED_FOLDERS.contains(member.getName())) {
+				continue;
+			}
+			findPOMs(files, member);
+		}
 	}
 
-//	public Set<IFile> findPOMActivePage() {
-//		Set<IFile> files = new HashSet<IFile>();
-//		IProject project = getCurrentProject();
-//		for (Object o : selection.toList()) {
-//			if (o instanceof IAdaptable) {
-//				IFile pom = findPOM((IAdaptable) o);
-//				if (pom != null && pom.isAccessible()) {
-//					files.add(pom);	
-//				}
-//			}
-//		}
-//		return files;
-//	}
-	
 	/**
 	 * Finds pom.xml in the project directory.
 	 * @param adaptable
 	 * @return
+	 * @throws CoreException 
 	 */
-	public Set<IFile> getCurrentProject()
+	public Set<IFile> getCurrentProject() throws CoreException
 	{
 		Set<IFile> files = new HashSet<IFile>();
 		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		IFileEditorInput input = (IFileEditorInput)editor.getEditorInput();
 		IFile file = input.getFile();
 		IProject project = file.getProject();
-		files.add(findPOM(project));
+		findPOMs(files, project);
 		return files;
 	}
 }
