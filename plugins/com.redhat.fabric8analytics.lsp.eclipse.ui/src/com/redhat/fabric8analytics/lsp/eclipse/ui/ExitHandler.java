@@ -34,7 +34,7 @@ import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.ThreeScaleIntegration;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.WorkspaceFilesFinder;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.EffectivePomJobHandler;;
+//import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.EffectivePomJobHandler;;
 
 public class ExitHandler extends AbstractHandler {
 	private String RECOMMENDER_API_TOKEN;
@@ -77,10 +77,10 @@ public class ExitHandler extends AbstractHandler {
 				serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
 				userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 			}
-			String jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, pomFiles, serverURL, userKey);
-			setJobId(jobID);
-			new AnalysesJobHandler("Analyses check Job", token, false).schedule();
-			new EffectivePomJobHandler("Effective pom", pomFiles, false).schedule();
+			
+//			
+			new AnalysesJobHandler("Analyses check Job", token, false, pomFiles, serverURL, userKey ).schedule();
+//			new EffectivePomJobHandler("Retreive effective pom", pomFiles, RECOMMENDER_API_TOKEN, serverURL, userKey, true);
 		} catch (RecommenderAPIException | StorageException | UnsupportedEncodingException | JSONException | PartInitException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}

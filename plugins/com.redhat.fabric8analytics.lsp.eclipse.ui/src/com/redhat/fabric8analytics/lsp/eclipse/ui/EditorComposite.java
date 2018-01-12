@@ -116,10 +116,10 @@ public class EditorComposite extends Composite{
 						serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
 						userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 					}
-					jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, pomFiles, serverURL, userKey);
+					
 
-
-					new AnalysesJobHandler("Analyses check Job", token, true).schedule();
+					new AnalysesJobHandler("Analyses check Job", token, true, pomFiles, serverURL, userKey ).schedule();
+//					new AnalysesJobHandler("Analyses check Job", token, true).schedule();
 
 					editorBrowser.setUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobID, token));
 

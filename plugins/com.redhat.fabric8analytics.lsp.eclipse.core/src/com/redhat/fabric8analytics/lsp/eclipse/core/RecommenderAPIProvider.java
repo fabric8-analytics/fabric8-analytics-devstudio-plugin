@@ -70,31 +70,37 @@ public class RecommenderAPIProvider {
 	 * @param pomFiles
 	 * @return jobID
 	 */
-	public String requestAnalyses(String token, Set<IFile> files, String serverURL, String userKey) throws RecommenderAPIException {
+	public String requestAnalyses(String token, Set<File> files, String serverURL, String userKey) throws RecommenderAPIException {
 		
 		setServerURL(serverURL);
 		setUserKey(userKey);
-		HttpPost post = new HttpPost(SERVER_ANALYZER_URL + String.format("?user_key=%s",userKey));
+		
+//		HttpPost post = new HttpPost(SERVER_ANALYZER_URL + String.format("?user_key=%s",userKey));
+		HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/analyse" + String.format("?user_key=%s",userKey));
 		post.addHeader("Authorization" , token);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
 				.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-		for (IFile file : files)
+		System.out.println(files);
+		
+		for (File file : files)
 		{
-			builder.addPart("manifest[]", new FileBody(new File(file.getLocation().toString())))
-			.addTextBody("filePath[]", file.toString());
+			builder.addPart("manifest[]", new FileBody(file))
+			.addTextBody("filePath[]", file.getAbsolutePath());
 		}
 
 		HttpEntity multipart = builder.build();
 		post.setEntity(multipart);
+		System.out.println(post);
 
 		try {
 			CloseableHttpClient client = HttpClients.createDefault();
 			HttpResponse response = client.execute(post);
 			int responseCode = response.getStatusLine().getStatusCode();
-			
+			System.out.println(responseCode);
 			if (responseCode==HttpStatus.SC_OK) {
 				JSONObject jsonObj = Utils.jsonObj(response);
+				System.out.println(jsonObj.getString("id"));
 				return jsonObj.getString("id");
 			} else {
 				throw new RecommenderAPIException("The recommender server returned unexpected return code: " + responseCode);				
