@@ -14,6 +14,8 @@ package com.redhat.fabric8analytics.lsp.eclipse.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.http.HttpEntity;
@@ -70,37 +72,32 @@ public class RecommenderAPIProvider {
 	 * @param pomFiles
 	 * @return jobID
 	 */
-	public String requestAnalyses(String token, Set<File> files, String serverURL, String userKey) throws RecommenderAPIException {
+	public String requestAnalyses(String token, Map<String, File> files, String serverURL, String userKey) throws RecommenderAPIException {
 		
 		setServerURL(serverURL);
 		setUserKey(userKey);
-		
-//		HttpPost post = new HttpPost(SERVER_ANALYZER_URL + String.format("?user_key=%s",userKey));
-		HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/analyse" + String.format("?user_key=%s",userKey));
+//		HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/analyse" + String.format("?user_key=%s",userKey));
+		HttpPost post = new HttpPost(SERVER_ANALYZER_URL + String.format("?user_key=%s",userKey));
 		post.addHeader("Authorization" , token);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
 				.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-		System.out.println(files);
 		
-		for (File file : files)
+		for (Map.Entry<String, File> fileObject : files.entrySet())
 		{
-			builder.addPart("manifest[]", new FileBody(file))
-			.addTextBody("filePath[]", file.getAbsolutePath());
+			builder.addPart("manifest[]", new FileBody(fileObject.getValue()))
+			.addTextBody("filePath[]", fileObject.getKey());
 		}
 
 		HttpEntity multipart = builder.build();
 		post.setEntity(multipart);
-		System.out.println(post);
 
 		try {
 			CloseableHttpClient client = HttpClients.createDefault();
 			HttpResponse response = client.execute(post);
 			int responseCode = response.getStatusLine().getStatusCode();
-			System.out.println(responseCode);
 			if (responseCode==HttpStatus.SC_OK) {
 				JSONObject jsonObj = Utils.jsonObj(response);
-				System.out.println(jsonObj.getString("id"));
 				return jsonObj.getString("id");
 			} else {
 				throw new RecommenderAPIException("The recommender server returned unexpected return code: " + responseCode);				
