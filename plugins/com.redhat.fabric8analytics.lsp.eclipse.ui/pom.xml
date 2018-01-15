@@ -47,7 +47,7 @@
                 <goal>wget</goal>
             </goals>
             <configuration>
-                <url>https://github.com/GeetikaBatra/lsp-server-test/releases/download/v1.0/ca-lsp-server.zip</url>
+                <url>http://download.jboss.org/jbosstools/oxygen/snapshots/builds/jbosstools-fabric8analytics-lsp-server_master/latest/ca-lsp-server-0.0.6-SNAPSHOT.zip</url>
                 <unpack>true</unpack>
                 <outputDirectory>server/</outputDirectory>
             </configuration>
