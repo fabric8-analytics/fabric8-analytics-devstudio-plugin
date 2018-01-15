@@ -12,8 +12,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
-		<!-- <jbosstools-target-platform-site>http://download.jboss.org/jbosstools/targetplatforms/jbosstoolstarget/${TARGET_PLATFORM_VERSION_MAX}/</jbosstools-target-platform-site> -->
-		<!-- <oxygenURL>http://download.eclipse.org/releases/oxygen/</oxygenURL> -->
 		<tycho.scmUrl>scm:git:https://github.com/fabric8-analytics/fabric8-analytics-devstudio-plugin.git</tycho.scmUrl>
 		<lsp4e-snapshot-site>http://download.eclipse.org/lsp4e/snapshots/</lsp4e-snapshot-site>
 		<eclipse-orbit-update-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/</eclipse-orbit-update-site>
@@ -46,11 +44,17 @@
 	</build>
 
 	<repositories>
-<!-- 		<repository>
-			<id>jbosstools-target-platform-site</id>
-			<layout>p2</layout>
-			<url>${jbosstools-target-platform-site}</url>
-		</repository> -->
+ 		 <repository>
+         	<id>jboss-public-repository-group</id>
+            <name>JBoss Public Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+            <releases>
+            	<enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+             </snapshots>
+        </repository>
 		<repository>
 			<id>jbosstools-base</id>
 			<layout>p2</layout>
@@ -60,11 +64,6 @@
 			<id>jbosstools-openshift-site</id>
 			<layout>p2</layout>
 			<url>${jbosstools-openshift-site}</url>
-		</repository>
-		<repository>
-			<id>oxygen</id>
-			<layout>p2</layout>
-			<url>${oxygenURL}</url>
 		</repository>
 		<!-- required at build + install time; should eventually be added to the JBoss Tools target platform instead -->
 		<repository>
