@@ -12,7 +12,6 @@
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +19,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.m2e.editor.pom.MavenPomEditor;
 import org.eclipse.m2e.editor.pom.MavenPomEditorPage;
 import org.eclipse.swt.SWT;
@@ -32,10 +30,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.json.JSONException;
 

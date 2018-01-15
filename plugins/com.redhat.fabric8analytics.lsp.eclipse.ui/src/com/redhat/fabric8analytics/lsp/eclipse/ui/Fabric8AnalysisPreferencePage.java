@@ -18,14 +18,15 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 
+
 public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	static final String PREFERENCE_PAGE_ID = Fabric8AnalysisLSUIActivator.getDefault().getBundle().getSymbolicName() + ".preferences"; //$NON-NLS-1$
 
 	private BooleanFieldEditor enableLSPField;
-	
+
 	public Fabric8AnalysisPreferencePage() {
-		
+
 	}
 	@Override
 	public void init(IWorkbench workbench) {
@@ -37,11 +38,11 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 	protected void createFieldEditors() {
 		enableLSPField = new BooleanFieldEditor(
 				Fabric8AnalysisPreferences.LSP_SERVER_ENABLED, 
-				"&Code analyses enabled", 
-		 		getFieldEditorParent());
+				"&Fabric8 Analysis",
+				getFieldEditorParent());
 		addField(enableLSPField);
 	}
-	
+
 	@Override
 	protected void performApply() {
 		super.performApply();

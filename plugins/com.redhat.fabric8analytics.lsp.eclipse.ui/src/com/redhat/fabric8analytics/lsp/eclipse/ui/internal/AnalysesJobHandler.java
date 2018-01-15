@@ -21,10 +21,10 @@ import java.util.HashMap ;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.m2e.core.MavenPlugin;
 import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.eclipse.m2e.core.project.IMavenProjectRegistry;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 
@@ -69,7 +68,6 @@ public class AnalysesJobHandler extends Job{
 		this.pomFiles = pomFiles;
 		this.serverUrl = serverUrl;
 		this.userKey = userKey;
-		this.baseTempDir = System.getProperty("java.io.tmpdir") + "fabric8Temp/";
 
 	}
 
@@ -91,7 +89,6 @@ public class AnalysesJobHandler extends Job{
 			Map<String, File> EffectivePomFiles = new HashMap<String,File>();
 
 
-
 			for(IFile pomFile: pomFiles) {
 				IMavenProjectRegistry  registry = MavenPlugin.getMavenProjectRegistry();
 				IMavenProjectFacade facade = registry.create(pomFile, true, monitor);
@@ -100,10 +97,10 @@ public class AnalysesJobHandler extends Job{
 				new MavenXpp3Writer().write(sw, mavenProject.getModel());
 
 				String effectivePom = sw.toString();
-
+				IProject currentProject = pomFile.getProject();
+				baseTempDir = currentProject.getLocation() + "/target/fabrci8Temp/";
 				String tempDir = baseTempDir + UUID.randomUUID().toString();
-				Boolean tempFileExists = new File(tempDir.toString()).mkdir() ;
-
+				Boolean tempFileExists = new File(tempDir.toString()).mkdirs();
 				if(tempFileExists)
 				{
 					File effectivePomFile = new File(tempDir + "/pom.xml");
@@ -112,7 +109,6 @@ public class AnalysesJobHandler extends Job{
 					fw.close();
 					EffectivePomFiles.put(pomFile.getFullPath().toString(), effectivePomFile);
 				}
-
 			} 
 			jobId = RecommenderAPIProvider.getInstance().requestAnalyses(token, EffectivePomFiles, serverUrl, userKey);
 			setTimerAnalyses();

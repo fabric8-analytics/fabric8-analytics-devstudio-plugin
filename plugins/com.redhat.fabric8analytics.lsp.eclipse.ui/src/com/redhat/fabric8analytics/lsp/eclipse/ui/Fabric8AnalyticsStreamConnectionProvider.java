@@ -94,7 +94,7 @@ implements StreamConnectionProvider {
 		ProcessBuilder res = super.createProcessBuilder();
 		try {
 
-			token = TokenCheck.getInstance().getToken();
+			token = Fabric8AnalysisPreferences.getInstance().getToken();
 			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL() + VERSION_ROUTE ;
 			userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 			res.environment().put(RECOMMENDER_API_TOKEN, token);

@@ -19,6 +19,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.ui.IViewPart;
@@ -60,7 +61,7 @@ public class ExitHandler extends AbstractHandler {
 				MessageDialogUtils.displayInfoMessage("Enable Fabric8 Analyses");
 				return null;
 			}
-			String token = TokenCheck.getInstance().getToken();
+			String token = Fabric8AnalysisPreferences.getInstance().getToken();
 			if (token == null) {
 				MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
 				return null;
@@ -78,9 +79,7 @@ public class ExitHandler extends AbstractHandler {
 				userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 			}
 			
-//			
 			new AnalysesJobHandler("Analyses check Job", token, false, pomFiles, serverURL, userKey ).schedule();
-//			new EffectivePomJobHandler("Retreive effective pom", pomFiles, RECOMMENDER_API_TOKEN, serverURL, userKey, true);
 		} catch (RecommenderAPIException | StorageException | UnsupportedEncodingException | JSONException | PartInitException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}

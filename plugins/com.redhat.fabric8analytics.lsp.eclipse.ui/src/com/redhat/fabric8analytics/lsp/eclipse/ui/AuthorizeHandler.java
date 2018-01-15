@@ -11,13 +11,22 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.equinox.security.storage.ISecurePreferences;
+import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.json.JSONException;
 
@@ -37,6 +46,8 @@ public class AuthorizeHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		String id = Fabric8AnalysisPreferencePage.PREFERENCE_PAGE_ID;
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		String token = TokenCheck.getInstance().getToken();
 		if (token == null) {
 			Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(false);
@@ -50,9 +61,8 @@ public class AuthorizeHandler extends AbstractHandler {
 			e.printStackTrace();
 		}
 		Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
-		MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "OpenShift.io", "Token retrieved is:" + token.substring(0, 16));
+		PreferencesUtil.createPreferenceDialogOn(shell,
+				"com.redhat.fabric8analytics.lsp.eclipse.preferences", new String[] { "com.redhat.fabric8analytics.lsp.eclipse.preferences" }, null).open();
 		return null;
 	}
-
-
 }
