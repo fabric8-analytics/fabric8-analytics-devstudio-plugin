@@ -14,15 +14,17 @@ package com.redhat.fabric8analytics.lsp.eclipse.ui;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -40,14 +42,22 @@ implements StreamConnectionProvider {
 
 	public static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
 
-	private static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
+	public static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
+	
+	private TokenCheck tokenCheck;
 
 	private String token;
 
 	private String serverUrl;
 
 	public Fabric8AnalyticsStreamConnectionProvider() {
+		this(TokenCheck.getInstance());
+	}
+	
+	public Fabric8AnalyticsStreamConnectionProvider(TokenCheck tokenCheck) {
 		super();
+		this.tokenCheck = tokenCheck; 
+		
 		File nodeJsLocation = getNodeJsLocation();
 		if (nodeJsLocation == null) {
 			return;
@@ -73,6 +83,12 @@ implements StreamConnectionProvider {
 		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
 			throw new IOException("Analyses Disabled");
 		}
+		
+		token = tokenCheck.getToken();
+		if (token == null) {
+			throw new IOException("The token was null");
+		}
+		
 		super.start();
 		// if super.start() does not throw exception, we're started
 		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is started ");
@@ -85,23 +101,23 @@ implements StreamConnectionProvider {
 	}
 
 	@Override
-	protected ProcessBuilder createProcessBuilder() {
-		ProcessBuilder res = super.createProcessBuilder();
-		try {
-
-			token = TokenCheck.getInstance().getToken();
-			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
-			String [] arrOfStr = serverUrl.split("http", 2);
-			serverUrl = "https" + arrOfStr[1];
+	public ProcessBuilder createProcessBuilder() {
+			ProcessBuilder res = super.createProcessBuilder();
+			if (token == null) {
+				token = tokenCheck.getToken();
+			}
+			
+			if (token == null) {
+				throw new RuntimeException("Token was null");
+			}
+//			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
+//			String [] arrOfStr = serverUrl.split("http", 2);
+//			serverUrl = "https" + arrOfStr[1];
 			String temp_server_url = RecommenderAPIProvider.RECOMMENDER_API_ANALYZER_URL;
 			res.environment().put(RECOMMENDER_API_TOKEN, token);
 			//			res.environment().put(RECOMMENDER_API_URL, serverUrl);
 			res.environment().put(RECOMMENDER_API_URL, temp_server_url);
 
-		} catch (StorageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return res;
 	}
 	private void addPreferencesListener() {
@@ -112,9 +128,10 @@ implements StreamConnectionProvider {
 				if (Fabric8AnalysisPreferences.LSP_SERVER_ENABLED.equals(event.getProperty())) {
 					if (Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
 						try {
+							// not sure if this actually works
 							start();
 						} catch (IOException e) {
-							MessageDialogUtils.displayErrorMessage("Failed to start Fabric8 analyses server", e);
+//							// nothing to do
 						}
 
 					} else {
@@ -166,5 +183,20 @@ implements StreamConnectionProvider {
 
 		MessageDialogUtils.displayErrorMessage(message);
 		return null;
+	}
+	
+	@Override
+	public List<String> getCommands() {
+		return super.getCommands();
+	}
+	
+	@Override
+	public InputStream getInputStream() {
+		return super.getInputStream();
+	}
+	
+	@Override
+	public OutputStream getOutputStream() {
+		return super.getOutputStream();
 	}
 }
