@@ -10,13 +10,22 @@
  *******************************************************************************/
 package com.redhat.fabric8analytics.lsp.eclipse.ui.itests;
 
+import org.eclipse.reddeer.common.logging.Logger;
 import org.eclipse.reddeer.junit.runner.RedDeerSuite;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+
+import com.redhat.fabric8analytics.lsp.eclipse.ui.itests.requirements.OSIOLoginRequirement.OSIOLogin;
 
 @RunWith(RedDeerSuite.class)
-@Suite.SuiteClasses({ StackAnalysesContextMenuItemTests.class, Fabric8AnalysisTabTests.class,
-		EnableFabric8AnalyticsTests.class })
-public class SmokeSuite {
+@OSIOLogin
+public class EnableFabric8AnalyticsTests {
+
+	private static final Logger log = Logger.getLogger(EnableFabric8AnalyticsTests.class);
+
+	@Test
+	public void enableFabric8AnalyticsButtonTest() {
+		log.info("Just check if requirement is satisfied");
+	}
 
 }
