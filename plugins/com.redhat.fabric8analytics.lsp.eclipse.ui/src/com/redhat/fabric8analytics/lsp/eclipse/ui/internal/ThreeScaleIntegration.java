@@ -11,14 +11,12 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui.internal;
 
-import java.io.UnsupportedEncodingException;
-
 import org.eclipse.equinox.security.storage.StorageException;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
-import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
+import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
+import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIProvider;
+import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleData;
 
 /**
  * Helper class for 3scale Integration.
@@ -34,24 +32,13 @@ public class ThreeScaleIntegration {
 		return INSTANCE;
 	}
 
-	public void set3ScalePreferences(String token) throws UnsupportedEncodingException, RecommenderAPIException, JSONException, StorageException {
-		JSONObject urlObject = RecommenderAPIProvider.getInstance().register3Scale(token);
-		JSONObject endpoints = new JSONObject(urlObject.getString("endpoints"));
-		if(endpoints!=null) {
-			try {	
-				Fabric8AnalysisPreferences.getInstance().setProdURL(endpoints.getString("prod"));
-				Fabric8AnalysisPreferences.getInstance().setStageURL(endpoints.getString("stage"));
-				Fabric8AnalysisPreferences.getInstance().setUserKey(urlObject.getString("user_key"));
-				System.out.println(Fabric8AnalysisPreferences.getInstance().getUserKey());
+	public void set3ScalePreferences(String token) throws ThreeScaleAPIException, JSONException, StorageException {
+		ThreeScaleData data = new ThreeScaleAPIProvider(token).register3Scale();
+		Fabric8AnalysisPreferences.getInstance().setProdURL(data.getProd());
+		Fabric8AnalysisPreferences.getInstance().setStageURL(data.getStage());
+		Fabric8AnalysisPreferences.getInstance().setUserKey(data.getUserKey());
+		System.out.println(Fabric8AnalysisPreferences.getInstance().getUserKey());
 
-			} catch (JSONException e1) {
-				e1.printStackTrace();
-			}
-
-
-		}
-
-		
 	}
 }
 

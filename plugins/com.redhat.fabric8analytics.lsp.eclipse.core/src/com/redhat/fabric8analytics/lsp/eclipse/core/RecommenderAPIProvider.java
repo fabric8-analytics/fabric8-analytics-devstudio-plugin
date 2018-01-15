@@ -13,7 +13,6 @@ package com.redhat.fabric8analytics.lsp.eclipse.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
 import org.apache.http.HttpEntity;
@@ -21,20 +20,15 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.eclipse.core.resources.IFile;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.redhat.fabric8analytics.lsp.eclipse.core.internal.Utils;
 
 /**
  * Provides access to Recommender API server
@@ -43,38 +37,41 @@ import com.redhat.fabric8analytics.lsp.eclipse.core.internal.Utils;
  *
  */
 public class RecommenderAPIProvider {
+	
+	private static final String RECOMMENDER_API_BASE_URL = "https://recommender.api.openshift.io";
+	
+	private static final String RECOMMENDER_API_URL_POSTFIX = "/api/v1";
+	
+	private static final String RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX = RECOMMENDER_API_URL_POSTFIX + "/stack-analyses/";
+	
+	public static final String RECOMMENDER_API_ANALYZER_URL = RECOMMENDER_API_BASE_URL + RECOMMENDER_API_URL_POSTFIX;
 
-	public static String SERVER_URL;
-	
-	private static String SERVER_ANALYZER_URL;
-	
-	private static String USER_KEY;
-	
 	private static final String ANALYSES_REPORT_URL =  "https://stack-analytics-report.prod-preview.openshift.io/#/analyze/";
 	
 	private static final String POST_ANALYSES_REPORT_URL	= "?api_data={\"access_token\":\"%s\",\"route_config\":{\"api_url\":\"%s\", \"user_key\":\"%s\"},\"show_modal\":false}";
 	
-	private static final String THREE_SCALE_URL = "https://3scale-connect.api.prod-preview.openshift.io/get-route";
+	private String url;
 
-	private static final String SERVICE_ID = "2555417754383";
+	private String userKey;
 	
-	private static final RecommenderAPIProvider INSTANCE = new RecommenderAPIProvider();
-
-	public static RecommenderAPIProvider getInstance() {
-		return INSTANCE;
+	private String token;
+	
+	public RecommenderAPIProvider(String url, String userKey, String token) {
+		checkConstructorArguments(url, userKey, token);
+		this.url = url;
+		this.token = token;
+		this.userKey = userKey;
 	}
-
+	
 	/**
 	 * Request analysis from the recommender API server. 
 	 * 
 	 * @param pomFiles
 	 * @return jobID
 	 */
-	public String requestAnalyses(String token, Set<IFile> files, String serverURL, String userKey) throws RecommenderAPIException {
-		
-		setServerURL(serverURL);
-		setUserKey(userKey);
-		HttpPost post = new HttpPost(SERVER_ANALYZER_URL + String.format("?user_key=%s",userKey));
+	public String requestAnalyses(Set<IFile> files) throws RecommenderAPIException {
+		checkFiles(files);
+		HttpPost post = new HttpPost(url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + String.format("?user_key=%s",userKey));
 		post.addHeader("Authorization" , token);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
@@ -88,41 +85,48 @@ public class RecommenderAPIProvider {
 		HttpEntity multipart = builder.build();
 		post.setEntity(multipart);
 
+		CloseableHttpClient client = createClient();
 		try {
-			CloseableHttpClient client = HttpClients.createDefault();
 			HttpResponse response = client.execute(post);
 			int responseCode = response.getStatusLine().getStatusCode();
 			
 			if (responseCode==HttpStatus.SC_OK) {
-				JSONObject jsonObj = Utils.jsonObj(response);
+				JSONObject jsonObj = new JSONObject(EntityUtils.toString(response.getEntity()));
 				return jsonObj.getString("id");
 			} else {
 				throw new RecommenderAPIException("The recommender server returned unexpected return code: " + responseCode);				
 			}
 		} catch (IOException | JSONException e) {
 			throw new RecommenderAPIException(e);				
+		} finally {
+			try {
+				client.close();
+			} catch (IOException e) {
+				// do nothing
+			}
 		}
 	}
 
-	public boolean analysesFinished(String jobId, String token) throws RecommenderAPIException {
+	public boolean analysesFinished(String jobId) throws RecommenderAPIException {
+		System.out.println("analysesFinished started");
+		checkJobID(jobId);
 		String RECOMMENDER_API_TOKEN = "Bearer ";
 		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 		}
 		
-		String url = SERVER_ANALYZER_URL + jobId +  String.format("?user_key=%s", USER_KEY);
-		HttpGet get = new HttpGet(url);
+		HttpGet get = new HttpGet(url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + jobId +  String.format("?user_key=%s", userKey));
 		get.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
 
-		//TODO - for debug purposes - should be removed later
-		Fabric8AnalysisLSCoreActivator.getDefault().logInfo("Polling url address to get analyses results: " + url);
+		CloseableHttpClient client = createClient();
+		
 		try {
-			CloseableHttpClient client = HttpClients.createDefault();
+			
 			HttpResponse response = client.execute(get);
 			int responseCode = response.getStatusLine().getStatusCode();
 
 			//TODO - for debug purposes - should be removed later
-			Fabric8AnalysisLSCoreActivator.getDefault().logInfo("Response code: " + responseCode);
+			Fabric8AnalysisLSCoreActivator.getDefault().logInfo("F8 server response code: " + responseCode);
 			
 			if (responseCode == HttpStatus.SC_OK) {
 				return true;
@@ -133,66 +137,64 @@ public class RecommenderAPIProvider {
 			}
 		} catch (Exception e) {
 			throw new RecommenderAPIException(e);
+		} finally {
+			try {
+				client.close();
+			} catch (IOException e) {
+				// do nothing
+			}
 		}
+		
 	}
 	
-	public String getAnalysesURL(String jobID, String token) {
+	public String getAnalysesURL(String jobID) {
 //		to be used once user key is enabled in analyses url
 //		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, SERVER_URL, USER_KEY);
-		String temp_server_url = "https://recommender.api.openshift.io/";
-		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, temp_server_url, USER_KEY);
+		String temp_server_url = RECOMMENDER_API_BASE_URL;
+		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, temp_server_url, userKey);
 		String url = ANALYSES_REPORT_URL + jobID + postURLFormat; 
-		//TODO - for debug purposes - should be removed later
-		Fabric8AnalysisLSCoreActivator.getDefault().logInfo("Analyses URL: " + url);
 		return url;
 	}
 	
-	/**
-	 * Registers to 3scale. 
-	 * 
-	 * @author Geetika Batra
-	 * @param token
-	 * @return 
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
-	 * @throws RecommenderAPIException
-	 */
-	public JSONObject register3Scale(String token) throws RecommenderAPIException, UnsupportedEncodingException, JSONException {
-		JSONObject urlObject = new JSONObject();
-        urlObject.put("auth_token", token);
-        urlObject.put("service_id" , SERVICE_ID);
-		HttpPost post = new HttpPost(THREE_SCALE_URL);
-		StringEntity se = new StringEntity(urlObject.toString());
-        se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-        post.setEntity(se);
-		try {
-			CloseableHttpClient client = HttpClients.createDefault();
-			HttpResponse response = client.execute(post);
-			
-			int responseCode = response.getStatusLine().getStatusCode();
-			
-			if (responseCode==HttpStatus.SC_OK) {
-				JSONObject jsonObj = new JSONObject(EntityUtils.toString(response.getEntity()));
-				return jsonObj;
-			} else {
-				throw new RecommenderAPIException("The 3scale server returned unexpected return code: " + responseCode);				
-			}
-		} catch (IOException | JSONException e) {
-			throw new RecommenderAPIException(e);				
+	protected CloseableHttpClient createClient() {
+		return HttpClients.createDefault();
+	}
+	
+	private void checkConstructorArguments(String url2, String userKey2, String token2) {
+		if (url2 == null) {
+			throw new IllegalArgumentException("The URL was null");
+		}
+		
+		if ("".equals(url2)) {
+			throw new IllegalArgumentException("The URL was empty");
+		}
+		
+		if (userKey2 == null) {
+			throw new IllegalArgumentException("The user key was null");
+		}
+		
+		if (token2 == null) {
+			throw new IllegalArgumentException("The token was null");
 		}
 	}
 	
-	/**
-	 * Set Server URL. 
-	 * 
-	 * @author Geetika Batra
-	 * @param serverUrl 
-	 */
-	public void setServerURL(String serverUrl) {
-		SERVER_URL = serverUrl;
-		SERVER_ANALYZER_URL = SERVER_URL + "/api/v1/stack-analyses/";
+	private void checkFiles(Set<IFile> files) {
+		if (files == null) {
+			throw new IllegalArgumentException("Files for analyses were null");
+		}
+		
+		if (files.size() == 0) {
+			throw new IllegalArgumentException("Files for analyses were empty");
+		}
 	}
-	public void setUserKey(String userKey) {
-		USER_KEY = userKey;
+	
+	private void checkJobID(String jobId) {
+		if (jobId == null) {
+			throw new IllegalArgumentException("Job ID was null");
+		}
+		
+		if ("".equals(jobId)) {
+			throw new IllegalArgumentException("Job ID was empty string");
+		}		
 	}
 }

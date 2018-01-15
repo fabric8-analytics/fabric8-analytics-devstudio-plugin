@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
@@ -35,17 +36,16 @@ public class AnalysesJobHandler extends Job{
 
 	private static String jobId = null;
 
-	private String token;
+	private RecommenderAPIProvider provider;
 	
 	private Boolean editorCheck;
 	
 	private Browser editorBrowser;
 
-	public AnalysesJobHandler(String name, String token, Boolean editorCheck) {
+	public AnalysesJobHandler(String name, RecommenderAPIProvider provider, Boolean editorCheck) {
 		super(name);
-		this.token = token;
+		this.provider = provider;
 		this.editorCheck = editorCheck;
-		
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
@@ -59,22 +59,30 @@ public class AnalysesJobHandler extends Job{
 				jobId = ExitHandler.getJobId();
 				((StackAnalysesView) mainView).updatebrowserUrl(url.toString());
 				
+			} else {
+				jobId = EditorComposite.jobID;
+				EditorComposite.updateBrowser(url.toString());	
 			}
-			jobId = EditorComposite.jobID;
-			EditorComposite.updateBrowser(url.toString());
-			setTimerAnalyses();
-			syncWithUi(mainView);
-		} catch (IOException e) {
+//			setTimerAnalyses();
+			if (!provider.analysesFinished(jobId)) {
+				schedule(TIMER_INTERVAL);	
+			} else {
+				syncWithUi(mainView);	
+			}
+			
+		} catch (IOException | RecommenderAPIException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
 		return Status.OK_STATUS;
 	}
 
-	private void setTimerAnalyses() {
+	private void setTimerAnalyses() throws StorageException {
 		try {
-			while(!RecommenderAPIProvider.getInstance().analysesFinished(jobId, token)){
+			while(!provider.analysesFinished(jobId)){
+				System.out.println("Still here");
 				Thread.sleep(TIMER_INTERVAL);
 			}
+			System.out.println("Finished");
 		} catch (RecommenderAPIException | InterruptedException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
@@ -84,11 +92,11 @@ public class AnalysesJobHandler extends Job{
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				if(editorCheck) {
-					EditorComposite.updateBrowser(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId, token));
+					EditorComposite.updateBrowser(provider.getAnalysesURL(jobId));
 					return;
 				}
 				
-				((StackAnalysesView) mainView).updatebrowserUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobId, token));
+				((StackAnalysesView) mainView).updatebrowserUrl(provider.getAnalysesURL(jobId));
 			}
 		});
 

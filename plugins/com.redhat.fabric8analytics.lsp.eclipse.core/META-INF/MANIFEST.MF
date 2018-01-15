@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.lsp4e;bundle-version="0.3.0",
  org.apache.httpcomponents.httpclient;bundle-version="4.5.2",
  org.apache.httpcomponents.httpcore;bundle-version="4.4.6",
  org.json;bundle-version="1.0.0",
- org.apache.commons.io;bundle-version="2.2.0"
+ org.apache.commons.io;bundle-version="2.2.0",
+ org.apache.commons.httpclient;bundle-version="3.1.0"
 Eclipse-BundleShape: dir
 Bundle-Activator: com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisLSCoreActivator
 Bundle-ActivationPolicy: lazy

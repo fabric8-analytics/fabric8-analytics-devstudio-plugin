@@ -11,8 +11,6 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +18,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.m2e.editor.pom.MavenPomEditor;
 import org.eclipse.m2e.editor.pom.MavenPomEditorPage;
 import org.eclipse.swt.SWT;
@@ -32,15 +29,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.json.JSONException;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
+import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.AnalysesJobHandler;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
@@ -70,7 +64,6 @@ public class EditorComposite extends Composite{
 		this.editorPage = editorPage;
 		this.pomEditor = pomEditor;
 		createComposite();
-
 	}
 
 
@@ -116,15 +109,17 @@ public class EditorComposite extends Composite{
 						serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
 						userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 					}
-					jobID = RecommenderAPIProvider.getInstance().requestAnalyses(RECOMMENDER_API_TOKEN, pomFiles, serverURL, userKey);
+					
+					RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
+					jobID = provider.requestAnalyses(pomFiles);
 
 
-					new AnalysesJobHandler("Analyses check Job", token, true).schedule();
+					new AnalysesJobHandler("Analyses check Job", provider, true).schedule();
 
-					editorBrowser.setUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobID, token));
+					editorBrowser.setUrl(provider.getAnalysesURL(jobID));
 
 				}	
-				catch (RecommenderAPIException | StorageException | UnsupportedEncodingException | JSONException e) {
+				catch (RecommenderAPIException | StorageException | JSONException | ThreeScaleAPIException e) {
 					MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 				};
 
