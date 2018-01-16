@@ -61,6 +61,11 @@
 			<url>${jbosstools-base-site}</url>
 		</repository>
 		<repository>
+			<id>jbosstools-server</id>
+			<layout>p2</layout>
+			<url>${jbosstools-server-site}</url>
+		</repository>
+		<repository>
 			<id>jbosstools-openshift-site</id>
 			<layout>p2</layout>
 			<url>${jbosstools-openshift-site}</url>

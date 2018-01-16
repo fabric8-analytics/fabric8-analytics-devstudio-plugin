@@ -61,11 +61,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.jboss.tools</groupId>
-			<artifactId>openshift</artifactId>
-			<version>3.4.2-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
 </project>
