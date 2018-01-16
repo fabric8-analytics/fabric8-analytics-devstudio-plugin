@@ -32,6 +32,7 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore());
 		setTitle("Fabric8");
+		setDescription("Following services will be enabled");
 	}
 
 	@Override

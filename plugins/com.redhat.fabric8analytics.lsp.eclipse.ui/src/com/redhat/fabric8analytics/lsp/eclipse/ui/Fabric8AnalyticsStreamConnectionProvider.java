@@ -42,7 +42,7 @@ implements StreamConnectionProvider {
 	private static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
 
 	private static final String THREE_SCALE_USER_TOKEN = "THREE_SCALE_USER_TOKEN";
-	
+
 	private static final String VERSION_ROUTE = "/api/v1";
 
 	private String token;
@@ -95,6 +95,11 @@ implements StreamConnectionProvider {
 		try {
 
 			token = Fabric8AnalysisPreferences.getInstance().getToken();
+			if(token!=null) {
+				String token = Fabric8AnalysisPreferences.getInstance().getToken();
+
+				token = TokenCheck.getInstance().getToken();
+			}
 			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL() + VERSION_ROUTE ;
 			userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 			res.environment().put(RECOMMENDER_API_TOKEN, token);
@@ -131,7 +136,7 @@ implements StreamConnectionProvider {
 	private static File getServerLocation() {
 		try {
 			Bundle bundle = Platform.getBundle(Fabric8AnalysisLSUIActivator.PLUGIN_ID);
-			return new File(FileLocator.getBundleFile(bundle), "server/ca-lsp-server/server.js");
+			return new File(FileLocator.getBundleFile(bundle), "server/server.js");
 		} catch (IOException e) {
 			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the Fabric8 analyses server location", e);
 			return null;

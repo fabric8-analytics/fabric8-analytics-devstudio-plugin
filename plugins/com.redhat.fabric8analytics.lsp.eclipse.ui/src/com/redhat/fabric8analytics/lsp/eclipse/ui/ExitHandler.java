@@ -66,6 +66,10 @@ public class ExitHandler extends AbstractHandler {
 				MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
 				return null;
 			}
+			else
+			{
+				token = TokenCheck.getInstance().getToken();
+			}
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 			RECOMMENDER_3SCALE_TOKEN = token;
 			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(StackAnalysesView.NAME);

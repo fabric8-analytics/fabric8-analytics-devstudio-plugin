@@ -73,8 +73,8 @@ public class RecommenderAPIProvider {
 		
 		setServerURL(serverURL);
 		setUserKey(userKey);
-//		HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/analyse" + String.format("?user_key=%s",userKey));
-		HttpPost post = new HttpPost(SERVER_ANALYZER_URL + String.format("?user_key=%s",userKey));
+		HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/analyse" + String.format("?user_key=%s",userKey));
+//		HttpPost post = new HttpPost(SERVER_ANALYZER_URL + String.format("?user_key=%s",userKey));
 		post.addHeader("Authorization" , token);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
