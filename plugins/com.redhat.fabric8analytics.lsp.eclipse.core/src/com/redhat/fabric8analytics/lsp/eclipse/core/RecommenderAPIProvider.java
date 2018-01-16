@@ -154,10 +154,10 @@ public class RecommenderAPIProvider {
 	public String getAnalysesURL(String jobID) {
 //		to be used once user key is enabled in analyses url
 //		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, SERVER_URL, USER_KEY);
-//		String temp_server_url = "https://recommender.api.openshift.io/";
+		String temp_server_url = "https://recommender.api.openshift.io/";
 		
-		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, recommender_api_base_url, userScaleKey);
-//		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, temp_server_url, userKey);
+//		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, recommender_api_base_url, userScaleKey);
+		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, temp_server_url, userScaleKey);
 
 		String url = ANALYSES_REPORT_URL + jobID + postURLFormat; 
 		return url;
