@@ -29,5 +29,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath:  .
 Import-Package: org.eclipse.equinox.security.storage,
  org.eclipse.reddeer.swt.api
-Export-Package: com.redhat.fabric8analytics.lsp.eclipse.ui.internal; x-friends:="com.redhat.fabric8analytics.lsp.eclipse.ui.tests"
+Export-Package: com.redhat.fabric8analytics.lsp.eclipse.ui,
+ com.redhat.fabric8analytics.lsp.eclipse.ui.internal;x-friends:="com.redhat.fabric8analytics.lsp.eclipse.ui.tests"
 

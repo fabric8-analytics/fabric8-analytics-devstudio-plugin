@@ -14,10 +14,13 @@ package com.redhat.fabric8analytics.lsp.eclipse.ui;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
@@ -30,6 +33,7 @@ import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.osgi.framework.Bundle;
 
+import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
@@ -39,7 +43,9 @@ implements StreamConnectionProvider {
 
 	public static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
 
-	private static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
+	public static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
+
+	private TokenCheck tokenCheck;
 
 	private static final String THREE_SCALE_USER_TOKEN = "THREE_SCALE_USER_TOKEN";
 
@@ -52,7 +58,13 @@ implements StreamConnectionProvider {
 	private String userKey;
 
 	public Fabric8AnalyticsStreamConnectionProvider() {
+		this(TokenCheck.getInstance());
+	}
+
+	public Fabric8AnalyticsStreamConnectionProvider(TokenCheck tokenCheck) {
 		super();
+		this.tokenCheck = tokenCheck; 
+
 		File nodeJsLocation = getNodeJsLocation();
 		if (nodeJsLocation == null) {
 			return;
@@ -78,6 +90,12 @@ implements StreamConnectionProvider {
 		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
 			throw new IOException("Analyses Disabled");
 		}
+
+		token = tokenCheck.getToken();
+		if (token == null) {
+			throw new IOException("The token was null");
+		}
+
 		super.start();
 		// if super.start() does not throw exception, we're started
 		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is started ");
@@ -93,25 +111,25 @@ implements StreamConnectionProvider {
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
 		try {
-
 			token = Fabric8AnalysisPreferences.getInstance().getToken();
 			if(token!=null) {
-				String token = Fabric8AnalysisPreferences.getInstance().getToken();
-
 				token = TokenCheck.getInstance().getToken();
+			}
+			if (token == null) {
+				throw new RuntimeException("Token was null");
 			}
 			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL() + VERSION_ROUTE ;
 			userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 			res.environment().put(RECOMMENDER_API_TOKEN, token);
 			res.environment().put(RECOMMENDER_API_URL, serverUrl);
 			res.environment().put(THREE_SCALE_USER_TOKEN, userKey);
-
 		} catch (StorageException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return res;
 	}
+	
 	private void addPreferencesListener() {
 		IPreferenceStore preferenceStore = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -120,9 +138,10 @@ implements StreamConnectionProvider {
 				if (Fabric8AnalysisPreferences.LSP_SERVER_ENABLED.equals(event.getProperty())) {
 					if (Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
 						try {
+							// not sure if this actually works
 							start();
 						} catch (IOException e) {
-							MessageDialogUtils.displayErrorMessage("Failed to start Fabric8 analyses server", e);
+							//							// nothing to do
 						}
 
 					} else {
@@ -174,5 +193,20 @@ implements StreamConnectionProvider {
 
 		MessageDialogUtils.displayErrorMessage(message);
 		return null;
+	}
+
+	@Override
+	public List<String> getCommands() {
+		return super.getCommands();
+	}
+
+	@Override
+	public InputStream getInputStream() {
+		return super.getInputStream();
+	}
+
+	@Override
+	public OutputStream getOutputStream() {
+		return super.getOutputStream();
 	}
 }

@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.jboss.tools</groupId>
 		<artifactId>parent</artifactId>
-		<version>4.5.2.AM1-SNAPSHOT</version>
+		<version>4.5.2.Final-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.redhat.fabric8analytics.eclipse</groupId>
@@ -12,10 +12,9 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
-		<oxygenURL>http://download.jboss.org/jbosstools/updates/requirements/oxygen/201710111001-Oxygen.1a/</oxygenURL>
-		<!-- <oxygenURL>http://download.eclipse.org/releases/oxygen/</oxygenURL> -->
 		<tycho.scmUrl>scm:git:https://github.com/fabric8-analytics/fabric8-analytics-devstudio-plugin.git</tycho.scmUrl>
 		<lsp4e-snapshot-site>http://download.eclipse.org/lsp4e/snapshots/</lsp4e-snapshot-site>
+		<eclipse-orbit-update-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/</eclipse-orbit-update-site>
 	</properties>
 
 	<modules>
@@ -45,26 +44,42 @@
 	</build>
 
 	<repositories>
+ 		 <repository>
+         	<id>jboss-public-repository-group</id>
+            <name>JBoss Public Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+            <releases>
+            	<enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+             </snapshots>
+        </repository>
 		<repository>
 			<id>jbosstools-base</id>
 			<layout>p2</layout>
 			<url>${jbosstools-base-site}</url>
 		</repository>
 		<repository>
+			<id>jbosstools-server</id>
+			<layout>p2</layout>
+			<url>${jbosstools-server-site}</url>
+		</repository>
+		<repository>
 			<id>jbosstools-openshift-site</id>
 			<layout>p2</layout>
 			<url>${jbosstools-openshift-site}</url>
-		</repository>
-		<repository>
-			<id>oxygen</id>
-			<layout>p2</layout>
-			<url>${oxygenURL}</url>
 		</repository>
 		<!-- required at build + install time; should eventually be added to the JBoss Tools target platform instead -->
 		<repository>
 			<id>lsp4e-snapshot</id>
 			<layout>p2</layout>
 			<url>${lsp4e-snapshot-site}</url>
+		</repository>
+		<repository>
+			<id>eclipse-orbit-update-site</id>
+			<url>${eclipse-orbit-update-site}</url>
+			<layout>p2</layout>
 		</repository>
 	</repositories>
 

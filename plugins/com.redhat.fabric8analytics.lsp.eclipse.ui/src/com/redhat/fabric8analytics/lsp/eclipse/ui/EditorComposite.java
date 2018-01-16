@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.json.JSONException;
 
-import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
+import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.AnalysesJobHandler;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
@@ -64,7 +64,6 @@ public class EditorComposite extends Composite{
 		this.editorPage = editorPage;
 		this.pomEditor = pomEditor;
 		createComposite();
-
 	}
 
 
@@ -111,14 +110,13 @@ public class EditorComposite extends Composite{
 						userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 					}
 					
+					RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
+					new AnalysesJobHandler("Analyses check Job", provider, true, pomFiles).schedule();
 
-					new AnalysesJobHandler("Analyses check Job", token, true, pomFiles, serverURL, userKey ).schedule();
-//					new AnalysesJobHandler("Analyses check Job", token, true).schedule();
-
-					editorBrowser.setUrl(RecommenderAPIProvider.getInstance().getAnalysesURL(jobID, token));
+					editorBrowser.setUrl(provider.getAnalysesURL(jobID));
 
 				}	
-				catch (RecommenderAPIException | StorageException | UnsupportedEncodingException | JSONException e) {
+				catch (StorageException | JSONException | ThreeScaleAPIException e) {
 					MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 				};
 

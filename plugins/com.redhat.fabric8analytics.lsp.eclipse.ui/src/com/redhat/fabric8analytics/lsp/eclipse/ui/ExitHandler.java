@@ -11,7 +11,6 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +28,7 @@ import org.json.JSONException;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
+import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.AnalysesJobHandler;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
@@ -83,8 +83,9 @@ public class ExitHandler extends AbstractHandler {
 				userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 			}
 			
-			new AnalysesJobHandler("Analyses check Job", token, false, pomFiles, serverURL, userKey ).schedule();
-		} catch (RecommenderAPIException | StorageException | UnsupportedEncodingException | JSONException | PartInitException e) {
+			RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
+			new AnalysesJobHandler("Analyses check Job", provider, false, pomFiles).schedule();
+		} catch (StorageException | JSONException | PartInitException | ThreeScaleAPIException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
 		return null;
