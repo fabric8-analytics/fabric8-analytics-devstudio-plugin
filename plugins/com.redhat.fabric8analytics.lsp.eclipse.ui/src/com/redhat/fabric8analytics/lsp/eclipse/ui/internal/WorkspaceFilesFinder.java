@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -117,15 +116,14 @@ public class WorkspaceFilesFinder {
 	 * @return
 	 * @throws CoreException 
 	 */
-	public Set<IFile> getCurrentProject() throws CoreException
+	public Set<IFile> getCurrentPom() throws CoreException
 	{
-		Set<IFile> files = new HashSet<IFile>();
+		Set<IFile> pomFile = new HashSet<IFile>(); ;
 		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		IFileEditorInput input = (IFileEditorInput)editor.getEditorInput();
 		IFile file = input.getFile();
-		IProject project = file.getProject();
-		findPOMs(files, project);
-		return files;
+		pomFile.add(file);
+		return pomFile; 
 	}
 }
 

@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -43,21 +44,27 @@ implements StreamConnectionProvider {
 	public static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
 
 	public static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
-	
+
 	private TokenCheck tokenCheck;
+
+	private static final String THREE_SCALE_USER_TOKEN = "THREE_SCALE_USER_TOKEN";
+
+	private static final String VERSION_ROUTE = "/api/v1";
 
 	private String token;
 
 	private String serverUrl;
 
+	private String userKey;
+
 	public Fabric8AnalyticsStreamConnectionProvider() {
 		this(TokenCheck.getInstance());
 	}
-	
+
 	public Fabric8AnalyticsStreamConnectionProvider(TokenCheck tokenCheck) {
 		super();
 		this.tokenCheck = tokenCheck; 
-		
+
 		File nodeJsLocation = getNodeJsLocation();
 		if (nodeJsLocation == null) {
 			return;
@@ -83,12 +90,12 @@ implements StreamConnectionProvider {
 		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
 			throw new IOException("Analyses Disabled");
 		}
-		
+
 		token = tokenCheck.getToken();
 		if (token == null) {
 			throw new IOException("The token was null");
 		}
-		
+
 		super.start();
 		// if super.start() does not throw exception, we're started
 		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is started ");
@@ -101,25 +108,28 @@ implements StreamConnectionProvider {
 	}
 
 	@Override
-	public ProcessBuilder createProcessBuilder() {
-			ProcessBuilder res = super.createProcessBuilder();
-			if (token == null) {
-				token = tokenCheck.getToken();
+	protected ProcessBuilder createProcessBuilder() {
+		ProcessBuilder res = super.createProcessBuilder();
+		try {
+			token = Fabric8AnalysisPreferences.getInstance().getToken();
+			if(token!=null) {
+				token = TokenCheck.getInstance().getToken();
 			}
-			
 			if (token == null) {
 				throw new RuntimeException("Token was null");
 			}
-//			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL();
-//			String [] arrOfStr = serverUrl.split("http", 2);
-//			serverUrl = "https" + arrOfStr[1];
-			String temp_server_url = RecommenderAPIProvider.RECOMMENDER_API_ANALYZER_URL;
+			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL() + VERSION_ROUTE ;
+			userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 			res.environment().put(RECOMMENDER_API_TOKEN, token);
-			//			res.environment().put(RECOMMENDER_API_URL, serverUrl);
-			res.environment().put(RECOMMENDER_API_URL, temp_server_url);
-
+			res.environment().put(RECOMMENDER_API_URL, serverUrl);
+			res.environment().put(THREE_SCALE_USER_TOKEN, userKey);
+		} catch (StorageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return res;
 	}
+	
 	private void addPreferencesListener() {
 		IPreferenceStore preferenceStore = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -131,7 +141,7 @@ implements StreamConnectionProvider {
 							// not sure if this actually works
 							start();
 						} catch (IOException e) {
-//							// nothing to do
+							//							// nothing to do
 						}
 
 					} else {
@@ -145,7 +155,7 @@ implements StreamConnectionProvider {
 	private static File getServerLocation() {
 		try {
 			Bundle bundle = Platform.getBundle(Fabric8AnalysisLSUIActivator.PLUGIN_ID);
-			return new File(FileLocator.getBundleFile(bundle), "ca-lsp-server-0.0.6-SNAPSHOT/server.js");
+			return new File(FileLocator.getBundleFile(bundle), "server/server.js");
 		} catch (IOException e) {
 			Fabric8AnalysisLSUIActivator.getDefault().logError("Cannot find the Fabric8 analyses server location", e);
 			return null;
@@ -184,17 +194,17 @@ implements StreamConnectionProvider {
 		MessageDialogUtils.displayErrorMessage(message);
 		return null;
 	}
-	
+
 	@Override
 	public List<String> getCommands() {
 		return super.getCommands();
 	}
-	
+
 	@Override
 	public InputStream getInputStream() {
 		return super.getInputStream();
 	}
-	
+
 	@Override
 	public OutputStream getOutputStream() {
 		return super.getOutputStream();

@@ -11,6 +11,7 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,7 +33,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.json.JSONException;
 
-import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.AnalysesJobHandler;
@@ -81,7 +81,7 @@ public class EditorComposite extends Composite{
 			public void widgetSelected(SelectionEvent s) {
 				Set<IFile> pomFiles = new HashSet<IFile>();
 				try {
-					pomFiles = (Set<IFile>) WorkspaceFilesFinder.getInstance().getCurrentProject();
+					pomFiles = WorkspaceFilesFinder.getInstance().getCurrentPom();
 				} catch (CoreException e1) {
 					MessageDialogUtils.displayErrorMessage("Error while searching for POM files", e1);
 					return;
@@ -111,15 +111,12 @@ public class EditorComposite extends Composite{
 					}
 					
 					RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
-					jobID = provider.requestAnalyses(pomFiles);
-
-
-					new AnalysesJobHandler("Analyses check Job", provider, true).schedule();
+					new AnalysesJobHandler("Analyses check Job", provider, true, pomFiles).schedule();
 
 					editorBrowser.setUrl(provider.getAnalysesURL(jobID));
 
 				}	
-				catch (RecommenderAPIException | StorageException | JSONException | ThreeScaleAPIException e) {
+				catch (StorageException | JSONException | ThreeScaleAPIException e) {
 					MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 				};
 

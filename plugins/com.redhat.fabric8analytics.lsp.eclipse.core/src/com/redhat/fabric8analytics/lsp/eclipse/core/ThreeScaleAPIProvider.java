@@ -34,7 +34,7 @@ public class ThreeScaleAPIProvider {
 
 	public static final String THREE_SCALE_URL = "https://3scale-connect.api.prod-preview.openshift.io/get-route";
 
-	public static final String SERVICE_ID = "2555417754383";
+	public static final String SERVICE_ID = "2555417754822";
 
 	private String token;
 

@@ -18,6 +18,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.ui.IViewPart;
@@ -34,6 +35,7 @@ import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.ThreeScaleIntegration;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.WorkspaceFilesFinder;
+//import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.EffectivePomJobHandler;;
 
 public class ExitHandler extends AbstractHandler {
 	private String RECOMMENDER_API_TOKEN;
@@ -59,10 +61,14 @@ public class ExitHandler extends AbstractHandler {
 				MessageDialogUtils.displayInfoMessage("Enable Fabric8 Analyses");
 				return null;
 			}
-			String token = TokenCheck.getInstance().getToken();
+			String token = Fabric8AnalysisPreferences.getInstance().getToken();
 			if (token == null) {
 				MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
 				return null;
+			}
+			else
+			{
+				token = TokenCheck.getInstance().getToken();
 			}
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 			RECOMMENDER_3SCALE_TOKEN = token;
@@ -78,10 +84,8 @@ public class ExitHandler extends AbstractHandler {
 			}
 			
 			RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
-			String jobID = provider.requestAnalyses(pomFiles);
-			setJobId(jobID);
-			new AnalysesJobHandler("Analyses check Job", provider, false).schedule();
-		} catch (RecommenderAPIException | StorageException | JSONException | PartInitException | ThreeScaleAPIException e) {
+			new AnalysesJobHandler("Analyses check Job", provider, false, pomFiles).schedule();
+		} catch (StorageException | JSONException | PartInitException | ThreeScaleAPIException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
 		return null;

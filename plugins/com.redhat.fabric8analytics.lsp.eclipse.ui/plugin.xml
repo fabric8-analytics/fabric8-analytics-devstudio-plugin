@@ -22,7 +22,7 @@
       <page
             class="com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisPreferencePage"
             id="com.redhat.fabric8analytics.lsp.eclipse.preferences"
-            name="Fabric8 Analysis">
+            name="Openshift Services">
       </page>
    </extension>
    <extension
@@ -47,7 +47,7 @@
       <command
             defaultHandler="com.redhat.fabric8analytics.lsp.eclipse.ui.AuthorizeHandler"
             id="com.redhat.fabric8analytics.lsp.eclipse.ui.authorizetoken"
-            name="Exit">
+            name="Connect to Openshift.io">
       </command>
    </extension>
    <extension
@@ -83,6 +83,7 @@
                id="com.redhat.fabric8analytics.lsp.eclipse.ui.Authorize">
             <command
                   commandId="com.redhat.fabric8analytics.lsp.eclipse.ui.authorizetoken"
+                  icon="icons/osio-16x16.png"
                   label="%F8Analytics.command.authorize"
                   style="push">
             </command>

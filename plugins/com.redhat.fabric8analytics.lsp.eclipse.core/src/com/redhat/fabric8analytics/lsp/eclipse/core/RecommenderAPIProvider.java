@@ -13,6 +13,8 @@ package com.redhat.fabric8analytics.lsp.eclipse.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.http.HttpEntity;
@@ -38,13 +40,13 @@ import org.json.JSONObject;
  */
 public class RecommenderAPIProvider {
 	
-	private static final String RECOMMENDER_API_BASE_URL = "https://recommender.api.openshift.io";
+	public  static String recommender_api_base_url;
 	
 	private static final String RECOMMENDER_API_URL_POSTFIX = "/api/v1";
 	
-	private static final String RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX = RECOMMENDER_API_URL_POSTFIX + "/stack-analyses/";
+	private static String userScaleKey;
 	
-	public static final String RECOMMENDER_API_ANALYZER_URL = RECOMMENDER_API_BASE_URL + RECOMMENDER_API_URL_POSTFIX;
+	private static final String RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX = RECOMMENDER_API_URL_POSTFIX + "/stack-analyses/";
 
 	private static final String ANALYSES_REPORT_URL =  "https://stack-analytics-report.prod-preview.openshift.io/#/analyze/";
 	
@@ -52,15 +54,16 @@ public class RecommenderAPIProvider {
 	
 	private String url;
 
-	private String userKey;
+	private static final String SERVICE_ID = "2555417754822";
 	
-	private String token;
 	
-	public RecommenderAPIProvider(String url, String userKey, String token) {
-		checkConstructorArguments(url, userKey, token);
-		this.url = url;
+	private static String token;
+	
+	public RecommenderAPIProvider(String url, String userScaleKey, String token) {
+		checkConstructorArguments(url, userScaleKey, token);
+		this.recommender_api_base_url = url;
 		this.token = token;
-		this.userKey = userKey;
+		this.userScaleKey = userScaleKey;
 	}
 	
 	/**
@@ -69,17 +72,20 @@ public class RecommenderAPIProvider {
 	 * @param pomFiles
 	 * @return jobID
 	 */
-	public String requestAnalyses(Set<IFile> files) throws RecommenderAPIException {
-		checkFiles(files);
-		HttpPost post = new HttpPost(url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + String.format("?user_key=%s",userKey));
+	public static String requestAnalyses(Map<String, File> files) throws RecommenderAPIException {
+		
+		checkFiles(files);// check if this is none
+		HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/analyse" + String.format("?user_key=%s",userScaleKey));
+//		HttpPost post = new HttpPost(recommender_api_base_url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + String.format("?user_key=%s",userScaleKey));
 		post.addHeader("Authorization" , token);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
 				.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-		for (IFile file : files)
+		
+		for (Map.Entry<String, File> fileObject : files.entrySet())
 		{
-			builder.addPart("manifest[]", new FileBody(new File(file.getLocation().toString())))
-			.addTextBody("filePath[]", file.toString());
+			builder.addPart("manifest[]", new FileBody(fileObject.getValue()))
+			.addTextBody("filePath[]", fileObject.getKey());
 		}
 
 		HttpEntity multipart = builder.build();
@@ -89,7 +95,6 @@ public class RecommenderAPIProvider {
 		try {
 			HttpResponse response = client.execute(post);
 			int responseCode = response.getStatusLine().getStatusCode();
-			
 			if (responseCode==HttpStatus.SC_OK) {
 				JSONObject jsonObj = new JSONObject(EntityUtils.toString(response.getEntity()));
 				return jsonObj.getString("id");
@@ -115,13 +120,12 @@ public class RecommenderAPIProvider {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 		}
 		
-		HttpGet get = new HttpGet(url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + jobId +  String.format("?user_key=%s", userKey));
+		HttpGet get = new HttpGet(recommender_api_base_url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + jobId +  String.format("?user_key=%s", userScaleKey));
 		get.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
 
 		CloseableHttpClient client = createClient();
 		
 		try {
-			
 			HttpResponse response = client.execute(get);
 			int responseCode = response.getStatusLine().getStatusCode();
 
@@ -150,13 +154,16 @@ public class RecommenderAPIProvider {
 	public String getAnalysesURL(String jobID) {
 //		to be used once user key is enabled in analyses url
 //		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, SERVER_URL, USER_KEY);
-		String temp_server_url = RECOMMENDER_API_BASE_URL;
-		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, temp_server_url, userKey);
+		String temp_server_url = "https://recommender.api.openshift.io/";
+		
+//		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, recommender_api_base_url, userScaleKey);
+		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, token, temp_server_url, userScaleKey);
+
 		String url = ANALYSES_REPORT_URL + jobID + postURLFormat; 
 		return url;
 	}
 	
-	protected CloseableHttpClient createClient() {
+	protected static CloseableHttpClient createClient() {
 		return HttpClients.createDefault();
 	}
 	
@@ -178,7 +185,7 @@ public class RecommenderAPIProvider {
 		}
 	}
 	
-	private void checkFiles(Set<IFile> files) {
+	private static void checkFiles(Map<String, File> files) {
 		if (files == null) {
 			throw new IllegalArgumentException("Files for analyses were null");
 		}
@@ -186,6 +193,10 @@ public class RecommenderAPIProvider {
 		if (files.size() == 0) {
 			throw new IllegalArgumentException("Files for analyses were empty");
 		}
+	}
+	
+	public void setUserKey(String userKey) {
+		userScaleKey = userKey;
 	}
 	
 	private void checkJobID(String jobId) {

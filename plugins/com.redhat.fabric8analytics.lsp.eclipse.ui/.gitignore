@@ -3,6 +3,6 @@
 .project/
 .settings/
 target/
-ca-lsp-server*
+server*
 **/.DS_Store
 
