@@ -70,6 +70,7 @@ implements StreamConnectionProvider {
 		}
 
 		File serverLocation = getServerLocation();
+		Fabric8AnalysisLSUIActivator.getDefault().logInfo("server location" + serverLocation);
 		if (serverLocation == null) {
 			return;
 		}
@@ -119,7 +120,7 @@ implements StreamConnectionProvider {
 			}
 			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL() + VERSION_ROUTE ;
 			userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
-			Fabric8AnalysisLSUIActivator.getDefault().logInfo(token = serverUrl + userKey);
+			Fabric8AnalysisLSUIActivator.getDefault().logInfo(token + serverUrl + userKey);
 			res.environment().put(RECOMMENDER_API_TOKEN, token);
 			res.environment().put(RECOMMENDER_API_URL, serverUrl);
 			res.environment().put(THREE_SCALE_USER_TOKEN, userKey);
