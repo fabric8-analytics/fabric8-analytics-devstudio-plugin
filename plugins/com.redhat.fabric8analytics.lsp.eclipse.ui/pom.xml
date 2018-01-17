@@ -18,23 +18,6 @@
                 <version>${tychoVersion}</version>
                 <extensions>true</extensions>
             </plugin>
-            <!-- <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <executions>
-                    <execution>
-                        <id>LSP SERVER</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${basedir}/scripts/lsp-server.sh</executable>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin> -->
             <plugin>
     <groupId>com.googlecode.maven-download-plugin</groupId>
     <artifactId>download-maven-plugin</artifactId>
@@ -59,7 +42,7 @@
                 <artifactId>tycho-packaging-plugin</artifactId>
                 <version>${tychoVersion}</version>
                 <configuration>
-                    <jgit.ignore>pom.xml,ca-lsp-server/,ca-lsp-server.tar</jgit.ignore>
+                    <jgit.ignore>pom.xml,server/</jgit.ignore>
                 </configuration>
             </plugin>
         </plugins>
