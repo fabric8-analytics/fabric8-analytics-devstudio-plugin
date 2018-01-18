@@ -119,8 +119,8 @@ public class RecommenderAPIProvider {
 		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 		}
-		
-		HttpGet get = new HttpGet(recommender_api_base_url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + jobId +  String.format("?user_key=%s", userScaleKey));
+		HttpGet get = new HttpGet("https://recommender.api.openshift.io/api/v1/stack-analyses/" + jobId );
+//		HttpGet get = new HttpGet(recommender_api_base_url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + jobId +  String.format("?user_key=%s", userScaleKey));
 		get.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
 
 		CloseableHttpClient client = createClient();
