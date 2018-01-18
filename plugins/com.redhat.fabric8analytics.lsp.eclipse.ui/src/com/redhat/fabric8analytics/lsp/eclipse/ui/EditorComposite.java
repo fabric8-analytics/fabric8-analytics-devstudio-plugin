@@ -97,7 +97,10 @@ public class EditorComposite extends Composite{
 					if (token == null) {
 						MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
 					}
-					Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
+					else {
+						Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
+					}
+					
 					String RECOMMENDER_API_TOKEN = "Bearer "+ token;
 					String RECOMMENDER_3SCALE_TOKEN = token;
 
