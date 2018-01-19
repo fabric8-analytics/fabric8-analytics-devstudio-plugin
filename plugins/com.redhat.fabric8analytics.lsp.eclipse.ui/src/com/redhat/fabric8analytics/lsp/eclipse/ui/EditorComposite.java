@@ -53,9 +53,9 @@ public class EditorComposite extends Composite{
 
 	protected MavenPomEditorPage editorPage;
 
-	public static Browser editorBrowser;
+	public Browser editorBrowser;
 
-	public static String jobID;
+	public String jobID;
 
 	private MavenPomEditor pomEditor;
 	private FormToolkit toolkit = new FormToolkit(Display.getCurrent());
@@ -109,7 +109,7 @@ public class EditorComposite extends Composite{
 					}
 					
 					RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
-					new AnalysesJobHandler("Analyses check Job", provider, true, Collections.singleton(currentPomFile)).schedule();
+					new AnalysesJobHandler("Analyses check Job", provider, Collections.singleton(currentPomFile), EditorComposite.this).schedule();
 
 					editorBrowser.setUrl(provider.getAnalysesURL(jobID));
 
@@ -122,7 +122,7 @@ public class EditorComposite extends Composite{
 			}
 		});
 	}
-	public static void updateBrowser(String url) {
+	public void updateBrowser(String url) {
 		Display.getDefault().asyncExec(new Runnable(){
 			public void run(){
 				if (!editorBrowser.isDisposed()) {
