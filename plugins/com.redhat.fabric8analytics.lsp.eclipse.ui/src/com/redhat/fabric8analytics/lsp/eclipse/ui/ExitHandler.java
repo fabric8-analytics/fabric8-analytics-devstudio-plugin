@@ -18,7 +18,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.ui.IViewPart;
@@ -26,7 +25,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.json.JSONException;
 
-import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.AnalysesJobHandler;
@@ -65,9 +63,7 @@ public class ExitHandler extends AbstractHandler {
 			if (token == null) {
 				MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
 				return null;
-			}
-			else
-			{
+			} else {
 				token = TokenCheck.getInstance().getToken();
 			}
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
@@ -84,7 +80,7 @@ public class ExitHandler extends AbstractHandler {
 			}
 			
 			RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
-			new AnalysesJobHandler("Analyses check Job", provider, pomFiles, null).schedule();
+			new AnalysesJobHandler(provider, pomFiles, null).analyze();
 		} catch (StorageException | JSONException | PartInitException | ThreeScaleAPIException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
