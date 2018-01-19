@@ -12,6 +12,7 @@
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -79,15 +80,9 @@ public class EditorComposite extends Composite{
 		buttonGo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent s) {
-				Set<IFile> pomFiles = new HashSet<IFile>();
-				try {
-					pomFiles = WorkspaceFilesFinder.getInstance().getCurrentPom();
-				} catch (CoreException e1) {
-					MessageDialogUtils.displayErrorMessage("Error while searching for POM files", e1);
-					return;
-				}
-				if (pomFiles == null || pomFiles.isEmpty()) {
-					MessageDialogUtils.displayInfoMessage("No POM files found in the selection");
+				IFile currentPomFile = pomEditor.getPomFile();
+				if(currentPomFile == null) {
+					MessageDialogUtils.displayErrorMessage("Cannot find POM file");
 					return;
 				}
 				try {
@@ -114,7 +109,7 @@ public class EditorComposite extends Composite{
 					}
 					
 					RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
-					new AnalysesJobHandler("Analyses check Job", provider, true, pomFiles).schedule();
+					new AnalysesJobHandler("Analyses check Job", provider, true, Collections.singleton(currentPomFile)).schedule();
 
 					editorBrowser.setUrl(provider.getAnalysesURL(jobID));
 
