@@ -119,13 +119,13 @@ implements StreamConnectionProvider {
 				throw new RuntimeException("Token was null");
 			}
 			
-			serverUrl = "https://recommender.api.openshift.io/api/v1/";
-//			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL() + VERSION_ROUTE ;
+//			serverUrl = "https://recommender.api.openshift.io/api/v1/";
+			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL() + VERSION_ROUTE ;
 			userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
 			Fabric8AnalysisLSUIActivator.getDefault().logInfo(token + serverUrl + userKey);
 			res.environment().put(RECOMMENDER_API_TOKEN, token);
 			res.environment().put(RECOMMENDER_API_URL, serverUrl);
-//			res.environment().put(THREE_SCALE_USER_TOKEN, userKey);
+			res.environment().put(THREE_SCALE_USER_TOKEN, userKey);
 		} catch (StorageException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
