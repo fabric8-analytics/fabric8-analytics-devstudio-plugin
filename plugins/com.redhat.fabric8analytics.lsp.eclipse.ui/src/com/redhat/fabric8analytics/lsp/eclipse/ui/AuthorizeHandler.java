@@ -41,7 +41,7 @@ public class AuthorizeHandler extends AbstractHandler {
 		String token = TokenCheck.getInstance().getToken();
 		if (token == null) {
 			Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(false);
-			MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
+			MessageDialogUtils.displayInfoMessage("Authorization to Openshift.io was not successful");
 			return null;
 		}
 		try {
