@@ -132,4 +132,15 @@ public class EditorComposite extends Composite{
 		});
 
 	}
+	
+	public void disposeBrowser() {
+		Display.getDefault().asyncExec(new Runnable(){
+			public void run(){
+				if (!editorBrowser.isDisposed()) {
+					editorBrowser.dispose();
+				}
+			}
+		});
+
+	}
 }
