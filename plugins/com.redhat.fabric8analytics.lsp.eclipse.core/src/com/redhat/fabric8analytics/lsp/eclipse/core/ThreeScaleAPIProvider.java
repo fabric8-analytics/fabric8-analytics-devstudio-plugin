@@ -32,7 +32,7 @@ import org.json.JSONObject;
  */
 public class ThreeScaleAPIProvider {
 
-	public static final String THREE_SCALE_URL = "https://3scale-connect.api.openshift.io/get-route ";
+	public static final String THREE_SCALE_URL = "https://3scale-connect.api.openshift.io/get-route";
 
 	public static final String SERVICE_ID = "2555417754949";
 
