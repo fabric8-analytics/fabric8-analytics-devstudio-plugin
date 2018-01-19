@@ -46,7 +46,7 @@ public class RecommenderAPIProvider {
 	
 	private static String userScaleKey;
 	
-	private static final String RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX = RECOMMENDER_API_URL_POSTFIX + "/stack-analyses/";
+	private static final String RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX = RECOMMENDER_API_URL_POSTFIX + "/analyse/";
 
 	private static final String ANALYSES_REPORT_URL =  "https://stack-analytics-report.openshift.io/#/analyze/";
 	
@@ -75,8 +75,8 @@ public class RecommenderAPIProvider {
 	public static String requestAnalyses(Map<String, File> files) throws RecommenderAPIException {
 		
 		checkFiles(files);// check if this is none
-//		HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/analyse" + String.format("?user_key=%s",userScaleKey));
-		HttpPost post = new HttpPost(recommender_api_base_url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + String.format("?user_key=%s",userScaleKey));
+		HttpPost post = new HttpPost("https://recommender.api.openshift.io/api/v1/analyse" + String.format("?user_key=%s",userScaleKey));
+//		HttpPost post = new HttpPost(recommender_api_base_url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + String.format("?user_key=%s",userScaleKey));
 		post.addHeader("Authorization" , token);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
@@ -119,10 +119,10 @@ public class RecommenderAPIProvider {
 		if(!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
 			RECOMMENDER_API_TOKEN = "Bearer "+ token;
 		}
-//		HttpGet get = new HttpGet("https://recommender.api.openshift.io/api/v1/stack-analyses/" + jobId );
-		HttpGet get = new HttpGet(recommender_api_base_url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + jobId +  String.format("?user_key=%s", userScaleKey));
+		HttpGet get = new HttpGet("https://recommender.api.openshift.io/api/v1/stack-analyses/" + jobId );
+//		HttpGet get = new HttpGet(recommender_api_base_url + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX + jobId +  String.format("?user_key=%s", userScaleKey));
 		get.addHeader("Authorization" , RECOMMENDER_API_TOKEN);
-
+		System.out.println("******************************************" + get);
 		CloseableHttpClient client = createClient();
 		
 		try {
