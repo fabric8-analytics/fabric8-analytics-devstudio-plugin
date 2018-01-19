@@ -35,7 +35,6 @@ import org.eclipse.m2e.core.MavenPlugin;
 import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.eclipse.m2e.core.project.IMavenProjectRegistry;
 import org.eclipse.equinox.security.storage.StorageException;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 
@@ -55,8 +54,6 @@ public class AnalysesJobHandler extends Job{
 
 	private RecommenderAPIProvider provider;
 
-	private Boolean editorCheck;
-
 	private String serverUrl;
 
 	private Set<IFile> pomFiles;
@@ -64,12 +61,14 @@ public class AnalysesJobHandler extends Job{
 	private String userKey;
 
 	private String baseTempDir;
+	
+	private EditorComposite editorComposite;
 
-	public AnalysesJobHandler(String name, RecommenderAPIProvider provider, Boolean editorCheck, Set<IFile> pomFiles) {
+	public AnalysesJobHandler(String name, RecommenderAPIProvider provider, Set<IFile> pomFiles, EditorComposite editorComposite) {
 		super(name);
 		this.provider = provider;
-		this.editorCheck = editorCheck;
 		this.pomFiles = pomFiles;
+		this.editorComposite = editorComposite;
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
@@ -79,13 +78,11 @@ public class AnalysesJobHandler extends Job{
 			url = new URL("platform:/plugin/com.redhat.fabric8analytics.lsp.eclipse.ui/templates/index.html");
 			url = FileLocator.toFileURL(url);
 			IViewPart mainView = ExitHandler.getView();
-
-			if(!editorCheck) {
+			
+			if(editorComposite == null) {
 				((StackAnalysesView) mainView).updatebrowserUrl(url.toString());
-			}		
-
-			else {
-				EditorComposite.updateBrowser(url.toString());
+			} else {
+				editorComposite.updateBrowser(url.toString());
 			}
 			Map<String, File> EffectivePomFiles = new HashMap<String,File>();
 
@@ -159,12 +156,11 @@ public class AnalysesJobHandler extends Job{
 	private void syncWithUi(IViewPart mainView) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				if(editorCheck) {
-					EditorComposite.updateBrowser(provider.getAnalysesURL(jobId));
-					return;
+				if(editorComposite == null) {
+					((StackAnalysesView) mainView).updatebrowserUrl(provider.getAnalysesURL(jobId));
+				} else {
+					editorComposite.updateBrowser(provider.getAnalysesURL(jobId));
 				}
-
-				((StackAnalysesView) mainView).updatebrowserUrl(provider.getAnalysesURL(jobId));
 			}
 		});
 

@@ -84,7 +84,7 @@ public class ExitHandler extends AbstractHandler {
 			}
 			
 			RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
-			new AnalysesJobHandler("Analyses check Job", provider, false, pomFiles).schedule();
+			new AnalysesJobHandler("Analyses check Job", provider, pomFiles, null).schedule();
 		} catch (StorageException | JSONException | PartInitException | ThreeScaleAPIException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
