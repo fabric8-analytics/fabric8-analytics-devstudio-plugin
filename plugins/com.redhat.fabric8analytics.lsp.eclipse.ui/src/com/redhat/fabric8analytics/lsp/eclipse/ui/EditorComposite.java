@@ -109,7 +109,7 @@ public class EditorComposite extends Composite{
 					}
 					
 					RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
-					new AnalysesJobHandler("Analyses check Job", provider, Collections.singleton(currentPomFile), EditorComposite.this).schedule();
+					new AnalysesJobHandler(provider, Collections.singleton(currentPomFile), EditorComposite.this).analyze();
 
 					editorBrowser.setUrl(provider.getAnalysesURL(jobID));
 
