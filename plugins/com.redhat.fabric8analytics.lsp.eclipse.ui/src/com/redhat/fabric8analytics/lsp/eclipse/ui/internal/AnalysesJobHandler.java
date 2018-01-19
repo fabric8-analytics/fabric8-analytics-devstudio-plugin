@@ -61,8 +61,9 @@ public class AnalysesJobHandler extends Job{
 	private String userKey;
 
 	private String baseTempDir;
-	
+
 	private EditorComposite editorComposite;
+
 
 	public AnalysesJobHandler(String name, RecommenderAPIProvider provider, Set<IFile> pomFiles, EditorComposite editorComposite) {
 		super(name);
@@ -77,8 +78,8 @@ public class AnalysesJobHandler extends Job{
 
 			url = new URL("platform:/plugin/com.redhat.fabric8analytics.lsp.eclipse.ui/templates/index.html");
 			url = FileLocator.toFileURL(url);
+
 			IViewPart mainView = ExitHandler.getView();
-			
 			if(editorComposite == null) {
 				((StackAnalysesView) mainView).updatebrowserUrl(url.toString());
 			} else {
@@ -109,32 +110,34 @@ public class AnalysesJobHandler extends Job{
 				}
 			} 
 			jobId = RecommenderAPIProvider.requestAnalyses(EffectivePomFiles);
-			if (!provider.analysesFinished(jobId)) {
-				schedule(TIMER_INTERVAL);	
-			} else {
-				syncWithUi(mainView);	
+			if(setTimerAnalyses(mainView)) {
+				syncWithUi(mainView);
 			}
-			//			setTimerAnalyses();
-			syncWithUi(mainView);
-
 			deleteTempDir(baseTempDir);
-		}catch (IOException | CoreException | RecommenderAPIException  e) {
-
+		}catch (IOException | CoreException | RecommenderAPIException | StorageException  e) {
+			deleteTempDir(baseTempDir);
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
 		return Status.OK_STATUS;
 	}
 
-	private void setTimerAnalyses() throws StorageException {
+	private Boolean setTimerAnalyses(IViewPart mainView) throws StorageException {
 		try {
-			while(!provider.analysesFinished(jobId)){
-				System.out.println("Still here");
+			int countTimer = 0;
+			while(!provider.analysesFinished(jobId))
+			{
+				if(countTimer==10) {
+					disposeBrowsers(mainView);
+					MessageDialogUtils.displayErrorMessage("Analyses Timeout");
+					return false;
+				}
 				Thread.sleep(TIMER_INTERVAL);
+				countTimer++;
 			}
-			System.out.println("Finished");
-		} catch (RecommenderAPIException | InterruptedException e) {
+		} catch (InterruptedException | RecommenderAPIException e) {
 			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
 		}
+		return true;
 	}
 
 	private void deleteTempDir(String baseDir){
@@ -156,6 +159,7 @@ public class AnalysesJobHandler extends Job{
 	private void syncWithUi(IViewPart mainView) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
+
 				if(editorComposite == null) {
 					((StackAnalysesView) mainView).updatebrowserUrl(provider.getAnalysesURL(jobId));
 				} else {
@@ -163,6 +167,15 @@ public class AnalysesJobHandler extends Job{
 				}
 			}
 		});
+
+	}
+
+	private void disposeBrowsers(IViewPart mainView) {
+		if(editorComposite == null) {
+			((StackAnalysesView) mainView).disposebrowserUrl();
+		} else {
+			editorComposite.disposeBrowser();
+		}
 
 	}
 }

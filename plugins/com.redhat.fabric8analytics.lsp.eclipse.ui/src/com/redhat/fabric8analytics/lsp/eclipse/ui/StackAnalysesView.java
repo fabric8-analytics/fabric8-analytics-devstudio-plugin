@@ -44,4 +44,13 @@ public class StackAnalysesView extends ViewPart {
 			}
 		});
 	}
+	public void disposebrowserUrl() {
+		Display.getDefault().asyncExec(new Runnable(){
+			public void run(){
+				if (!browser.isDisposed()) {
+					browser.dispose();;
+				}
+			}
+		});
+	}
 }
