@@ -46,9 +46,9 @@ implements StreamConnectionProvider {
 
 	private TokenCheck tokenCheck;
 
-	private static final String THREE_SCALE_USER_TOKEN = "THREE_SCALE_USER_TOKEN";
+	public static final String THREE_SCALE_USER_TOKEN = "THREE_SCALE_USER_TOKEN";
 
-	private static final String VERSION_ROUTE = "/api/v1";
+	public static final String VERSION_ROUTE = "/api/v1";
 
 	private String token;
 
@@ -113,7 +113,7 @@ implements StreamConnectionProvider {
 		try {
 			token = Fabric8AnalysisPreferences.getInstance().getToken();
 			if(token!=null) {
-				token = TokenCheck.getInstance().getToken();
+				token = tokenCheck.getToken();
 			}
 			if (token == null) {
 				throw new RuntimeException("Token was null");

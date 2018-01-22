@@ -54,6 +54,7 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
+					<skip>${skipITests}</skip>
 					<useUIThread>false</useUIThread>
 					<testClass>${test.class}</testClass>
 					<testSuite>${test.suite}</testSuite>
