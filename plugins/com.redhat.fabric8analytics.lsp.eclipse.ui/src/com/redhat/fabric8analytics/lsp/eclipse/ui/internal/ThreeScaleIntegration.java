@@ -14,6 +14,7 @@ package com.redhat.fabric8analytics.lsp.eclipse.ui.internal;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.json.JSONException;
 
+import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIProvider;
 import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleData;

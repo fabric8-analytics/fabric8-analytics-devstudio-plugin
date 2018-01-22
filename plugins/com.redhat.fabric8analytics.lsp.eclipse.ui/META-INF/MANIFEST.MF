@@ -11,24 +11,20 @@ Require-Bundle: org.eclipse.lsp4e;bundle-version="0.3.0",
  org.eclipse.swt,
  org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.12.0",
- org.apache.httpcomponents.httpclient;bundle-version="4.5.2",
- org.apache.httpcomponents.httpcore;bundle-version="4.4.6",
  org.json;bundle-version="1.0.0",
  org.apache.commons.io;bundle-version="2.2.0",
  com.redhat.fabric8analytics.lsp.eclipse.core;bundle-version="0.0.1",
- org.eclipse.equinox.registry,
  org.jboss.tools.openshift.io.ui;bundle-version="3.4.1",
  org.eclipse.m2e.core,
  org.eclipse.m2e.editor,
  org.eclipse.ui.forms,
  org.eclipse.ui.ide,
- org.eclipse.m2e.maven.runtime
+ org.eclipse.m2e.maven.runtime,
+ org.eclipse.equinox.security
 Eclipse-BundleShape: dir
 Bundle-Activator: com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisLSUIActivator
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath:  .
-Import-Package: org.eclipse.equinox.security.storage,
- org.eclipse.reddeer.swt.api
+Bundle-ClassPath: .
 Export-Package: com.redhat.fabric8analytics.lsp.eclipse.ui,
  com.redhat.fabric8analytics.lsp.eclipse.ui.internal;x-friends:="com.redhat.fabric8analytics.lsp.eclipse.ui.tests"
 
