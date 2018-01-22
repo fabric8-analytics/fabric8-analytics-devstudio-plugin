@@ -25,16 +25,16 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.equinox.security.storage.StorageException;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.osgi.framework.Bundle;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisLSCoreActivator;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
+import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 
@@ -135,25 +135,25 @@ implements StreamConnectionProvider {
 	}
 	
 	private void addPreferencesListener() {
-		IPreferenceStore preferenceStore = Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore();
-		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (Fabric8AnalysisPreferences.LSP_SERVER_ENABLED.equals(event.getProperty())) {
-					if (Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
-						try {
-							// not sure if this actually works
-							start();
-						} catch (IOException e) {
-							//							// nothing to do
-						}
+		InstanceScope.INSTANCE.getNode(Fabric8AnalysisLSCoreActivator.PLUGIN_ID)
+				.addPreferenceChangeListener(new IPreferenceChangeListener() {
 
-					} else {
-						stop();	
+					@Override
+					public void preferenceChange(PreferenceChangeEvent event) {
+						if (Fabric8AnalysisPreferences.LSP_SERVER_ENABLED.equals(event.getKey())) {
+							if(Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
+								try {
+									// not sure if this actually works
+									start();
+								} catch (IOException e) {
+									// // nothing to do
+								}
+							} else {
+								stop();
+							}
+						}
 					}
-				}
-			}
-		});
+				});
 	}
 
 	private static File getServerLocation() {

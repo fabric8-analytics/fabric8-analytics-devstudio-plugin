@@ -11,13 +11,9 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.m2e.editor.pom.MavenPomEditor;
@@ -34,14 +30,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.json.JSONException;
 
+import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
 import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.AnalysesJobHandler;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.ThreeScaleIntegration;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.WorkspaceFilesFinder;
 
 /**
  * Class to create composite for page Fabric8Analyses.

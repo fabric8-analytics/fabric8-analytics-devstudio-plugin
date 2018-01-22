@@ -20,9 +20,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.json.JSONException;
 
-import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisLSCoreActivator;
+import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.ThreeScaleIntegration;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
@@ -49,7 +48,7 @@ public class AuthorizeHandler extends AbstractHandler {
 			Fabric8AnalysisPreferences.getInstance().setToken(token);
 			ThreeScaleIntegration.getInstance().set3ScalePreferences(token);
 		} catch (ThreeScaleAPIException | JSONException | StorageException e) {
-			Fabric8AnalysisLSCoreActivator.getDefault().logError("Could not set token", e);
+			Fabric8AnalysisLSUIActivator.getDefault().logError("Could not set token", e);
 		}
 		Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
 		PreferencesUtil.createPreferenceDialogOn(shell,

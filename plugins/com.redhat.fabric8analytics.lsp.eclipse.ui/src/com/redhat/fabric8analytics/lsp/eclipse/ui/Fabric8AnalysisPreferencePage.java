@@ -11,12 +11,15 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
+import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisLSCoreActivator;
+import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
 
 
 public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -30,7 +33,7 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 	}
 	@Override
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(Fabric8AnalysisLSUIActivator.getDefault().getPreferenceStore());
+		setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE, Fabric8AnalysisLSCoreActivator.PLUGIN_ID));
 		setTitle("Fabric8");
 		setDescription("Following services will be enabled");
 	}
