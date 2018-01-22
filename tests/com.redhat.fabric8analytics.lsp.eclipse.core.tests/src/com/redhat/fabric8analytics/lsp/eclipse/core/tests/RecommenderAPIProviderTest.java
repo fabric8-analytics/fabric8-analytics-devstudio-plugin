@@ -22,10 +22,12 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -74,10 +76,10 @@ public class RecommenderAPIProviderTest {
 
 	private StatusLine statusLine;
 	
-	private Set<IFile> files;
+	private Map<String, String> files;
 
 	@Before
-	public void setup() throws CoreException {
+	public void setup() throws CoreException, IOException {
 		httpClient = mock(CloseableHttpClient.class);
 		httpResponse = mock(CloseableHttpResponse.class);
 		httpEntity = mock(HttpEntity.class);
@@ -86,9 +88,11 @@ public class RecommenderAPIProviderTest {
 		provider = new RecommenderAPIProviderWithCustomClient(URL, USER_KEY, TOKEN);
 		
 		IProject project = createProject("myproject");
-		files = new HashSet<>();
-		files.add(createFile(project, "firstfile", "aaa content"));
-		files.add(createFile(project, "secondfile", "bbb content"));
+		files = new HashMap<>();
+		File fileA = createFile(project, "firstfile", "aaa content");
+		File fileB = createFile(project, "secondfile", "bbb content");
+		files.put(fileA.getAbsolutePath(), new String(Files.readAllBytes(fileA.toPath())));
+		files.put(fileB.getAbsolutePath(), new String(Files.readAllBytes(fileB.toPath())));
 	}
 
 	@After
@@ -127,7 +131,7 @@ public class RecommenderAPIProviderTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void requestAnalyses_emptyFiles() throws ClientProtocolException, IOException, RecommenderAPIException, CoreException {
-		provider.requestAnalyses(Collections.EMPTY_SET);
+		provider.requestAnalyses(Collections.emptyMap());
 	}
 	
 	@Test
@@ -268,10 +272,10 @@ public class RecommenderAPIProviderTest {
 		}
 	}
 	
-	private IFile createFile(IProject project, String name, String content) throws CoreException{
+	private File createFile(IProject project, String name, String content) throws CoreException{
 		IFile file = project.getFile(name);
 		file.create(new ByteArrayInputStream(content.getBytes()), IResource.NONE, null);
-		return file;
+		return file.getRawLocation().makeAbsolute().toFile();
 	}
 
 	private IProject createProject(String name) throws CoreException {

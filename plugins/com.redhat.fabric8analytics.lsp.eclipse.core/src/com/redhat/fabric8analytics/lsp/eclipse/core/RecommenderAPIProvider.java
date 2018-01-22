@@ -185,7 +185,7 @@ public class RecommenderAPIProvider {
 			throw new IllegalArgumentException("The token was null");
 		}
 	}
-
+	
 	private void checkFiles(Map<String, String> files) {
 		if (files == null) {
 			throw new IllegalArgumentException("Files for analyses were null");
