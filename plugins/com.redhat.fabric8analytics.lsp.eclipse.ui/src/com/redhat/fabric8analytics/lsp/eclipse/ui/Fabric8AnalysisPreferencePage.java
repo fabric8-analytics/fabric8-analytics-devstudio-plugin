@@ -39,7 +39,7 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 	protected void createFieldEditors() {
 		enableLSPField = new BooleanFieldEditor(
 				Fabric8AnalysisPreferences.LSP_SERVER_ENABLED, 
-				"&Fabric8 Analysis",
+				"&Fabric8 Analytics",
 				getFieldEditorParent());
 		addField(enableLSPField);
 	}
