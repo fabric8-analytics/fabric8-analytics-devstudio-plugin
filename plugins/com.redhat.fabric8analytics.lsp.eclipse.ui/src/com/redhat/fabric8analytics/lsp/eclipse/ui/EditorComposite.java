@@ -14,7 +14,8 @@ package com.redhat.fabric8analytics.lsp.eclipse.ui;
 import java.util.Collections;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.equinox.security.storage.StorageException;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.m2e.editor.pom.MavenPomEditor;
 import org.eclipse.m2e.editor.pom.MavenPomEditorPage;
@@ -28,15 +29,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.json.JSONException;
 
-import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
-import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.AnalyticsAuthData;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.AnalysesJobHandler;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.ThreeScaleIntegration;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.GetAnalyticsAuthDataJob;
 
 /**
  * Class to create composite for page Fabric8Analyses.
@@ -44,7 +42,7 @@ import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
  * @author Geetika Batra
  *
  */
-public class EditorComposite extends Composite{
+public class EditorComposite extends Composite {
 
 	protected MavenPomEditorPage editorPage;
 
@@ -62,7 +60,6 @@ public class EditorComposite extends Composite{
 		createComposite();
 	}
 
-
 	private void createComposite() {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginWidth = 0;
@@ -76,50 +73,30 @@ public class EditorComposite extends Composite{
 			@Override
 			public void widgetSelected(SelectionEvent s) {
 				IFile currentPomFile = pomEditor.getPomFile();
-				if(currentPomFile == null) {
+				if (currentPomFile == null) {
 					MessageDialogUtils.displayErrorMessage("Cannot find POM file");
 					return;
 				}
-				try {
-
-					String token = TokenCheck.getInstance().getToken();
-
-					if (token == null) {
-						MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
+				GetAnalyticsAuthDataJob getAuthDataJob = new GetAnalyticsAuthDataJob();
+				getAuthDataJob.addJobChangeListener(new JobChangeAdapter() {
+						
+					@Override
+					public void done(IJobChangeEvent event) {
+						AnalyticsAuthData analyticsAuthData = getAuthDataJob.getAuthData();
+						if(analyticsAuthData != null) {
+							RecommenderAPIProvider provider = new RecommenderAPIProvider(analyticsAuthData);
+							new AnalysesJobHandler(provider, Collections.singleton(currentPomFile), EditorComposite.this).analyze();
+						}
 					}
-					else {
-						Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
-					}
-					
-					String RECOMMENDER_API_TOKEN = "Bearer "+ token;
-					String RECOMMENDER_3SCALE_TOKEN = token;
-
-					String serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
-					String userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
-
-					if(serverURL == null && userKey == null) {
-						ThreeScaleIntegration.getInstance().set3ScalePreferences(RECOMMENDER_3SCALE_TOKEN);
-						serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
-						userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
-					}
-					
-					RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
-					new AnalysesJobHandler(provider, Collections.singleton(currentPomFile), EditorComposite.this).analyze();
-
-					editorBrowser.setUrl(provider.getAnalysesURL(jobID));
-
-				}	
-				catch (StorageException | JSONException | ThreeScaleAPIException e) {
-					MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
-				};
-
-
+				});
+				getAuthDataJob.schedule();
 			}
 		});
 	}
+
 	public void updateBrowser(String url) {
-		Display.getDefault().asyncExec(new Runnable(){
-			public void run(){
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
 				if (!editorBrowser.isDisposed()) {
 					editorBrowser.setUrl(url);
 				}
@@ -127,10 +104,10 @@ public class EditorComposite extends Composite{
 		});
 
 	}
-	
+
 	public void disposeBrowser() {
-		Display.getDefault().asyncExec(new Runnable(){
-			public void run(){
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
 				if (!editorBrowser.isDisposed()) {
 					editorBrowser.dispose();
 				}

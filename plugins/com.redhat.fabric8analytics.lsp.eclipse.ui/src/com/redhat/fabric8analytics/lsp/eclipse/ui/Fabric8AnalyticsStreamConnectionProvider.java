@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -35,35 +36,32 @@ import org.osgi.framework.Bundle;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisLSCoreActivator;
 import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.AnalyticsAuthData;
+import com.redhat.fabric8analytics.lsp.eclipse.core.internal.AnalyticsAuthService;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 
 public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConnectionProvider
-implements StreamConnectionProvider {
+		implements StreamConnectionProvider {
 
 	public static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
 
 	public static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
 
-	private TokenCheck tokenCheck;
+	private AnalyticsAuthService osioApiProvider;
 
 	public static final String THREE_SCALE_USER_TOKEN = "THREE_SCALE_USER_TOKEN";
 
 	public static final String VERSION_ROUTE = "/api/v1";
 
-	private String token;
-
-	private String serverUrl;
-
-	private String userKey;
+	private AnalyticsAuthData analyticsAuthData;
 
 	public Fabric8AnalyticsStreamConnectionProvider() {
-		this(TokenCheck.getInstance());
+		this(AnalyticsAuthService.getInstance());
 	}
 
-	public Fabric8AnalyticsStreamConnectionProvider(TokenCheck tokenCheck) {
+	public Fabric8AnalyticsStreamConnectionProvider(AnalyticsAuthService tokenCheck) {
 		super();
-		this.tokenCheck = tokenCheck; 
+		this.osioApiProvider = tokenCheck;
 
 		File nodeJsLocation = getNodeJsLocation();
 		if (nodeJsLocation == null) {
@@ -76,11 +74,8 @@ implements StreamConnectionProvider {
 			return;
 		}
 
-		setCommands(Arrays.asList(new String[] {
-				nodeJsLocation.getAbsolutePath(),
-				serverLocation.getAbsolutePath(),
-				"--stdio"
-		}));
+		setCommands(Arrays.asList(
+				new String[] { nodeJsLocation.getAbsolutePath(), serverLocation.getAbsolutePath(), "--stdio" }));
 
 		setWorkingDirectory(System.getProperty("user.dir"));
 		addPreferencesListener();
@@ -89,12 +84,16 @@ implements StreamConnectionProvider {
 	@Override
 	public void start() throws IOException {
 		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
-			throw new IOException("Analyses Disabled");
+			throw new IOException("Fabric8Analytics LSP Server is not enabled");
 		}
 
-		token = tokenCheck.getToken();
-		if (token == null) {
-			throw new IOException("The token was null");
+		try {
+			analyticsAuthData = osioApiProvider.getAnalyticsAuthData(new NullProgressMonitor());
+		} catch (StorageException e) {
+			throw new IOException("Error while retrieving stored data", e);
+		}
+		if (analyticsAuthData == null) {
+			throw new IOException("User is not logged in Openshift.io");
 		}
 
 		super.start();
@@ -111,29 +110,13 @@ implements StreamConnectionProvider {
 	@Override
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
-		try {
-			token = Fabric8AnalysisPreferences.getInstance().getToken();
-			if(token!=null) {
-				token = tokenCheck.getToken();
-			}
-			if (token == null) {
-				throw new RuntimeException("Token was null");
-			}
-			
-//			serverUrl = "https://recommender.api.openshift.io/api/v1/";
-			serverUrl = Fabric8AnalysisPreferences.getInstance().getProdURL() + VERSION_ROUTE ;
-			userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
-			Fabric8AnalysisLSUIActivator.getDefault().logInfo(token + serverUrl + userKey);
-			res.environment().put(RECOMMENDER_API_TOKEN, token);
-			res.environment().put(RECOMMENDER_API_URL, serverUrl);
-			res.environment().put(THREE_SCALE_USER_TOKEN, userKey);
-		} catch (StorageException e) {
-			// TODO Auto-generated catch block
-			Fabric8AnalysisLSCoreActivator.getDefault().logError("Could not get token ", e);
-		}
+		String serverUrl = getAuthData().getThreeScaleData().getProd() + VERSION_ROUTE;
+		res.environment().put(RECOMMENDER_API_TOKEN, getAuthData().getToken());
+		res.environment().put(RECOMMENDER_API_URL, serverUrl);
+		res.environment().put(THREE_SCALE_USER_TOKEN, getAuthData().getThreeScaleData().getUserKey());
 		return res;
 	}
-	
+
 	private void addPreferencesListener() {
 		InstanceScope.INSTANCE.getNode(Fabric8AnalysisLSCoreActivator.PLUGIN_ID)
 				.addPreferenceChangeListener(new IPreferenceChangeListener() {
@@ -168,9 +151,9 @@ implements StreamConnectionProvider {
 
 	private static File getNodeJsLocation() {
 		String location = null;
-		String[] command = new String[] {"/bin/bash", "-c", "which node"};
+		String[] command = new String[] { "/bin/bash", "-c", "which node" };
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			command = new String[] {"cmd", "/c", "where node"};
+			command = new String[] { "cmd", "/c", "where node" };
 		}
 		BufferedReader reader = null;
 		try {
@@ -192,8 +175,8 @@ implements StreamConnectionProvider {
 			return new File(location);
 		}
 
-		String message = "`node` is missing in your PATH, Fabric8 Fabric8 analyses server won't work.\n" +
-				"Please install `node` and make it available in your PATH";
+		String message = "`node` is missing in your PATH, Fabric8 Fabric8 analyses server won't work.\n"
+				+ "Please install `node` and make it available in your PATH";
 
 		MessageDialogUtils.displayErrorMessage(message);
 		return null;
@@ -212,5 +195,9 @@ implements StreamConnectionProvider {
 	@Override
 	public OutputStream getOutputStream() {
 		return super.getOutputStream();
+	}
+	
+	public AnalyticsAuthData getAuthData() {
+		return analyticsAuthData;
 	}
 }

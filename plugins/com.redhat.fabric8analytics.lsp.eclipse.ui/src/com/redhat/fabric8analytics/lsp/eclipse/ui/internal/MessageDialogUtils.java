@@ -1,9 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Red Hat Inc..
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Red Hat Incorporated - initial API and implementation
+ *******************************************************************************/
 package com.redhat.fabric8analytics.lsp.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.AnalyticsAuthData;
+import com.redhat.fabric8analytics.lsp.eclipse.core.internal.AnalyticsAuthService;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisLSUIActivator;
 
 public class MessageDialogUtils {
@@ -14,6 +29,19 @@ public class MessageDialogUtils {
 				MessageDialog.openInformation(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "Fabric8 info message", message);
 			}
 		});
+	}
+	
+	public static AnalyticsAuthData proptForLogin(IProgressMonitor monitor) {
+		MessageDialog dialog = new MessageDialog(Display.getDefault().getActiveShell(), "Fabric8Analytics login", 
+				null, "Please login to Openshift.io", MessageDialog.CONFIRM, new String[] {"Login", "Cancel"}, 0);
+		if(dialog.open() == Window.OK) {
+			try {
+				return AnalyticsAuthService.getInstance().login(monitor);
+			} catch (StorageException e) {
+				Fabric8AnalysisLSUIActivator.getDefault().logError("Error while storing Fabric8Analytics data", e);
+			}
+		}
+		return null;
 	}
 
 	public static void displayErrorMessage(String message) {

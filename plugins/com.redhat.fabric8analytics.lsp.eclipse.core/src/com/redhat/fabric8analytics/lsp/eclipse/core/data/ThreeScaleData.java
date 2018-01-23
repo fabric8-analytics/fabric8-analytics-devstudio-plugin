@@ -1,4 +1,4 @@
-package com.redhat.fabric8analytics.lsp.eclipse.core;
+package com.redhat.fabric8analytics.lsp.eclipse.core.data;
 
 /**
  * Stores 3scale data. 

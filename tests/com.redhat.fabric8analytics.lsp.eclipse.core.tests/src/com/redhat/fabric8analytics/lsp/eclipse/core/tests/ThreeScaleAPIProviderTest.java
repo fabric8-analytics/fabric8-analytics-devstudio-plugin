@@ -38,7 +38,7 @@ import org.mockito.ArgumentCaptor;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIProvider;
-import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleData;
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.ThreeScaleData;
 
 public class ThreeScaleAPIProviderTest {
 	

@@ -16,4 +16,6 @@ Require-Bundle: org.eclipse.reddeer.go;bundle-version="2.0.0",
  com.redhat.fabric8analytics.lsp.eclipse.core;bundle-version="0.0.1",
  com.redhat.fabric8analytics.lsp.eclipse.ui;bundle-version="0.0.1",
  org.eclipse.equinox.security,
- org.eclipse.lsp4e
+ org.eclipse.lsp4e,
+ org.eclipse.lsp4j.jsonrpc,
+ org.eclipse.lsp4j
