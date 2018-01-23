@@ -53,6 +53,8 @@ import org.mockito.ArgumentCaptor;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIException;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.AnalyticsAuthData;
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.ThreeScaleData;
 
 public class RecommenderAPIProviderTest {
 
@@ -84,8 +86,11 @@ public class RecommenderAPIProviderTest {
 		httpResponse = mock(CloseableHttpResponse.class);
 		httpEntity = mock(HttpEntity.class);
 		statusLine = mock(StatusLine.class);
+		
+		ThreeScaleData scaleData = new ThreeScaleData(URL, URL, USER_KEY);
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, TOKEN);
 
-		provider = new RecommenderAPIProviderWithCustomClient(URL, USER_KEY, TOKEN);
+		provider = new RecommenderAPIProviderWithCustomClient(data);
 		
 		IProject project = createProject("myproject");
 		files = new HashMap<>();
@@ -111,17 +116,23 @@ public class RecommenderAPIProviderTest {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void checkNullURL() {
-		new RecommenderAPIProvider(null, USER_KEY, TOKEN);
+		ThreeScaleData scaleData = new ThreeScaleData(null, URL, USER_KEY);
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, TOKEN);
+		new RecommenderAPIProvider(data);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void checkNullUserKey() {
-		new RecommenderAPIProvider(URL, null, TOKEN);
+		ThreeScaleData scaleData = new ThreeScaleData(URL, URL, null);
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, TOKEN);
+		new RecommenderAPIProvider(data);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void checkNullToken() {
-		new RecommenderAPIProvider(URL, USER_KEY, null);
+		ThreeScaleData scaleData = new ThreeScaleData(URL, URL, USER_KEY);
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, null);
+		new RecommenderAPIProvider(data);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -262,8 +273,8 @@ public class RecommenderAPIProviderTest {
 
 	private class RecommenderAPIProviderWithCustomClient extends RecommenderAPIProvider {
 
-		public RecommenderAPIProviderWithCustomClient(String url, String userKey, String token) {
-			super(url, userKey, token);
+		public RecommenderAPIProviderWithCustomClient(AnalyticsAuthData data) {
+			super(data);
 		}
 		
 		@Override

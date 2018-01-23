@@ -11,7 +11,6 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -19,31 +18,28 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.equinox.security.storage.StorageException;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.json.JSONException;
 
-import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.core.RecommenderAPIProvider;
-import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIException;
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.AnalyticsAuthData;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.AnalysesJobHandler;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.ThreeScaleIntegration;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
+import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.GetAnalyticsAuthDataJob;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.WorkspaceFilesFinder;
-//import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.EffectivePomJobHandler;;
 
 public class ExitHandler extends AbstractHandler {
-	private String RECOMMENDER_API_TOKEN;
-	private String RECOMMENDER_3SCALE_TOKEN;
-	static  String jobId;
+
+	static String jobId;
 	static IViewPart mainView = null;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Set<IFile> pomFiles = new HashSet<IFile>();
+		final Set<IFile> pomFiles;
 		try {
 			pomFiles = WorkspaceFilesFinder.getInstance().findPOMs();
 		} catch (CoreException e1) {
@@ -54,47 +50,45 @@ public class ExitHandler extends AbstractHandler {
 			MessageDialogUtils.displayInfoMessage("No POM files found in the selection");
 			return null;
 		}
-		try {
-			if(!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
-				MessageDialogUtils.displayInfoMessage("Enable Fabric8 Analyses");
-				return null;
-			}
-			String token = Fabric8AnalysisPreferences.getInstance().getToken();
-			if (token == null) {
-				MessageDialogUtils.displayInfoMessage("Cannot run analyses because login into OpenShift.io failed");
-				return null;
-			} else {
-				token = TokenCheck.getInstance().getToken();
-			}
-			RECOMMENDER_API_TOKEN = "Bearer "+ token;
-			RECOMMENDER_3SCALE_TOKEN = token;
-			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(StackAnalysesView.NAME);
-			setView(view);
-			String serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
-			String userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
+		GetAnalyticsAuthDataJob getAuthDataJob = new GetAnalyticsAuthDataJob();
+		getAuthDataJob.addJobChangeListener(new JobChangeAdapter() {
 
-			if(serverURL == null && userKey == null) {
-				ThreeScaleIntegration.getInstance().set3ScalePreferences(RECOMMENDER_3SCALE_TOKEN);
-				serverURL = Fabric8AnalysisPreferences.getInstance().getProdURL();
-				userKey = Fabric8AnalysisPreferences.getInstance().getUserKey();
+			@Override
+			public void done(IJobChangeEvent event) {
+				AnalyticsAuthData analyticsAuthData = getAuthDataJob.getAuthData();
+				if (analyticsAuthData != null) {
+					Display.getDefault().syncExec(new Runnable() {
+
+						@Override
+						public void run() {
+							try {
+								IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+										.showView(StackAnalysesView.NAME);
+								setView(view);
+							} catch (PartInitException e) {
+								MessageDialogUtils.displayErrorMessage("Error while opening stack analysis view", e);
+							}
+
+						}
+					});
+
+					RecommenderAPIProvider provider = new RecommenderAPIProvider(analyticsAuthData);
+					new AnalysesJobHandler(provider, pomFiles, null).analyze();
+				}
+
 			}
-			
-			RecommenderAPIProvider provider = new RecommenderAPIProvider(serverURL, userKey, token);
-			new AnalysesJobHandler(provider, pomFiles, null).analyze();
-		} catch (StorageException | JSONException | PartInitException | ThreeScaleAPIException e) {
-			MessageDialogUtils.displayErrorMessage("Error while running stack analyses", e);
-		}
+		});
+		getAuthDataJob.schedule();
 		return null;
 	}
 
-	public static  void setJobId(String jobId) {
+	public static void setJobId(String jobId) {
 		ExitHandler.jobId = jobId;
 	}
 
 	public static String getJobId() {
 		return ExitHandler.jobId;
 	}
-
 
 	public static void setView(IViewPart mainView) {
 		ExitHandler.mainView = mainView;

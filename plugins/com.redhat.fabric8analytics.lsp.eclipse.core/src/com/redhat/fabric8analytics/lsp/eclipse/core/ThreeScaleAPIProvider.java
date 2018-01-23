@@ -25,6 +25,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.ThreeScaleData;
+
 /**
  * Provides access to 3scale service
  * 

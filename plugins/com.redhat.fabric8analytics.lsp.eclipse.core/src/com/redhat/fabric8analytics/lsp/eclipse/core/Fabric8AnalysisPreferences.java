@@ -15,13 +15,14 @@ import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.ThreeScaleData;
+
 public class Fabric8AnalysisPreferences {
 	
 	public static final String LSP_SERVER_ENABLED = "fabric8AnalysisPreferences.LSP_ENABLED";
 	public static final String PROD_URL = "fabric8AnalysisPreferences.PROD_URL";
 	public static final String STAGE_URL = "fabric8AnalysisPreferences.STAGE_URL";
 	public static final String USER_KEY = "fabric8AnalysisPreferences.USER_KEY";
-	public static final String TOKEN = "fabric8AnalysisPreferences.TOKEN";
 	
 	private ISecurePreferences secureNode;
 	private static Fabric8AnalysisPreferences instance;
@@ -70,12 +71,11 @@ public class Fabric8AnalysisPreferences {
 		secureNode.put(USER_KEY, userKey, true);
 	}
 	
-	public String getToken() throws StorageException {
-		return secureNode.get(TOKEN, null);
-	}
-	
-	public void setToken(String token) throws StorageException {
-		secureNode.put(TOKEN, token, true);
+	public ThreeScaleData getThreeScaleData() throws StorageException {
+		if(getProdURL() == null || getStageURL() == null || getUserKey() == null) {
+			return null;
+		}
+		return new ThreeScaleData(getProdURL(), getStageURL(), getUserKey());
 	}
 
 }

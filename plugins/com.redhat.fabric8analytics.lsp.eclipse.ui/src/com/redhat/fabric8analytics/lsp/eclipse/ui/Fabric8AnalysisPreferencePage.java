@@ -11,26 +11,31 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisLSCoreActivator;
 import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
-
+import com.redhat.fabric8analytics.lsp.eclipse.core.internal.AnalyticsAuthService;
 
 public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	static final String PREFERENCE_PAGE_ID = Fabric8AnalysisLSUIActivator.getDefault().getBundle().getSymbolicName() + ".preferences"; //$NON-NLS-1$
+	static final String PREFERENCE_PAGE_ID = Fabric8AnalysisLSUIActivator.getDefault().getBundle().getSymbolicName()
+			+ ".preferences"; //$NON-NLS-1$
 
 	private BooleanFieldEditor enableLSPField;
 
 	public Fabric8AnalysisPreferencePage() {
 
 	}
+
 	@Override
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE, Fabric8AnalysisLSCoreActivator.PLUGIN_ID));
@@ -40,10 +45,8 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 
 	@Override
 	protected void createFieldEditors() {
-		enableLSPField = new BooleanFieldEditor(
-				Fabric8AnalysisPreferences.LSP_SERVER_ENABLED, 
-				"&Fabric8 Analytics",
-				getFieldEditorParent());
+		enableLSPField = new BooleanFieldEditor(Fabric8AnalysisPreferences.LSP_SERVER_ENABLED,
+				"&Fabric8 Analytics LSP Server", getFieldEditorParent());
 		addField(enableLSPField);
 	}
 
@@ -53,5 +56,18 @@ public class Fabric8AnalysisPreferencePage extends FieldEditorPreferencePage imp
 		if (enableLSPField != null) {
 			enableLSPField.load();
 		}
+	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if(enableLSPField.equals(event.getSource()) && (Boolean)event.getNewValue()) {
+			// login
+			try {
+				AnalyticsAuthService.getInstance().login(new NullProgressMonitor());
+			} catch (StorageException e) {
+				Fabric8AnalysisLSUIActivator.getDefault().logError("Error while logging to openshift.io", e);
+			}
+		}
+		super.propertyChange(event);
 	}
 }

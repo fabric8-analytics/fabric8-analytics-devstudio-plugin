@@ -20,6 +20,7 @@ Require-Bundle: org.eclipse.lsp4e;bundle-version="0.3.0",
  org.eclipse.ui.forms,
  org.eclipse.ui.ide,
  org.eclipse.m2e.maven.runtime,
+ org.jboss.tools.openshift.io.core,
  org.eclipse.equinox.security
 Eclipse-BundleShape: dir
 Bundle-Activator: com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisLSUIActivator

@@ -19,26 +19,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Matchers.any;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.AnalyticsAuthData;
+import com.redhat.fabric8analytics.lsp.eclipse.core.data.ThreeScaleData;
+import com.redhat.fabric8analytics.lsp.eclipse.core.internal.AnalyticsAuthService;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalyticsStreamConnectionProvider;
-import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 
 public class Fabric8AnalyticsStreamConnectionProviderTest {
 	
 	private static final String TOKEN = "mytoken";
 	
-	private TokenCheck tokenCheck;
+	private AnalyticsAuthService authService;
 
 	private Fabric8AnalyticsStreamConnectionProviderWrapper provider;
 	
@@ -46,12 +52,13 @@ public class Fabric8AnalyticsStreamConnectionProviderTest {
 	public void setup() throws StorageException {
 		Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
 		
-		tokenCheck = mock(TokenCheck.class);
-		when(tokenCheck.getToken()).thenReturn(TOKEN);
+		ThreeScaleData scaleData = new ThreeScaleData("www.myurl.com", "www.myurl.com", "userKey");
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, TOKEN);
 		
-		provider = new Fabric8AnalyticsStreamConnectionProviderWrapper(tokenCheck);
-		Fabric8AnalysisPreferences.getInstance().setToken("myToken");
-		Fabric8AnalysisPreferences.getInstance().setUserKey("userKey");
+		authService = mock(AnalyticsAuthService.class);
+		when(authService.getAnalyticsAuthData(any(IProgressMonitor.class))).thenReturn(data);
+		
+		provider = new Fabric8AnalyticsStreamConnectionProviderWrapper(authService);
 	}
 	
 	@After
@@ -61,7 +68,14 @@ public class Fabric8AnalyticsStreamConnectionProviderTest {
 	
 	@Test
 	public void createProcessBuilder() throws StorageException {
-		ProcessBuilder builder = provider.createProcessBuilder();
+		ThreeScaleData scaleData = new ThreeScaleData("www.myurl.com", "www.myurl.com", "userKey");
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, TOKEN);
+		
+		provider = new Fabric8AnalyticsStreamConnectionProviderWrapper(authService);
+		Fabric8AnalyticsStreamConnectionProviderWrapper providerSpy = spy(provider);
+		doReturn(data).when(providerSpy).getAuthData();
+		
+		ProcessBuilder builder = providerSpy.createProcessBuilder();
 		List<String> commands = builder.command();
 		
 		assertThat(commands.size(), is(3));
@@ -74,15 +88,15 @@ public class Fabric8AnalyticsStreamConnectionProviderTest {
 		Map<String, String> params = builder.environment();
 		
 		assertThat(params, hasEntry(Fabric8AnalyticsStreamConnectionProvider.RECOMMENDER_API_TOKEN, TOKEN));
-		assertThat(params, hasEntry(Fabric8AnalyticsStreamConnectionProvider.RECOMMENDER_API_URL, Fabric8AnalysisPreferences.getInstance().getProdURL() + Fabric8AnalyticsStreamConnectionProvider.VERSION_ROUTE));
+		assertThat(params, hasEntry(Fabric8AnalyticsStreamConnectionProvider.RECOMMENDER_API_URL, "www.myurl.com" + Fabric8AnalyticsStreamConnectionProvider.VERSION_ROUTE));
 	}
 	
 	@Test(expected=IOException.class)
-	public void start_noToken() throws IOException {
-		tokenCheck = mock(TokenCheck.class);
-		when(tokenCheck.getToken()).thenReturn(null);
+	public void start_noToken() throws IOException, StorageException {
+		authService = mock(AnalyticsAuthService.class);
+		when(authService.getAnalyticsAuthData(any(IProgressMonitor.class))).thenReturn(null);
 		
-		provider = new Fabric8AnalyticsStreamConnectionProviderWrapper(tokenCheck);
+		provider = new Fabric8AnalyticsStreamConnectionProviderWrapper(authService);
 		provider.start();
 	}
 	
