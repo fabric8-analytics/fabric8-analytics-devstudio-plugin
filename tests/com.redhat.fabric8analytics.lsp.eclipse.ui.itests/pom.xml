@@ -14,9 +14,13 @@
 	<properties>
 		<test.suite>com.redhat.fabric8analytics.lsp.eclipse.ui.itests</test.suite>
 		<test.class>com.redhat.fabric8analytics.lsp.eclipse.ui.itests.SmokeSuite</test.class>
+		<systemProperties>${integrationTestsSystemProperties}</systemProperties>
+		<integrationTestsSystemProperties>-DOSusername=${OSusername} -DOSpassword=${OSpassword} -DOSLoginProvider=${OSLoginProvider}</integrationTestsSystemProperties>
+		<!-- <OSusername>${OSusername}</OSusername> <OSpassword>${OSpassword}</OSpassword> 
+			<OSLoginProvider>${OSLoginProvider}</OSLoginProvider> -->
+		<jbosstools-site>http://download.jboss.org/jbosstools/${eclipseReleaseName}/snapshots/updates/core/${stream_jbt}/</jbosstools-site>
+		<jbosstools-tests-site>http://download.jboss.org/jbosstools/${eclipseReleaseName}/snapshots/updates/coretests/${stream_jbt}/</jbosstools-tests-site>
 	</properties>
-
-
 
 	<profiles>
 		<profile>
@@ -54,6 +58,7 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
+					<appArgLine>-eclipse.password ${project.basedir}/resources/securepass</appArgLine>
 					<skip>${skipITests}</skip>
 					<useUIThread>false</useUIThread>
 					<testClass>${test.class}</testClass>
@@ -62,4 +67,17 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>jbosstools</id>
+			<layout>p2</layout>
+			<url>${jbosstools-site}</url>
+		</repository>
+		<repository>
+			<id>jbosstools-tests</id>
+			<layout>p2</layout>
+			<url>${jbosstools-tests-site}</url>
+		</repository>
+	</repositories>
 </project>

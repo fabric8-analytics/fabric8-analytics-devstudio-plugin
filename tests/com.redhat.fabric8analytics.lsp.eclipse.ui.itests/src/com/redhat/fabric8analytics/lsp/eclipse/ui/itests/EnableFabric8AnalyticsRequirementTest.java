@@ -19,12 +19,12 @@ import com.redhat.fabric8analytics.lsp.eclipse.ui.itests.requirements.OSIOLoginR
 
 @RunWith(RedDeerSuite.class)
 @OSIOLogin
-public class EnableFabric8AnalyticsTests {
+public class EnableFabric8AnalyticsRequirementTest {
 
-	private static final Logger log = Logger.getLogger(EnableFabric8AnalyticsTests.class);
+	private static final Logger log = Logger.getLogger(EnableFabric8AnalyticsRequirementTest.class);
 
 	@Test
-	public void enableFabric8AnalyticsButtonTest() {
+	public void enableFabric8AnalyticsOSIOButtonTest() {
 		log.info("Just check if requirement is satisfied");
 	}
 

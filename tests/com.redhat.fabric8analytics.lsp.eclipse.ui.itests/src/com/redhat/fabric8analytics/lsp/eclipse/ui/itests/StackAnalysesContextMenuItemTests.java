@@ -20,7 +20,10 @@ import org.eclipse.reddeer.swt.impl.menu.ContextMenu;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.redhat.fabric8analytics.lsp.eclipse.ui.itests.requirements.ImportProjectsRequirements.ImportProjects;
+
 @RunWith(RedDeerSuite.class)
+@ImportProjects
 public class StackAnalysesContextMenuItemTests extends StackAnalysesTestProjectBase {
 
 	private static final Logger log = Logger.getLogger(StackAnalysesContextMenuItemTests.class);

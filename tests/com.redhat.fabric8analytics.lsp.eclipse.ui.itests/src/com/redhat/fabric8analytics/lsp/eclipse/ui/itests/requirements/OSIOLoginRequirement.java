@@ -16,7 +16,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.eclipse.reddeer.common.wait.TimePeriod;
+import org.eclipse.reddeer.common.wait.WaitWhile;
 import org.eclipse.reddeer.junit.requirement.AbstractRequirement;
+import org.eclipse.reddeer.workbench.core.condition.JobIsRunning;
 import org.eclipse.reddeer.workbench.ui.dialogs.WorkbenchPreferenceDialog;
 import org.jboss.tools.openshift.reddeer.preference.page.OpenShifIOPreferencePage;
 
@@ -41,8 +44,9 @@ public class OSIOLoginRequirement extends AbstractRequirement<OSIOLogin> {
 	 */
 	@Override
 	public void fulfill() {
-		OSIOLoginDialog osiologindialog = OSIOLoginDialog.openLoginDialog();
-		osiologindialog.login();
+		// to make sure that there account is not present from previous failed tests 
+		removeAccountFromOpenShiftIOPreferencePage();
+		OSIOLoginDialog.openAndLogin();
 	}
 
 	/*
@@ -53,10 +57,12 @@ public class OSIOLoginRequirement extends AbstractRequirement<OSIOLogin> {
 	@Override
 	public void cleanUp() {
 		removeAccountFromOpenShiftIOPreferencePage();
+		OSIOLoginDialog.closePreferences(TimePeriod.SHORT);
 	}
 
 	// https://github.com/jbosstools/jbosstools-openshift/blob/master/itests/org.jboss.tools.openshift.ui.bot.test/src/org/jboss/tools/openshift/ui/bot/test/integration/openshift/io/GetOpenShiftIOTokenTest.java
-	private static void removeAccountFromOpenShiftIOPreferencePage() {
+	public static void removeAccountFromOpenShiftIOPreferencePage() {
+		new WaitWhile(new JobIsRunning(), TimePeriod.LONG);
 		WorkbenchPreferenceDialog preferences = new WorkbenchPreferenceDialog();
 		preferences.open();
 		OpenShifIOPreferencePage page = new OpenShifIOPreferencePage(preferences);
