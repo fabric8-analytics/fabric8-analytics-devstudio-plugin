@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
  */
 public class Fabric8AnalysisLSCoreActivator extends Plugin {
 
-	private static final String PLUGIN_ID = "com.redhat.fabric8analytics.lsp.eclipse.core";
+	public static final String PLUGIN_ID = "com.redhat.fabric8analytics.lsp.eclipse.core";
 	
 	// The shared instance
 	private static Fabric8AnalysisLSCoreActivator plugin;
