@@ -128,7 +128,7 @@ implements StreamConnectionProvider {
 			res.environment().put(THREE_SCALE_USER_TOKEN, userKey);
 		} catch (StorageException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.priFabric8AnalysisLSCoreActivator.getDefault().logError("Could not get token ", e);
 		}
 		return res;
 	}
