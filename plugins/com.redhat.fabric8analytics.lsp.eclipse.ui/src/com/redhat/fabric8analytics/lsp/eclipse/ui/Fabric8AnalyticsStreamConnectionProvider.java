@@ -112,7 +112,7 @@ implements StreamConnectionProvider {
 		ProcessBuilder res = super.createProcessBuilder();
 		try {
 			token = Fabric8AnalysisPreferences.getInstance().getToken();
-			if(token!=null) {
+			if(token == null) {
 				token = TokenCheck.getInstance().getToken();
 			}
 			if (token == null) {
