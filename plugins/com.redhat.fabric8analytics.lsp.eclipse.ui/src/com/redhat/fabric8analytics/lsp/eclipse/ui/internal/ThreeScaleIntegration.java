@@ -37,8 +37,6 @@ public class ThreeScaleIntegration {
 		Fabric8AnalysisPreferences.getInstance().setProdURL(data.getProd());
 		Fabric8AnalysisPreferences.getInstance().setStageURL(data.getStage());
 		Fabric8AnalysisPreferences.getInstance().setUserKey(data.getUserKey());
-		System.out.println(Fabric8AnalysisPreferences.getInstance().getUserKey());
-
 	}
 }
 

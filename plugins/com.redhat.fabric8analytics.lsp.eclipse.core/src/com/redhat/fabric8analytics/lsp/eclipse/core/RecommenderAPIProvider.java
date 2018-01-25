@@ -109,7 +109,6 @@ public class RecommenderAPIProvider {
 	}
 
 	public boolean analysesFinished(String jobId) throws RecommenderAPIException {
-		System.out.println("analysesFinished started");
 		checkJobID(jobId);
 		String RECOMMENDER_API_TOKEN = "Bearer ";
 		if (!RECOMMENDER_API_TOKEN.equals("Bearer " + token)) {
@@ -120,7 +119,6 @@ public class RecommenderAPIProvider {
 				 RECOMMENDER_API_URL_POLL_ANALYSES_POSTFIX + jobId +
 		 String.format("?user_key=%s", userScaleKey));
 		get.addHeader("Authorization", RECOMMENDER_API_TOKEN);
-		System.out.println("******************************************" + get);
 		CloseableHttpClient client = createClient();
 
 		try {
