@@ -23,15 +23,27 @@ image:docs/images/fabric8analytics-install.png[title="installation", alt="instal
 
 == Features
 
-* This Plugin helps to analyze your application stack.
+* Log In into OpenShift.io
+image:docs/images/icon.png[title="icon", alt="icon"]
 
+* Enables Fabric8 analyses
+image:docs/images/enableDialog.png[title="enable", alt="enable"]
+
+* This Plugin helps to analyze your application stack on manifest level.
+
+image:docs/images/pomSA.png[title="generate", alt="generate"]
+image:docs/images/pomSA2.png[title="manifest_level", alt="manifest_level"]
+
+* The Plugin also analyzes stack at workspace level
+
+image:docs/images/projectSA.png[title="project_stack", alt="project_stack"]
 image:docs/images/SA.png[title="stack_menu", alt="stack_menu"]
 
 
-* This plugin helps to analyze your components of application stack as and when you type.
+* Another feature includes analyses of components of application stack as and when you type.
 
 image:docs/images/componentA.png[title="componentAnalyses", alt="componentAnalyses"]
 
-
+image:docs/images/component_analyses.png[title="CA", alt="CA"]
 
 
