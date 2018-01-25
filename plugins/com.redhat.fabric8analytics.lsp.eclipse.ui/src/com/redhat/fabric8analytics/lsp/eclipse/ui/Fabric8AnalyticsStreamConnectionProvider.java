@@ -33,6 +33,7 @@ import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.osgi.framework.Bundle;
 
+import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisLSCoreActivator;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.MessageDialogUtils;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
@@ -128,7 +129,7 @@ implements StreamConnectionProvider {
 			res.environment().put(THREE_SCALE_USER_TOKEN, userKey);
 		} catch (StorageException e) {
 			// TODO Auto-generated catch block
-			e.priFabric8AnalysisLSCoreActivator.getDefault().logError("Could not get token ", e);
+			Fabric8AnalysisLSCoreActivator.getDefault().logError("Could not get token ", e);
 		}
 		return res;
 	}
