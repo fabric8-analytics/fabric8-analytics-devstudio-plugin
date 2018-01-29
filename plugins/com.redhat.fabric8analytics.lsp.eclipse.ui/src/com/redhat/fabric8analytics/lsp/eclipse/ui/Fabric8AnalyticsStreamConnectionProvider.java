@@ -19,10 +19,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -41,6 +48,10 @@ import com.redhat.fabric8analytics.lsp.eclipse.ui.internal.TokenCheck;
 public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConnectionProvider
 implements StreamConnectionProvider {
 
+	public static final String SERVER_ID = "com.redhat.fabric8analytics.lsp.eclipse.server";
+	
+	private static final String LSP_SERVER_ID_ATTRIBUTE = "languageServerId";
+	
 	public static final String RECOMMENDER_API_TOKEN = "RECOMMENDER_API_TOKEN";
 
 	public static final String RECOMMENDER_API_URL = "RECOMMENDER_API_URL";
@@ -105,7 +116,31 @@ implements StreamConnectionProvider {
 	@Override
 	public void stop() {
 		super.stop();
+		removeMarkers();
 		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is stopped");
+	}
+	
+	private void removeMarkers() {
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IProject[] projects = workspaceRoot.getProjects();
+		for (IProject project : projects) {
+			try {
+				List<IMarker> markersToDelete = new ArrayList<>();
+				IMarker[] markers = project.findMarkers(null, true, IResource.DEPTH_INFINITE);
+				for (IMarker marker : markers) {
+					if (marker.exists()) {
+						Object serverId = marker.getAttribute(LSP_SERVER_ID_ATTRIBUTE);
+						if (SERVER_ID.equals(serverId)) {
+							markersToDelete.add(marker);
+						}
+					}
+				}
+				ResourcesPlugin.getWorkspace()
+						.deleteMarkers(markersToDelete.toArray(new IMarker[markersToDelete.size()]));
+			} catch (CoreException e) {
+				Fabric8AnalysisLSUIActivator.getDefault().logError("Error occured while removing LSP markers", e);
+			}
+		}
 	}
 
 	@Override
