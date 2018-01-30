@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -38,7 +39,7 @@ import org.eclipse.ui.PlatformUI;
 public class WorkspaceFilesFinder {
 
 	private static final Set<String> EXCLUDED_FOLDERS = Stream.of("bin", "target").collect(Collectors.toSet());
-	
+
 	private static final WorkspaceFilesFinder INSTANCE = new WorkspaceFilesFinder();
 
 	public static WorkspaceFilesFinder getInstance() {
@@ -96,12 +97,12 @@ public class WorkspaceFilesFinder {
 				return;
 			}
 		}
-		
+
 		IContainer container = (IContainer) adaptable.getAdapter(IContainer.class);
 		if (container == null || !container.isAccessible()) {
 			return;
 		}
-		
+
 		for (IResource member : container.members()) {
 			if (member instanceof IFolder && EXCLUDED_FOLDERS.contains(member.getName())) {
 				continue;
@@ -125,5 +126,82 @@ public class WorkspaceFilesFinder {
 		pomFile.add(file);
 		return pomFile; 
 	}
-}
 
+	/**
+	 * Finds the license files in the root of workspace selected projects 
+	 * 
+	 * @return
+	 * @throws CoreException 
+	 */
+	public Set<IFile> findLicense() throws CoreException {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			return Collections.emptySet(); 
+		}
+
+		IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
+		if (selection == null) {
+			return Collections.emptySet();
+		}
+		return findLicense(selection);
+	}
+
+	/**
+	 * Finds the license files in the root of selected projects 
+	 * @param selection
+	 * @return
+	 * @throws CoreException 
+	 */
+	public Set<IFile> findLicense(IStructuredSelection selection) throws CoreException {
+		Set<IFile> files = new HashSet<IFile>();
+		if(selection instanceof IStructuredSelection) {
+			IStructuredSelection structurredSelection = (IStructuredSelection)selection;
+			Object firstSeleciton = structurredSelection.getFirstElement();
+
+			IProject selectedProject = null;
+
+			if (firstSeleciton instanceof IProject) {
+				//				selectedProject = (IProject) firstSeleciton;
+				for (Object o : selection.toList()) {
+					if (o instanceof IAdaptable) {
+						findLicense(files, (IAdaptable) o);
+					}
+				}
+				
+				return files;
+			}
+
+		}
+		return files;
+	}
+	/**
+	 * Finds the license file in the the project.
+	 * @param adaptable
+	 * @return
+	 * @throws CoreException 
+	 */
+	private void findLicense(Set<IFile> files, IAdaptable adaptable) throws CoreException {
+		
+		IContainer container = (IContainer) adaptable.getAdapter(IContainer.class);
+		if (container == null || !container.isAccessible()) {
+			return;
+		}
+		for (IResource member : container.members()) {
+			if (member instanceof IFile && member.getName().toLowerCase().equals("license")) {
+				IFile file = (IFile) member.getAdapter(IFile.class);
+				if (file != null) {
+					if (file.isAccessible()) {
+						files.add(file);
+					} else {
+						return;
+					}
+				}
+				
+			}
+			
+		}
+
+
+	}
+
+}

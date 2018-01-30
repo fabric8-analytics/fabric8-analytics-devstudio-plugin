@@ -40,11 +40,14 @@ public class AnalysesJobHandler {
 	private Set<IFile> pomFiles;
 
 	private EditorComposite editorComposite;
+	
+	private Set<IFile> license;
 
-	public AnalysesJobHandler(RecommenderAPIProvider provider, Set<IFile> pomFiles, EditorComposite editorComposite) {
+	public AnalysesJobHandler(RecommenderAPIProvider provider, Set<IFile> pomFiles, Set<IFile> license, EditorComposite editorComposite) {
 		this.provider = provider;
 		this.pomFiles = pomFiles;
 		this.editorComposite = editorComposite;
+		this.license = license;
 	}
 
 	public void analyze() {
@@ -62,7 +65,7 @@ public class AnalysesJobHandler {
 		} else {
 			editorComposite.updateBrowser(url.toString());
 		}
-		SendToFabric8AnalysisJob sentToAnalysisJob = new SendToFabric8AnalysisJob(provider, pomFiles);
+		SendToFabric8AnalysisJob sentToAnalysisJob = new SendToFabric8AnalysisJob(provider, pomFiles, license);
 		sentToAnalysisJob.schedule();
 
 		sentToAnalysisJob.addJobChangeListener(new JobChangeAdapter() {
