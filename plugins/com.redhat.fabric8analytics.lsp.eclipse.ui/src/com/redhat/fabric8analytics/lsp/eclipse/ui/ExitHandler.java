@@ -40,10 +40,12 @@ public class ExitHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final Set<IFile> pomFiles;
+		final Set<IFile> license;
 		try {
 			pomFiles = WorkspaceFilesFinder.getInstance().findPOMs();
+			license = WorkspaceFilesFinder.getInstance().findLicense();
 		} catch (CoreException e1) {
-			MessageDialogUtils.displayErrorMessage("Error while searching for POM files", e1);
+			MessageDialogUtils.displayErrorMessage("Error while searching for Pom or license files", e1);
 			return null;
 		}
 		if (pomFiles.isEmpty()) {
@@ -73,7 +75,7 @@ public class ExitHandler extends AbstractHandler {
 					});
 
 					RecommenderAPIProvider provider = new RecommenderAPIProvider(analyticsAuthData);
-					new AnalysesJobHandler(provider, pomFiles, null).analyze();
+					new AnalysesJobHandler(provider, pomFiles, license, null).analyze();
 				}
 
 			}

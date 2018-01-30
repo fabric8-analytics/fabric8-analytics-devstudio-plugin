@@ -34,11 +34,13 @@ public class SendToFabric8AnalysisJob extends Job {
 		private String jobID;
 		private Set<IFile> pomFiles;
 		private RecommenderAPIProvider provider;
+		private Set<IFile> license;
 
-		public SendToFabric8AnalysisJob(RecommenderAPIProvider provider, Set<IFile> pomFiles) {
+		public SendToFabric8AnalysisJob(RecommenderAPIProvider provider, Set<IFile> pomFiles, Set<IFile> license) {
 			super("Send poms to fabric8-analysis");
 			this.pomFiles = pomFiles;
 			this.provider = provider;
+			this.license = license;
 		}
 
 		@Override
@@ -56,7 +58,8 @@ public class SendToFabric8AnalysisJob extends Job {
 					String effectivePom = sw.toString();
 					effectivePomFiles.put(pomFile.getFullPath().toString(), effectivePom);
 				}
-				jobID = provider.requestAnalyses(effectivePomFiles);
+				
+				jobID = provider.requestAnalyses(effectivePomFiles, license);
 			} catch (Exception e) {
 				return new Status(Status.ERROR, Fabric8AnalysisLSCoreActivator.PLUGIN_ID, "Error during communication with server", e);
 			}
