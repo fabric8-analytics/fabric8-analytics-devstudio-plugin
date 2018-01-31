@@ -98,7 +98,7 @@ public class RecommenderAPIProviderTest {
 		File fileB = createFile(project, "secondfile", "bbb content");
 		files.put(fileA.getAbsolutePath(), new String(Files.readAllBytes(fileA.toPath())));
 		files.put(fileB.getAbsolutePath(), new String(Files.readAllBytes(fileB.toPath())));
-	}
+		}
 
 	@After
 	public void after() throws CoreException {
@@ -137,12 +137,12 @@ public class RecommenderAPIProviderTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void requestAnalyses_nullFiles() throws ClientProtocolException, IOException, RecommenderAPIException, CoreException {
-		provider.requestAnalyses(null);
+		provider.requestAnalyses(null, null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void requestAnalyses_emptyFiles() throws ClientProtocolException, IOException, RecommenderAPIException, CoreException {
-		provider.requestAnalyses(Collections.emptyMap());
+		provider.requestAnalyses(Collections.emptyMap(), null);
 	}
 	
 	@Test
@@ -155,7 +155,7 @@ public class RecommenderAPIProviderTest {
 
 		final ArgumentCaptor<HttpPost> argumentCaptor = ArgumentCaptor.forClass(HttpPost.class);
 
-		provider.requestAnalyses(files);
+		provider.requestAnalyses(files, null);
 		
 		verify(httpClient).execute(argumentCaptor.capture());
 		HttpPost httpPost = argumentCaptor.getValue();
@@ -178,7 +178,7 @@ public class RecommenderAPIProviderTest {
 		when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(JSON.getBytes()));
 		when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
 
-		String jobID = provider.requestAnalyses(files);
+		String jobID = provider.requestAnalyses(files, null);
 		verify(httpClient, atLeastOnce()).close();
 
 		assertThat(jobID, is("12345"));
@@ -190,7 +190,7 @@ public class RecommenderAPIProviderTest {
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);
 		when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_FORBIDDEN);
 
-		provider.requestAnalyses(files);
+		provider.requestAnalyses(files, null);
 		verify(httpClient, atLeastOnce()).close();
 	}
 
@@ -198,7 +198,7 @@ public class RecommenderAPIProviderTest {
 	public void requestAnalyses_clientException() throws ClientProtocolException, IOException, RecommenderAPIException {
 		when(httpClient.execute(any(HttpPost.class))).thenThrow(IOException.class);
 
-		provider.requestAnalyses(files);
+		provider.requestAnalyses(files, null);
 		verify(httpClient, atLeastOnce()).close();
 	}
 
