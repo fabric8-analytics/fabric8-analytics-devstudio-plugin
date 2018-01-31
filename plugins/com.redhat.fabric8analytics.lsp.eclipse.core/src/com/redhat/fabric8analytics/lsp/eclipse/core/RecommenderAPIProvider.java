@@ -33,6 +33,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -90,21 +91,9 @@ public class RecommenderAPIProvider {
 					fileObject.getKey());
 		}
 		if(!license.isEmpty()) {
-			File temp = license.iterator().next().getFullPath().toFile();
-			BufferedReader br;
-			try {
-				br = new BufferedReader(new FileReader(temp));
-				String line = null;
-				 while ((line = br.readLine()) != null) {
-				   System.out.println(line);
-				 }
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			 
+			IPath licenseFile = license.iterator().next().getLocation();
 
-			FileBody licenseBody = new FileBody(temp);
+			FileBody licenseBody = new FileBody(new File(licenseFile.toString()));
 			builder.addPart("license[]", licenseBody);
 		}
 		HttpEntity multipart = builder.build();
