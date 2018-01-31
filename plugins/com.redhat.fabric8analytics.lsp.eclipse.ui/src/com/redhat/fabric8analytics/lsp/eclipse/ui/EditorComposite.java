@@ -85,7 +85,7 @@ public class EditorComposite extends Composite {
 						AnalyticsAuthData analyticsAuthData = getAuthDataJob.getAuthData();
 						if(analyticsAuthData != null) {
 							RecommenderAPIProvider provider = new RecommenderAPIProvider(analyticsAuthData);
-							new AnalysesJobHandler(provider, Collections.singleton(currentPomFile), Collections.EMPTY_SET, EditorComposite.this).analyze();
+							new AnalysesJobHandler(provider, Collections.singleton(currentPomFile), null , EditorComposite.this).analyze();
 						}
 					}
 				});

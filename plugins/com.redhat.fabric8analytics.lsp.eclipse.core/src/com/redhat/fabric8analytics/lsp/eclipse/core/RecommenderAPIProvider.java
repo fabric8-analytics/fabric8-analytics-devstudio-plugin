@@ -11,15 +11,10 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.core;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Set;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -32,7 +27,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,7 +69,7 @@ public class RecommenderAPIProvider {
 	 * @param pomFiles
 	 * @return jobID
 	 */
-	public String requestAnalyses(Map<String, String> files, Set<IFile> license) throws RecommenderAPIException {
+	public String requestAnalyses(Map<String, String> files, IFile license) throws RecommenderAPIException {
 
 		checkFiles(files);// check if this is none
 		HttpPost post = new HttpPost(
@@ -90,8 +84,8 @@ public class RecommenderAPIProvider {
 			builder.addPart("manifest[]", new PomContentBody(fileObject.getValue())).addTextBody("filePath[]",
 					fileObject.getKey());
 		}
-		if(!license.isEmpty()) {
-			IPath licenseFile = license.iterator().next().getLocation();
+		if(license!=null) {
+			IPath licenseFile = license.getLocation();
 
 			FileBody licenseBody = new FileBody(new File(licenseFile.toString()));
 			builder.addPart("license[]", licenseBody);

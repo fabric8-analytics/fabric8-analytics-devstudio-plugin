@@ -133,15 +133,15 @@ public class WorkspaceFilesFinder {
 	 * @return
 	 * @throws CoreException 
 	 */
-	public Set<IFile> findLicense() throws CoreException {
+	public IFile findLicense() throws CoreException {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
-			return Collections.emptySet(); 
+			return null;
 		}
 
 		IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
 		if (selection == null) {
-			return Collections.emptySet();
+			return null;
 		}
 		return findLicense(selection);
 	}
@@ -152,7 +152,7 @@ public class WorkspaceFilesFinder {
 	 * @return
 	 * @throws CoreException 
 	 */
-	public Set<IFile> findLicense(IStructuredSelection selection) throws CoreException {
+	public IFile findLicense(IStructuredSelection selection) throws CoreException {
 		Set<IFile> files = new HashSet<IFile>();
 		if(selection instanceof IStructuredSelection) {
 			IStructuredSelection structurredSelection = (IStructuredSelection)selection;
@@ -164,15 +164,15 @@ public class WorkspaceFilesFinder {
 				//				selectedProject = (IProject) firstSeleciton;
 				for (Object o : selection.toList()) {
 					if (o instanceof IAdaptable) {
-						findLicense(files, (IAdaptable) o);
+						return findLicense((IAdaptable) o);
 					}
 				}
 				
-				return files;
+				return null;
 			}
 
 		}
-		return files;
+		return null;
 	}
 	/**
 	 * Finds the license file in the the project.
@@ -180,26 +180,27 @@ public class WorkspaceFilesFinder {
 	 * @return
 	 * @throws CoreException 
 	 */
-	private void findLicense(Set<IFile> files, IAdaptable adaptable) throws CoreException {
+	private IFile findLicense(IAdaptable adaptable) throws CoreException {
 		
 		IContainer container = (IContainer) adaptable.getAdapter(IContainer.class);
 		if (container == null || !container.isAccessible()) {
-			return;
+			return null;
 		}
 		for (IResource member : container.members()) {
 			if (member instanceof IFile && member.getName().toLowerCase().equals("license")) {
 				IFile file = (IFile) member.getAdapter(IFile.class);
 				if (file != null) {
 					if (file.isAccessible()) {
-						files.add(file);
+						return file;
 					} else {
-						return;
+						return null;
 					}
 				}
 				
 			}
 			
 		}
+		return null;
 
 
 	}

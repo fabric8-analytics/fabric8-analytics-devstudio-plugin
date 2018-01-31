@@ -41,9 +41,9 @@ public class AnalysesJobHandler {
 
 	private EditorComposite editorComposite;
 	
-	private Set<IFile> license;
+	private IFile license;
 
-	public AnalysesJobHandler(RecommenderAPIProvider provider, Set<IFile> pomFiles, Set<IFile> license, EditorComposite editorComposite) {
+	public AnalysesJobHandler(RecommenderAPIProvider provider, Set<IFile> pomFiles, IFile license, EditorComposite editorComposite) {
 		this.provider = provider;
 		this.pomFiles = pomFiles;
 		this.editorComposite = editorComposite;

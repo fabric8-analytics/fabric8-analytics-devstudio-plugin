@@ -34,9 +34,9 @@ public class SendToFabric8AnalysisJob extends Job {
 		private String jobID;
 		private Set<IFile> pomFiles;
 		private RecommenderAPIProvider provider;
-		private Set<IFile> license;
+		private IFile license;
 
-		public SendToFabric8AnalysisJob(RecommenderAPIProvider provider, Set<IFile> pomFiles, Set<IFile> license) {
+		public SendToFabric8AnalysisJob(RecommenderAPIProvider provider, Set<IFile> pomFiles, IFile license) {
 			super("Send poms to fabric8-analysis");
 			this.pomFiles = pomFiles;
 			this.provider = provider;
