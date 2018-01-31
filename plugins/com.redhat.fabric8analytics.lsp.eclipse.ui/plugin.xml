@@ -56,7 +56,7 @@
          locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
          <command
                commandId="myplugin.command.mycommand"
-               label="Stack Analyses"
+               label="Stack Analysis"
                mnemonic="M1+P">
          </command>
          <visibleWhen>
@@ -96,7 +96,7 @@
          locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
          <command
                commandId="myplugin.command.mycommand"
-               label="Stack Analyses"
+               label="Stack Analysis"
                mnemonic="M1+P">
          </command>
            <visibleWhen>
