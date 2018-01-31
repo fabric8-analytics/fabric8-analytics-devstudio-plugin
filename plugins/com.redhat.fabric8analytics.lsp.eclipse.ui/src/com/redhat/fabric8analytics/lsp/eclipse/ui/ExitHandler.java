@@ -40,7 +40,7 @@ public class ExitHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final Set<IFile> pomFiles;
-		final Set<IFile> license;
+		final IFile license;
 		try {
 			pomFiles = WorkspaceFilesFinder.getInstance().findPOMs();
 			license = WorkspaceFilesFinder.getInstance().findLicense();
