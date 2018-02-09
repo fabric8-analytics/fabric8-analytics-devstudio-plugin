@@ -14,6 +14,8 @@ Require-Bundle: org.eclipse.lsp4e;bundle-version="0.3.0",
  org.json;bundle-version="1.0.0",
  org.apache.commons.io;bundle-version="2.2.0",
  org.apache.commons.httpclient;bundle-version="3.1.0",
+ com.redhat.fabric8analytics.eclipse.core;bundle-version="0.0.1",
+ com.redhat.fabric8analytics.eclipse.lsp.ui;bundle-version="0.0.1",
  org.eclipse.equinox.security,
  org.eclipse.m2e.core,
  org.eclipse.m2e.maven.runtime,
@@ -23,5 +25,6 @@ Bundle-Activator: com.redhat.fabric8analytics.eclipse.lsp.core.Fabric8AnalysisLS
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath:  .
 Export-Package: com.redhat.fabric8analytics.eclipse.lsp.core
+Import-Package: com.redhat.fabric8analytics.eclipse.lsp.ui
 
 

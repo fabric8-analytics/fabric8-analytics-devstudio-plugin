@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Bundle-SymbolicName: com.redhat.fabric8analytics.lsp.eclipse.core;singleton:=true
+Bundle-SymbolicName: com.redhat.fabric8analytics.eclipse.core;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Localization: plugin
@@ -23,8 +23,8 @@ Bundle-Activator: com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisLS
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath:  .
 Export-Package: com.redhat.fabric8analytics.lsp.eclipse.core,
- com.redhat.fabric8analytics.lsp.eclipse.core.job,
  com.redhat.fabric8analytics.lsp.eclipse.core.data,
- com.redhat.fabric8analytics.lsp.eclipse.core.internal;x-friends:=com.redhat.fabric8analytics.lsp.eclipse.ui
+ com.redhat.fabric8analytics.lsp.eclipse.core.internal;x-friends:="com.redhat.fabric8analytics.eclipse.ui",
+ com.redhat.fabric8analytics.lsp.eclipse.core.job
 
 
