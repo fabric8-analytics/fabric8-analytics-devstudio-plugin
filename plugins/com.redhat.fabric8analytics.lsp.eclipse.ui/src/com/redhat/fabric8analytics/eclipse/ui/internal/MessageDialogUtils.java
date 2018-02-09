@@ -8,7 +8,7 @@
  * Contributors:
  *     Red Hat Incorporated - initial API and implementation
  *******************************************************************************/
-package com.redhat.fabric8analytics.eclipse.lsp.ui;
+package com.redhat.fabric8analytics.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.equinox.security.storage.StorageException;
@@ -19,7 +19,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.redhat.fabric8analytics.eclipse.core.data.AnalyticsAuthData;
 import com.redhat.fabric8analytics.eclipse.core.internal.AnalyticsAuthService;
-import com.redhat.fabric8analytics.eclipse.lsp.ui.Fabric8AnalysisLSUIActivator;
+import com.redhat.fabric8analytics.eclipse.ui.Fabric8AnalysisLSUIActivator;
 
 public class MessageDialogUtils {
 

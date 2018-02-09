@@ -2,6 +2,30 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         point="org.eclipse.lsp4e.languageServer">
+      <server
+            class="com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalyticsStreamConnectionProvider"
+            id="com.redhat.fabric8analytics.lsp.eclipse.server"
+            label="Fabric8Analytics">
+      </server>
+      <contentTypeMapping
+            contentType="org.eclipse.m2e.core.pomFile"
+            id="com.redhat.fabric8analytics.lsp.eclipse.server">
+      </contentTypeMapping>
+      <contentTypeMapping
+             contentType="org.eclipse.wst.json.npm.core.npmsource"
+             id="com.redhat.fabric8analytics.lsp.eclipse.server">
+      </contentTypeMapping>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisPreferencePage"
+            id="com.redhat.fabric8analytics.lsp.eclipse.preferences"
+            name="Openshift Services">
+      </page>
+   </extension>
+   <extension
          point="org.eclipse.ui.views">
       <view
             class="com.redhat.fabric8analytics.lsp.eclipse.ui.StackAnalysesView"
@@ -92,6 +116,6 @@
    </extension>
  <extension
    point="org.eclipse.m2e.editor.pageFactories">
-		<factory class="com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8PomEditorFactory"> </factory>
+		<factory class="com.redhat.fabric8analytics.eclipse.ui.Fabric8PomEditorFactory"> </factory>
     </extension>
 </plugin>

@@ -41,10 +41,10 @@ import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.osgi.framework.Bundle;
 
+import com.redhat.fabric8analytics.eclipse.core.data.AnalyticsAuthData;
+import com.redhat.fabric8analytics.eclipse.core.internal.AnalyticsAuthService;
 import com.redhat.fabric8analytics.eclipse.lsp.core.Fabric8AnalysisLSCoreActivator;
-import com.redhat.fabric8analytics.eclipse.lsp.core.Fabric8AnalysisPreferences;
-import com.redhat.fabric8analytics.lsp.eclipse.core.data.AnalyticsAuthData;
-import com.redhat.fabric8analytics.lsp.eclipse.core.internal.AnalyticsAuthService;
+import com.redhat.fabric8analytics.eclipse.core.Fabric8AnalysisPreferences;
 import com.redhat.fabric8analytics.eclipse.lsp.ui.MessageDialogUtils;
 
 public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConnectionProvider
