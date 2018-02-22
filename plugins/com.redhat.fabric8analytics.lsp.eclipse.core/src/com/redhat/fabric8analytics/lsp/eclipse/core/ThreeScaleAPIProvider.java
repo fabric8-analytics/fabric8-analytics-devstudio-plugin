@@ -15,12 +15,9 @@ import java.io.IOException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,9 +30,9 @@ import com.redhat.fabric8analytics.lsp.eclipse.core.data.ThreeScaleData;
  */
 public class ThreeScaleAPIProvider {
 
-	public static final String THREE_SCALE_URL = "https://3scale-connect.api.openshift.io/get-route";
+	public static final String THREE_SCALE_URL = "https://f8a-connect-api-2445582058137.production.gw.apicast.io:443/get-endpoints?user_key=%s";
 
-	public static final String SERVICE_ID = "2555417754949";
+	public static final String SERVICE_ID = "ad467b765e5c8a8a5ca745a1f32b8487";
 
 	private String token;
 
@@ -55,17 +52,10 @@ public class ThreeScaleAPIProvider {
 	public ThreeScaleData register3Scale() throws ThreeScaleAPIException {
 		CloseableHttpClient client = createClient();
 		try {
-			JSONObject urlObject = new JSONObject();
-			urlObject.put("auth_token", token);
-			urlObject.put("service_id" , SERVICE_ID);
-
-			StringEntity se = new StringEntity(urlObject.toString());
-			se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-
-			HttpPost post = new HttpPost(THREE_SCALE_URL);
-			post.setEntity(se);
-
-			HttpResponse response = client.execute(post);
+			String queryUrl = String.format(THREE_SCALE_URL, SERVICE_ID);
+			HttpGet get = new HttpGet(queryUrl);
+			get.addHeader("Authorization", token);
+			HttpResponse response = client.execute(get);
 
 			int responseCode = response.getStatusLine().getStatusCode();
 
