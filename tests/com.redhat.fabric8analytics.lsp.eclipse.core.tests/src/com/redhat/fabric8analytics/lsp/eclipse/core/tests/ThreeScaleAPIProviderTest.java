@@ -10,8 +10,6 @@
  *******************************************************************************/
 
 package com.redhat.fabric8analytics.lsp.eclipse.core.tests;
-
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
@@ -24,14 +22,12 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.eclipse.core.runtime.CoreException;
 import org.junit.Before;
@@ -88,6 +84,7 @@ public class ThreeScaleAPIProviderTest {
 		when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);
 		when(httpResponse.getEntity()).thenReturn(httpEntity);
+		when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(JSON.getBytes()));
 		when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
 
 		final ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
@@ -95,9 +92,8 @@ public class ThreeScaleAPIProviderTest {
 		provider.register3Scale();
 		verify(httpClient).execute(argumentCaptor.capture());
 		HttpGet httpGet = argumentCaptor.getValue();
-		assertThat(httpGet.getURI().toString(), startsWith(URL));
-		assertThat(httpGet.getURI().toString(), containsString("?user_key=" + USER_KEY));
-		assertThat(httpGet.getHeaders("Authorization")[0].getValue(), is("Bearer mytoken"));// might be withoput value
+		assertThat(httpGet.getURI().toString(), startsWith(String.format(ThreeScaleAPIProvider.THREE_SCALE_URL,ThreeScaleAPIProvider.SERVICE_ID)));
+		assertThat(httpGet.getHeaders("Authorization")[0].getValue(), is(TOKEN));// might be withoput value
 	}
 
 	@Test
@@ -105,14 +101,17 @@ public class ThreeScaleAPIProviderTest {
 		when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);
 		when(httpResponse.getEntity()).thenReturn(httpEntity);
+		
+		
+		when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(JSON.getBytes()));
 		when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
 
 		ThreeScaleData data = provider.register3Scale();
 
 		verify(httpClient, atLeastOnce()).close();
-//		assertThat(data.getProd(), is(PROD));
-//		assertThat(data.getStage(), is(STAGE));
-//		assertThat(data.getUserKey(), is(USER_KEY));
+		assertThat(data.getProd(), is(PROD));
+		assertThat(data.getStage(), is(STAGE));
+		assertThat(data.getUserKey(), is(USER_KEY));
 		
 	}
 
