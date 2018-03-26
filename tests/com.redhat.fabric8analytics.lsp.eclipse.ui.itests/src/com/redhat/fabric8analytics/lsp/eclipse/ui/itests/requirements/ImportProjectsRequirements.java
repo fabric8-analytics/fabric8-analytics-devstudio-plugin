@@ -55,7 +55,11 @@ public class ImportProjectsRequirements extends AbstractRequirement<ImportProjec
 	 */
 	@Override
 	public void fulfill() {
-		if (System.getProperty("fabric8analytics.tests.usePersistantWorkspace") == null) {
+		//log.info("System property 'fabric8analytics.tests.usePersistantWorkspace' " + System.getProperty("fabric8analytics.tests.usePersistantWorkspace"));
+		if (System.getProperty("fabric8analytics.tests.usePersistantWorkspace") == null
+				|| System.getProperty("fabric8analytics.tests.usePersistantWorkspace").isEmpty()
+				|| System.getProperty("fabric8analytics.tests.usePersistantWorkspace")
+						.contains("{fabric8analytics.tests.usePersistantWorkspace}")) {
 			for (String projectName : annotation.projectsNames()) {
 				try {
 					importProject(projectName);
@@ -75,11 +79,14 @@ public class ImportProjectsRequirements extends AbstractRequirement<ImportProjec
 	@Override
 	public void cleanUp() {
 		log.info("Cleaning projects");
-		if (System.getProperty("fabric8analytics.tests.usePersistantWorkspace") == null) {
+		if (System.getProperty("fabric8analytics.tests.usePersistantWorkspace") == null
+				|| System.getProperty("fabric8analytics.tests.usePersistantWorkspace").isEmpty()
+				|| System.getProperty("fabric8analytics.tests.usePersistantWorkspace")
+						.contains("{fabric8analytics.tests.usePersistantWorkspace}")) {
 			try {
 				new ProjectExplorer().deleteAllProjects(false);
 				// idk why this error happens but deletion is successful
-			} catch (EclipseLayerException | CoreLayerException e) { 
+			} catch (EclipseLayerException | CoreLayerException e) {
 				// e.printStackTrace();
 				log.info("Exception EclipseLayerException or CoreLayerException occured and ignored");
 			}
