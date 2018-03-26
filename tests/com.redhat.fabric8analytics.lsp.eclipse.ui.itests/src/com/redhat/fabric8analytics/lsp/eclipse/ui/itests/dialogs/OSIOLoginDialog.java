@@ -183,12 +183,11 @@ public class OSIOLoginDialog extends AbstractWindow {
 			new WaitUntil(new ControlIsEnabled(new PushButton("Apply")), wait);
 			WorkbenchPreferenceDialog preferences = new WorkbenchPreferenceDialog();
 			OpenshiftServicesPreferencePage osserivcesPreferences = new OpenshiftServicesPreferencePage(preferences);
-			OpenshiftServicesPreferenceDialog osserivces = osserivcesPreferences.getOpenshiftServicesPreferenceDialog();
-			log.info("Fabric8Analytics checkbox is: " + osserivces.isFabric8AnalyticsLSPServerEnabled());
+			log.info("Fabric8Analytics checkbox is: " + osserivcesPreferences.isFabric8AnalyticsLSPServerEnabled());
 			assertTrue(
 					"Fabric8Analytics should have been enabled in Openshift Services preferences by now but it is not",
-					osserivces.isFabric8AnalyticsLSPServerEnabled());
-			osserivces.ok();
+					osserivcesPreferences.isFabric8AnalyticsLSPServerEnabled());
+			preferences.ok();
 		} catch (Exception e) {
 			log.info("Closing preferences failed but is ignored");
 		}

@@ -18,7 +18,6 @@ import org.eclipse.reddeer.workbench.ui.dialogs.WorkbenchPreferenceDialog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.redhat.fabric8analytics.lsp.eclipse.ui.itests.dialogs.OpenshiftServicesPreferenceDialog;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.itests.pages.OpenshiftServicesPreferencePage;
 import com.redhat.fabric8analytics.lsp.eclipse.ui.itests.requirements.OSIOLoginRequirement;
 
@@ -29,29 +28,26 @@ public class EnableFabric8AnalyticsLSPServerTests {
 
 	@Test
 	public void enableFabric8AnalyticsLSPServerTest() {
-		log.info("Check if '" + OpenshiftServicesPreferenceDialog.CHECKBOX_LABEL + "' is checkable and proper action follows (osio login dialog shows up)");
+		log.info("Check if '" + OpenshiftServicesPreferencePage.CHECKBOX_LABEL + "' is checkable and proper action follows (osio login dialog shows up)");
 		OSIOLoginRequirement.removeAccountFromOpenShiftIOPreferencePage();
 		WorkbenchPreferenceDialog preferences = new WorkbenchPreferenceDialog();
 		preferences.open();
 		OpenshiftServicesPreferencePage osServicesPreferences = new OpenshiftServicesPreferencePage(preferences);
 		preferences.select(osServicesPreferences);
 		
-		OpenshiftServicesPreferenceDialog osServices = osServicesPreferences.getOpenshiftServicesPreferenceDialog();
-		if(osServices.isFabric8AnalyticsLSPServerEnabled())
-			osServices.disableFabric8AnalyticsLSPServer();
-		osServices.enableFabric8AnalyticsLSPServer();
+		if(osServicesPreferences.isFabric8AnalyticsLSPServerEnabled()) {
+			osServicesPreferences.disableFabric8AnalyticsLSPServer();
+		}
+		osServicesPreferences.enableFabric8AnalyticsLSPServer();
 
 		// open preferences anew 
-		preferences = new WorkbenchPreferenceDialog();
 		preferences.open();
-		osServicesPreferences = new OpenshiftServicesPreferencePage(preferences);
 		preferences.select(osServicesPreferences);
 
-		osServices = osServicesPreferences.getOpenshiftServicesPreferenceDialog();
-		assertTrue("Fabric8Analytics LSP server chekbox in Openshift services preferences page should be checked but it is not",osServices.isFabric8AnalyticsLSPServerEnabled());
+		assertTrue("Fabric8Analytics LSP server chekbox in Openshift services preferences page should be checked but it is not",osServicesPreferences.isFabric8AnalyticsLSPServerEnabled());
 		
-		osServices.disableFabric8AnalyticsLSPServer();
-		osServices.ok();
+		osServicesPreferences.disableFabric8AnalyticsLSPServer();
+		osServicesPreferences.apply();
 		//TODO add check that LSP server is disabled
 		OSIOLoginRequirement.removeAccountFromOpenShiftIOPreferencePage();
 	}

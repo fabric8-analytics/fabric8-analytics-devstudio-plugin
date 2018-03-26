@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -15,7 +16,7 @@
 		<test.suite>com.redhat.fabric8analytics.lsp.eclipse.ui.itests</test.suite>
 		<test.class>com.redhat.fabric8analytics.lsp.eclipse.ui.itests.SmokeSuite</test.class>
 		<systemProperties>${integrationTestsSystemProperties}</systemProperties>
-		<integrationTestsSystemProperties>-DOSusername=${OSusername} -DOSpassword=${OSpassword} -DOSLoginProvider=${OSLoginProvider}</integrationTestsSystemProperties>
+		<integrationTestsSystemProperties>-DOSusername=${OSusername} -DOSpassword=${OSpassword} -DOSLoginProvider=${OSLoginProvider} -Dfabric8analytics.tests.usePersistantWorkspace=${fabric8analytics.tests.usePersistantWorkspace}</integrationTestsSystemProperties>
 		<!-- <OSusername>${OSusername}</OSusername> <OSpassword>${OSpassword}</OSpassword> 
 			<OSLoginProvider>${OSLoginProvider}</OSLoginProvider> -->
 		<jbosstools-site>http://download.jboss.org/jbosstools/${eclipseReleaseName}/snapshots/updates/core/${stream_jbt}/</jbosstools-site>
@@ -34,6 +35,36 @@
 						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>target-platform-configuration</artifactId>
 						<configuration>
+							<useUIThread>false</useUIThread>
+							<testClass>${test.class}</testClass>
+							<testSuite>${test.suite}</testSuite>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>SmokeSuite-prsistantWorkspace</id>
+			<properties>
+				<test.class>com.redhat.fabric8analytics.lsp.eclipse.ui.itests.SmokeSuite</test.class>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<configuration>
+							<useUIThread>false</useUIThread>
+							<testClass>${test.class}</testClass>
+							<testSuite>${test.suite}</testSuite>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-surefire-plugin</artifactId>
+						<configuration>
+							<appArgLine>-eclipse.password ${project.basedir}/resources/securepass -data ${fabric8analytics.tests.usePersistantWorkspace}</appArgLine>
+							<skip>${skipITests}</skip>
 							<useUIThread>false</useUIThread>
 							<testClass>${test.class}</testClass>
 							<testSuite>${test.suite}</testSuite>

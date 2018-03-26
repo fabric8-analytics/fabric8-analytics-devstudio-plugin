@@ -55,12 +55,14 @@ public class ImportProjectsRequirements extends AbstractRequirement<ImportProjec
 	 */
 	@Override
 	public void fulfill() {
-		for (String projectName : annotation.projectsNames()) {
-			try {
-				importProject(projectName);
-			} catch (IOException e) {
-				// e.printStackTrace();
-				log.error(e.getMessage());
+		if (System.getProperty("fabric8analytics.tests.usePersistantWorkspace") == null) {
+			for (String projectName : annotation.projectsNames()) {
+				try {
+					importProject(projectName);
+				} catch (IOException e) {
+					// e.printStackTrace();
+					log.error(e.getMessage());
+				}
 			}
 		}
 	}
@@ -73,12 +75,14 @@ public class ImportProjectsRequirements extends AbstractRequirement<ImportProjec
 	@Override
 	public void cleanUp() {
 		log.info("Cleaning projects");
-		try {
-			new ProjectExplorer().deleteAllProjects(false);
-		} catch (EclipseLayerException | CoreLayerException e) {
-			// idk why this error happens but deletion is successful
-			// e.printStackTrace();
-			log.info("Exception EclipseLayerException or CoreLayerException occured and ignored");
+		if (System.getProperty("fabric8analytics.tests.usePersistantWorkspace") == null) {
+			try {
+				new ProjectExplorer().deleteAllProjects(false);
+				// idk why this error happens but deletion is successful
+			} catch (EclipseLayerException | CoreLayerException e) { 
+				// e.printStackTrace();
+				log.info("Exception EclipseLayerException or CoreLayerException occured and ignored");
+			}
 		}
 		WorkbenchShellHandler.getInstance().closeAllNonWorbenchShells();
 		EditorHandler.getInstance().closeAll(false);
