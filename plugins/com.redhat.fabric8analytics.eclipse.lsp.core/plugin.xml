@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.lsp4e.languageServer">
+      <server
+            class="com.redhat.fabric8analytics.eclipse.lsp.core.Fabric8AnalyticsStreamConnectionProvider"
+            id="com.redhat.fabric8analytics.eclipse.lsp.server"
+            label="Fabric8Analytics">
+      </server>
+      <contentTypeMapping
+            contentType="org.eclipse.m2e.core.pomFile"
+            id="com.redhat.fabric8analytics.eclipse.lsp.server">
+      </contentTypeMapping>
+      <contentTypeMapping
+             contentType="org.eclipse.wst.json.npm.core.npmsource"
+             id="com.redhat.fabric8analytics.eclipse.lsp.server">
+      </contentTypeMapping>
+   </extension>
+</plugin>

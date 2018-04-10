@@ -1,20 +1,23 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: fabricate8analysis UI Tests
-Bundle-SymbolicName: com.redhat.fabric8analytics.lsp.eclipse.ui.itests;singleton:=true
+Bundle-Name: Fabricate8analysis UI Tests
+Bundle-SymbolicName: com.redhat.fabric8analytics.eclipse.lsp.core.tests;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: JBoss by Red Hat
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.reddeer.go;bundle-version="2.0.0",
- org.junit;bundle-version="4.8.2",
- org.eclipse.lsp4e,
+Require-Bundle: org.junit;bundle-version="4.8.2",
  org.eclipse.core.resources,
  org.eclipse.m2e.core.ui,
  org.eclipse.m2e.lifecyclemapping.defaults,
+ org.mockito;bundle-version="1.9.5",
+ org.hamcrest.library;bundle-version="1.3.0",
  com.redhat.fabric8analytics.eclipse.core;bundle-version="0.0.1",
  com.redhat.fabric8analytics.eclipse.ui;bundle-version="0.0.1",
  com.redhat.fabric8analytics.eclipse.lsp.core;bundle-version="0.0.1",
- com.redhat.fabric8analytics.eclipse.lsp.ui;bundle-version="0.0.1",
- org.jboss.tools.openshift.common.ui;bundle-version="3.4.2",
- org.jboss.tools.openshift.reddeer;bundle-version="3.4.2"
+ org.eclipse.equinox.security,
+ org.eclipse.lsp4e,
+ org.eclipse.lsp4j.jsonrpc,
+ org.eclipse.lsp4j,
+ org.eclipse.core.runtime,
+ org.eclipse.jface

@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-<description>Fabric8Analytics Language Server Integration</description>
+<description>Fabric8Analytics Integration</description>
 
 <!-- PLEASE NOTE!
 	When updating this file, please be sure that it parses as valid XML before committing it.
 	To test, just run `mvn clean install` in this folder. 
 -->
-<category-def name="site" label="Fabric8Analytics Language Server Integration">
-	<description>Fabric8Analytics Language Server Integration</description>
+<category-def name="site" label="Fabric8Analytics Integration">
+	<description>Fabric8Analytics Integration</description>
 </category-def>
 
-<feature id="com.redhat.fabric8analytics.lsp.eclipse.feature"><category name="site"/></feature>
-<feature id="com.redhat.fabric8analytics.lsp.eclipse.feature.source"><category name="site"/></feature>
+<feature id="com.redhat.fabric8analytics.eclipse.feature"><category name="site"/></feature>
+<feature id="com.redhat.fabric8analytics.eclipse.feature.source"><category name="site"/></feature>
+<feature id="com.redhat.fabric8analytics.eclipse.lsp.feature"><category name="site"/></feature>
+<feature id="com.redhat.fabric8analytics.eclipse.lsp.feature.source"><category name="site"/></feature>
 
 <bundle id="org.eclipse.xtext.xbase.lib"><category name="site"/></bundle>
 <bundle id="org.eclipse.lsp4j.jsonrpc"><category name="site"/></bundle>

@@ -17,7 +17,8 @@
 	</properties>
 
 	<modules>
-		<module>com.redhat.fabric8analytics.lsp.eclipse.core.tests</module>
-		<module>com.redhat.fabric8analytics.lsp.eclipse.ui.tests</module>
+		<module>com.redhat.fabric8analytics.eclipse.core.tests</module>
+		<module>com.redhat.fabric8analytics.eclipse.ui.tests</module>
+		<module>com.redhat.fabric8analytics.eclipse.lsp.core.tests</module>
 	</modules>
 </project>

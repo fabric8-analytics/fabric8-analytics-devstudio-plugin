@@ -11,7 +11,7 @@
 
 	<groupId>com.redhat.fabric8analytics.eclipse</groupId>
 	<artifactId>site</artifactId>
-	<name>Fabric8Analytics Language Server integration update site</name>
+	<name>Fabric8Analytics integration update site</name>
 	<packaging>eclipse-repository</packaging>
 	<properties>
 		<update.site.name>${project.name}</update.site.name>

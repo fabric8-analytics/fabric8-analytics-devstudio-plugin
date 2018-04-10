@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: com.redhat.fabric8analytics.eclipse.lsp.ui;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-Vendor: %Bundle-Vendor
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.swt,
+ org.eclipse.core.runtime,
+ com.redhat.fabric8analytics.eclipse.ui,
+ com.redhat.fabric8analytics.eclipse.lsp.core,
+ com.redhat.fabric8analytics.eclipse.core,
+ org.eclipse.equinox.security
+Bundle-Activator: com.redhat.fabric8analytics.eclipse.lsp.ui.Fabric8AnalysisLSPUIActivator
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Export-Package: com.redhat.fabric8analytics.eclipse.lsp.ui
+
