@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="com.redhat.fabric8analytics.eclipse.ui.service.preference" name="Fabric8 Service Preferences" schema="schema/com.redhat.fabric8analytics.eclipse.ui.service.preference.exsd"/>
+   <extension-point id="com.redhat.fabric8analytics.eclipse.ui.login.listener" name="OSIO Login listeners" schema="schema/com.redhat.fabric8analytics.eclipse.ui.login.listener.exsd"/>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.redhat.fabric8analytics.eclipse.ui.internal.preferences.Fabric8AnalysisPreferencePage"
+            id="com.redhat.fabric8analytics.eclipse.ui.preferences"
+            name="Openshift Services">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="com.redhat.fabric8analytics.eclipse.ui.internal.view.StackAnalysesView"
+            id="com.redhat.fabric8analytics.eclipse.ui.StackAnalysesView"
+            name="Stack Analyses">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="com.redhat.fabric8analytics.eclipse.ui.internal.view.StackAnalysisHandler"
+            id="com.redhat.fabric8analytics.eclipse.ui.StackAnalysisHandler"
+            name="StackAnalysisHandler">
+            
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="com.redhat.fabric8analytics.eclipse.ui.internal.auth.AuthorizeHandler"
+            id="com.redhat.fabric8analytics.eclipse.ui.authorizetoken"
+            name="Connect to Openshift.io">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+         locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
+         <command
+               commandId="com.redhat.fabric8analytics.eclipse.ui.StackAnalysisHandler"
+               label="Stack Analysis"
+               mnemonic="M1+P">
+         </command>
+         <visibleWhen>
+				     <with variable="activeMenuSelection">
+				            <iterate ifEmpty="false">
+				            	<or>
+					             	<adapt type="org.eclipse.core.resources.IProject">
+					             	</adapt>
+					             	<adapt type="org.eclipse.core.resources.IFile">
+					             		 <test property="org.eclipse.core.resources.name" value="pom.xml" />
+					             	</adapt>
+				             	</or>
+				            </iterate>
+				           </with>
+         			</visibleWhen>
+      </menuContribution>
+   </extension>
+ <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=org.eclipse.ui.workbench.help">
+         <toolbar
+               id="com.redhat.fabric8analytics.eclipse.ui.Authorize">
+            <command
+                  commandId="com.redhat.fabric8analytics.eclipse.ui.authorizetoken"
+                  icon="icons/osio-16x16.png"
+                  label="%F8Analytics.command.authorize"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+<extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+         locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+         <command
+               commandId="com.redhat.fabric8analytics.eclipse.ui.StackAnalysisHandler"
+               label="Stack Analysis"
+               mnemonic="M1+P">
+         </command>
+           <visibleWhen>
+				     <with variable="activeMenuSelection">
+				            <iterate ifEmpty="false">
+				            	<or>
+					             	<adapt type="org.eclipse.core.resources.IProject">
+					             	</adapt>
+					             	<adapt type="org.eclipse.core.resources.IFile">
+					             		 <test property="org.eclipse.core.resources.name" value="pom.xml" />
+					             	</adapt>
+				             	</or>
+				            </iterate>
+				           </with>
+         			</visibleWhen>
+      </menuContribution>
+   </extension>
+ <extension
+   point="org.eclipse.m2e.editor.pageFactories">
+		<factory class="com.redhat.fabric8analytics.eclipse.ui.internal.pom.Fabric8PomEditorFactory"> </factory>
+    </extension>
+</plugin>

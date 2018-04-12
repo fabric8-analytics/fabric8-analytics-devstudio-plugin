@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension
+      point="com.redhat.fabric8analytics.eclipse.ui.service.preference">
+      <service
+            class="com.redhat.fabric8analytics.eclipse.lsp.ui.LSPService">
+      </service>
+</extension>
+<extension
+      point="com.redhat.fabric8analytics.eclipse.ui.login.listener">
+      <listener
+            class="com.redhat.fabric8analytics.eclipse.lsp.ui.LoginListener">
+      </listener>
+</extension>
+</plugin>

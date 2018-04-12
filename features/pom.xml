@@ -7,12 +7,12 @@
 		<artifactId>com.redhat.fabric8analytics.parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>com.redhat.fabric8analytics.eclipse</groupId>
 	<artifactId>features</artifactId>
 	
 	<name>com.redhat.fabric8analytics.eclipse features</name>	
 	<packaging>pom</packaging>
 	<modules>
-		<module>com.redhat.fabric8analytics.lsp.eclipse.feature</module>
+		<module>com.redhat.fabric8analytics.eclipse.feature</module>
+		<module>com.redhat.fabric8analytics.eclipse.lsp.feature</module>
 	</modules>
 </project>
