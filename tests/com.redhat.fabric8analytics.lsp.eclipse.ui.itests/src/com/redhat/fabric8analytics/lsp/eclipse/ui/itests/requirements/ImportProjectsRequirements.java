@@ -19,6 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.eclipse.reddeer.common.logging.Logger;
+import org.eclipse.reddeer.common.wait.TimePeriod;
 import org.eclipse.reddeer.core.exception.CoreLayerException;
 import org.eclipse.reddeer.eclipse.exception.EclipseLayerException;
 import org.eclipse.reddeer.eclipse.m2e.core.ui.wizard.MavenImportWizard;
@@ -104,7 +105,7 @@ public class ImportProjectsRequirements extends AbstractRequirement<ImportProjec
 		String canonicalPath = new File(path).getCanonicalPath();
 		log.info("Canonical path to resoruce project: " + canonicalPath);
 		importPage.setRootDirectory(canonicalPath);
-		importDialog.finish();
+		importDialog.finish(TimePeriod.getCustom(3600));
 	}
 
 }
