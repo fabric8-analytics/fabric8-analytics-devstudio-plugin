@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.redhat.fabric8analytics.eclipse</groupId>
 		<artifactId>plugins</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>com.redhat.fabric8analytics.lsp.eclipse.core</artifactId>

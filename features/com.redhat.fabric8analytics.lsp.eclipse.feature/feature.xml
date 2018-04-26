@@ -2,7 +2,7 @@
 <feature 
     id="com.redhat.fabric8analytics.lsp.eclipse.feature" 
     label="%featureName" 
-    version="0.0.1.qualifier" 
+    version="0.0.2.qualifier" 
     provider-name="%providerName" 
     license-feature="org.jboss.tools.foundation.license.feature"
     license-feature-version="0.0.0"

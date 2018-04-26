@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.redhat.fabric8analytics.tests</groupId>
 		<artifactId>tests</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 	<groupId>com.redhat.fabric8analytics.lsp.eclipse.ui.tests</groupId>
 	<artifactId>com.redhat.fabric8analytics.lsp.eclipse.ui.tests</artifactId>
