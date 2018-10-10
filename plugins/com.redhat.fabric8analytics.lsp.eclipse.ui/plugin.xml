@@ -83,7 +83,7 @@
                id="com.redhat.fabric8analytics.lsp.eclipse.ui.Authorize">
             <command
                   commandId="com.redhat.fabric8analytics.lsp.eclipse.ui.authorizetoken"
-                  icon="icons/osio-16x16.png"
+                  icon="icons/openshift_logo.png"
                   label="%F8Analytics.command.authorize"
                   style="push">
             </command>
