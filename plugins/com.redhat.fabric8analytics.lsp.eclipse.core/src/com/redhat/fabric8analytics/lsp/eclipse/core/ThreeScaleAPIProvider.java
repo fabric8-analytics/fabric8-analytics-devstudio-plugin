@@ -36,9 +36,7 @@ public class ThreeScaleAPIProvider {
 
 	private String token;
 
-	public ThreeScaleAPIProvider(String token) {
-		checkConstructorArguments(token);
-		this.token = token;
+	public ThreeScaleAPIProvider() {
 	}
 
 	/**
@@ -81,11 +79,6 @@ public class ThreeScaleAPIProvider {
 		return HttpClients.createDefault();
 	}
 	
-	private void checkConstructorArguments(String token2) {
-		if (token2 == null) {
-			throw new IllegalArgumentException("The token was null");
-		}
-	}
 
 	private ThreeScaleData createThreeScaleData(JSONObject jsonObj) throws ThreeScaleAPIException, JSONException {
 		String endpointsString = jsonObj.getString("endpoints");

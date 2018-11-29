@@ -52,7 +52,7 @@ public class RecommenderAPIProvider {
 
 	private static final String ANALYSES_REPORT_URL = "https://stack-analytics-report.openshift.io/#/analyze/";
 
-	private static final String POST_ANALYSES_REPORT_URL = "?api_data={\"access_token\":\"%s\",\"route_config\":{\"api_url\":\"%s\"},\"user_key\":\"%s\"}";
+	private static final String POST_ANALYSES_REPORT_URL = "?api_data={\"route_config\":{\"api_url\":\"%s\"},\"user_key\":\"%s\"}";
 
 	private static final String SERVICE_ID = "2555417754949";
 
@@ -75,8 +75,6 @@ public class RecommenderAPIProvider {
 		HttpPost post = new HttpPost(
 				analyticsAuthData.getThreeScaleData().getProd() + RECOMMENDER_API_URL_STACK_ANALYSES_POSTFIX
 						+ String.format("?user_key=%s", analyticsAuthData.getThreeScaleData().getUserKey()));
-		post.addHeader("Authorization", analyticsAuthData.getToken());
-
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 		
 		
@@ -117,14 +115,9 @@ public class RecommenderAPIProvider {
 
 	public boolean analysesFinished(String jobId) throws RecommenderAPIException {
 		checkJobID(jobId);
-		String RECOMMENDER_API_TOKEN = "Bearer ";
-		if (!RECOMMENDER_API_TOKEN.equals("Bearer " + analyticsAuthData.getToken())) {
-			RECOMMENDER_API_TOKEN = "Bearer " + analyticsAuthData.getToken();
-		}
 		HttpGet get = new HttpGet(
 				analyticsAuthData.getThreeScaleData().getProd() + RECOMMENDER_API_URL_POLL_ANALYSES_POSTFIX + jobId
 						+ String.format("?user_key=%s", analyticsAuthData.getThreeScaleData().getUserKey()));
-		get.addHeader("Authorization", RECOMMENDER_API_TOKEN);
 		CloseableHttpClient client = createClient();
 
 		try {
@@ -155,7 +148,7 @@ public class RecommenderAPIProvider {
 	}
 
 	public String getAnalysesURL(String jobID) {
-		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL, analyticsAuthData.getToken(),
+		String postURLFormat = String.format(POST_ANALYSES_REPORT_URL,
 				analyticsAuthData.getThreeScaleData().getProd(), analyticsAuthData.getThreeScaleData().getUserKey());
 
 		String url = ANALYSES_REPORT_URL + jobID + postURLFormat;
@@ -179,9 +172,6 @@ public class RecommenderAPIProvider {
 			throw new IllegalArgumentException("The user key was null");
 		}
 
-		if (authData.getToken() == null) {
-			throw new IllegalArgumentException("The token was null");
-		}
 	}
 
 	private void checkFiles(Map<String, String> files) {

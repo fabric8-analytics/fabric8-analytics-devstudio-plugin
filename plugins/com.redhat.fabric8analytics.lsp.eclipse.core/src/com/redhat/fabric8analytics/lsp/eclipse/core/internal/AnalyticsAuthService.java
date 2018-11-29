@@ -53,67 +53,55 @@ public class AnalyticsAuthService {
 	}
 
 	/**
-	 * Returns auth data - token and 3scale data. 
-	 * Auth token is refreshed if needed.
+	 * Returns auth data - 3scale data. 
 	 * If user was not logged before, null is returned.
 	 * 
-	 * @return OSIO data (token and 3scale data)
+	 * @return 3scale data (3scale data)
 	 * @throws ThreeScaleAPIException 
 	 */
 	public AnalyticsAuthData getAnalyticsAuthData(IProgressMonitor progressMonitor) throws StorageException{
 		SubMonitor monitor = getSubMonitor(progressMonitor);
 		monitor.setWorkRemaining(2);
 		monitor.setTaskName("Check Openshift.io accout status");
-		IAccount account = getAccount();
-		if(account == null) {
-			return null;
-		}
-		AccountStatus accountStatus = AccountService.getDefault().getStatus(account);
-		if (accountStatus == AccountStatus.NEEDS_REFRESH) {
-			return login(progressMonitor);
-		}
-		String token = account.getAccessToken();
 		ThreeScaleData threeScaleData = Fabric8AnalysisPreferences.getInstance().getThreeScaleData();
 		if(threeScaleData == null) {
 			try {
-				threeScaleData = registerThreeScale(monitor, token);
+				threeScaleData = registerThreeScale(monitor);
 			} catch (ThreeScaleAPIException e) {
 				Fabric8AnalysisLSCoreActivator.getDefault().logError("Unable to get data from 3scale", e);
 				return null;
 			}
 		}
-		return new AnalyticsAuthData(threeScaleData, token);
+		return new AnalyticsAuthData(threeScaleData);
 		
 	}
 
 	/**
-	 * Login to OSIO. If anything goes wrong during login process, null is returned
+	 * If anything goes wrong during login process, null is returned
 	 * 
 	 * @param progressMonitor progressMonitor to report login progress.
-	 * @return OSIO data (token and 3scale data) or null if login process fails
+	 * @return 3scale data (3scale data) or null if login process fails
 	 */
 	public AnalyticsAuthData login(IProgressMonitor progressMonitor) throws StorageException{
 		SubMonitor monitor = getSubMonitor(progressMonitor);
 		monitor.setWorkRemaining(2);
-		String token = AccountService.getDefault().getToken(null);
 		ThreeScaleData threeScaleData = null;
-		if (token != null) {
+		
 			try {
-				threeScaleData = registerThreeScale(monitor, token);
+				threeScaleData = registerThreeScale(monitor);
 			} catch (ThreeScaleAPIException e) {
 				Fabric8AnalysisLSCoreActivator.getDefault().logError("Unable to get data from 3scale", e);
 				return null;
 			}
-		}
-		AnalyticsAuthData analyticsAuthData = new AnalyticsAuthData(threeScaleData, token);
+		AnalyticsAuthData analyticsAuthData = new AnalyticsAuthData(threeScaleData);
 		return analyticsAuthData;
 	}
 	
-	private ThreeScaleData registerThreeScale(SubMonitor monitor, String token) throws ThreeScaleAPIException, StorageException {
+	private ThreeScaleData registerThreeScale(SubMonitor monitor) throws ThreeScaleAPIException, StorageException {
 		monitor.setWorkRemaining(1);
 		monitor.setTaskName("Get ThreeScale data");
 		Fabric8AnalysisPreferences preferences = Fabric8AnalysisPreferences.getInstance();
-		ThreeScaleData threeScaleData = new ThreeScaleAPIProvider(token).register3Scale();
+		ThreeScaleData threeScaleData = new ThreeScaleAPIProvider().register3Scale();
 		preferences.setProdURL(threeScaleData.getProd());
 		preferences.setStageURL(threeScaleData.getStage());
 		preferences.setUserKey(threeScaleData.getUserKey());

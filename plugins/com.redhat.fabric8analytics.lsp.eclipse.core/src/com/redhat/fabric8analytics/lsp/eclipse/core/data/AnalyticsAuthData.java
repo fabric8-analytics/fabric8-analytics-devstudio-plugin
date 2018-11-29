@@ -14,15 +14,13 @@ public class AnalyticsAuthData {
 	
 	private ThreeScaleData threeScaleData;
 	
-	private String token;
 
 	public AnalyticsAuthData() {
 		// empty constructor
 	}
 
-	public AnalyticsAuthData(ThreeScaleData threeScaleData, String token) {
+	public AnalyticsAuthData(ThreeScaleData threeScaleData) {
 		this.threeScaleData = threeScaleData;
-		this.token = token;
 	}
 
 	public ThreeScaleData getThreeScaleData() {
@@ -31,14 +29,6 @@ public class AnalyticsAuthData {
 
 	public void setThreeScaleData(ThreeScaleData threeScaleData) {
 		this.threeScaleData = threeScaleData;
-	}
-	
-	public String getToken() {
-		return token;
-	}
-	
-	public void setToken(String token) {
-		this.token = token;
 	}
 
 }
