@@ -42,8 +42,6 @@ import com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalyticsStreamConnecti
 
 public class Fabric8AnalyticsStreamConnectionProviderTest {
 	
-	private static final String TOKEN = "mytoken";
-	
 	private AnalyticsAuthService authService;
 
 	private Fabric8AnalyticsStreamConnectionProviderWrapper provider;
@@ -53,7 +51,7 @@ public class Fabric8AnalyticsStreamConnectionProviderTest {
 		Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
 		
 		ThreeScaleData scaleData = new ThreeScaleData("www.myurl.com", "www.myurl.com", "userKey");
-		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, TOKEN);
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData);
 		
 		authService = mock(AnalyticsAuthService.class);
 		when(authService.getAnalyticsAuthData(any(IProgressMonitor.class))).thenReturn(data);
@@ -69,7 +67,7 @@ public class Fabric8AnalyticsStreamConnectionProviderTest {
 	@Test
 	public void createProcessBuilder() throws StorageException {
 		ThreeScaleData scaleData = new ThreeScaleData("www.myurl.com", "www.myurl.com", "userKey");
-		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, TOKEN);
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData);
 		
 		provider = new Fabric8AnalyticsStreamConnectionProviderWrapper(authService);
 		Fabric8AnalyticsStreamConnectionProviderWrapper providerSpy = spy(provider);
@@ -87,7 +85,6 @@ public class Fabric8AnalyticsStreamConnectionProviderTest {
 		
 		Map<String, String> params = builder.environment();
 		
-		assertThat(params, hasEntry(Fabric8AnalyticsStreamConnectionProvider.RECOMMENDER_API_TOKEN, TOKEN));
 		assertThat(params, hasEntry(Fabric8AnalyticsStreamConnectionProvider.RECOMMENDER_API_URL, "www.myurl.com" + Fabric8AnalyticsStreamConnectionProvider.VERSION_ROUTE));
 	}
 	

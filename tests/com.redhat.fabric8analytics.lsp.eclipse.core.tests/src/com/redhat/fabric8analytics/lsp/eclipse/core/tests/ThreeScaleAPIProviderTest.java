@@ -71,12 +71,12 @@ public class ThreeScaleAPIProviderTest {
 		httpEntity = mock(HttpEntity.class);
 		statusLine = mock(StatusLine.class);
 
-		provider = new ThreeScaleAPIProviderWithCustomClient(TOKEN);
+		provider = new ThreeScaleAPIProviderWithCustomClient();
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void checkNullToken() {
-		new ThreeScaleAPIProvider(null);
+		new ThreeScaleAPIProvider();
 	}
 	
 	@Test
@@ -93,7 +93,6 @@ public class ThreeScaleAPIProviderTest {
 		verify(httpClient).execute(argumentCaptor.capture());
 		HttpGet httpGet = argumentCaptor.getValue();
 		assertThat(httpGet.getURI().toString(), startsWith(String.format(ThreeScaleAPIProvider.THREE_SCALE_URL,ThreeScaleAPIProvider.SERVICE_ID)));
-		assertThat(httpGet.getHeaders("Authorization")[0].getValue(), is(TOKEN));// might be withoput value
 	}
 
 	@Test
@@ -139,8 +138,8 @@ public class ThreeScaleAPIProviderTest {
 	
 	private class ThreeScaleAPIProviderWithCustomClient extends ThreeScaleAPIProvider {
 
-		public ThreeScaleAPIProviderWithCustomClient(String token) {
-			super(token);
+		public ThreeScaleAPIProviderWithCustomClient() {
+			super();
 		}
 		
 		@Override
