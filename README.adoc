@@ -23,10 +23,10 @@ This plugin adds support of Dependency Analytics in Devstudio.
 
 == Installation
 
-* Start link:https://developers.redhat.com/products/devstudio/download/[Devstudio 11] (or link:https://www.eclipse.org/downloads/eclipse-packages/[Eclipse Oxygen 4.7] with link:http://tools.jboss.org/downloads/[JBoss Tools 4.5] installed)
+* Start link:https://developers.redhat.com/products/devstudio/download/[Devstudio 12] (or link:https://www.eclipse.org/downloads/eclipse-packages/[Eclipse 2018-09] with link:http://tools.jboss.org/downloads/[JBoss Tools 4.9] installed)
 * Help -> Install New Software...
 * Work with: http://download.jboss.org/jbosstools/oxygen/snapshots/builds/jbosstools-fabric8analytics_master/latest/all/repo/
-* Install Fabric8Analytics Language Server integration and Language Sever Protocol client
+* Install Dependency Analytics Language Server integration and Language Sever Protocol client
 * Restarted when prompted
 
 image:docs/images/fabric8analytics-install.png[title="installation", alt="installation"]
