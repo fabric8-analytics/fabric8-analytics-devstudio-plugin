@@ -10,7 +10,7 @@
 
 'Dependency Analytics' extension supports projects using Maven.
 
-=Red Hat Dependency Analytics Plugin
+== Red Hat Dependency Analytics Plugin
 
 This plugin adds support of Dependency Analytics in Devstudio.
 
