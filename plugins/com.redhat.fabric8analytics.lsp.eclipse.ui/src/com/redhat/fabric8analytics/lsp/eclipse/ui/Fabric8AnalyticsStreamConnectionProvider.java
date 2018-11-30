@@ -94,9 +94,6 @@ public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConne
 
 	@Override
 	public void start() throws IOException {
-		if (!Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
-			throw new IOException("Fabric8Analytics LSP Server is not enabled");
-		}
 
 		try {
 			analyticsAuthData = osioApiProvider.getAnalyticsAuthData(new NullProgressMonitor());
@@ -146,7 +143,6 @@ public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConne
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder res = super.createProcessBuilder();
 		String serverUrl = getAuthData().getThreeScaleData().getProd() + VERSION_ROUTE;
-		res.environment().put(RECOMMENDER_API_TOKEN, getAuthData().getToken());
 		res.environment().put(RECOMMENDER_API_URL, serverUrl);
 		res.environment().put(THREE_SCALE_USER_TOKEN, getAuthData().getThreeScaleData().getUserKey());
 		return res;
