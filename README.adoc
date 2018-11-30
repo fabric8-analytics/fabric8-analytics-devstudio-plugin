@@ -10,9 +10,9 @@
 
 'Dependency Analytics' extension supports projects using Maven.
 
-= Fabric8Analytics Devstudio Plugin
+=Red Hat Dependency Analytics Plugin
 
-This plugin adds support of Fabric8Analytics in Devstudio.
+This plugin adds support of Dependency Analytics in Devstudio.
 
 == Usage
 
