@@ -88,7 +88,7 @@ public class RecommenderAPIProviderTest {
 		statusLine = mock(StatusLine.class);
 		
 		ThreeScaleData scaleData = new ThreeScaleData(URL, URL, USER_KEY);
-		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, TOKEN);
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData);
 
 		provider = new RecommenderAPIProviderWithCustomClient(data);
 		
@@ -117,21 +117,21 @@ public class RecommenderAPIProviderTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void checkNullURL() {
 		ThreeScaleData scaleData = new ThreeScaleData(null, URL, USER_KEY);
-		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, TOKEN);
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData);
 		new RecommenderAPIProvider(data);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void checkNullUserKey() {
 		ThreeScaleData scaleData = new ThreeScaleData(URL, URL, null);
-		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, TOKEN);
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData);
 		new RecommenderAPIProvider(data);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void checkNullToken() {
 		ThreeScaleData scaleData = new ThreeScaleData(URL, URL, USER_KEY);
-		AnalyticsAuthData data = new AnalyticsAuthData(scaleData, null);
+		AnalyticsAuthData data = new AnalyticsAuthData(scaleData);
 		new RecommenderAPIProvider(data);
 	}
 	
@@ -163,7 +163,6 @@ public class RecommenderAPIProviderTest {
 
 		assertThat(httpPost.getURI().toString(), startsWith(URL));
 		assertThat(httpPost.getURI().toString(), containsString("?user_key=" + USER_KEY));
-		assertThat(httpPost.getHeaders("Authorization")[0].getValue(), is(TOKEN));
 		assertThat(filesString, containsString("firstfile"));
 		assertThat(filesString, containsString("aaa content"));
 		assertThat(filesString, containsString("secondfile"));
