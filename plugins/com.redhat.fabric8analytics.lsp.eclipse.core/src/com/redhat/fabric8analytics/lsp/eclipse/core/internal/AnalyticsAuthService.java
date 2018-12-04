@@ -11,15 +11,10 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.core.internal;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.equinox.security.storage.StorageException;
-import org.jboss.tools.openshift.io.core.AccountService;
-import org.jboss.tools.openshift.io.core.AccountStatus;
-import org.jboss.tools.openshift.io.core.model.IAccount;
 
 import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisLSCoreActivator;
 import com.redhat.fabric8analytics.lsp.eclipse.core.Fabric8AnalysisPreferences;
@@ -37,19 +32,6 @@ public class AnalyticsAuthService {
 	}
 
 	private AnalyticsAuthService() {
-	}
-	
-	/**
-	 * Returns osio account
-	 * @return osio account or null if there is none
-	 */
-	public IAccount getAccount() {
-		AccountService service = AccountService.getDefault();
-		List<IAccount> accounts = service.getModel().getClusters().get(0).getAccounts();
-		if(accounts == null || accounts.isEmpty()) {
-			return null;
-		}
-		return accounts.get(0);
 	}
 
 	/**
