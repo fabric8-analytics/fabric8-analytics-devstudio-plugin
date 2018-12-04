@@ -14,13 +14,11 @@ Require-Bundle: org.eclipse.lsp4e;bundle-version="0.3.0",
  org.json;bundle-version="1.0.0",
  org.apache.commons.io;bundle-version="2.2.0",
  com.redhat.fabric8analytics.lsp.eclipse.core;bundle-version="0.0.1",
- org.jboss.tools.openshift.io.ui;bundle-version="3.4.1",
  org.eclipse.m2e.core,
  org.eclipse.m2e.editor,
  org.eclipse.ui.forms,
  org.eclipse.ui.ide,
  org.eclipse.m2e.maven.runtime,
- org.jboss.tools.openshift.io.core,
  org.eclipse.equinox.security
 Eclipse-BundleShape: dir
 Bundle-Activator: com.redhat.fabric8analytics.lsp.eclipse.ui.Fabric8AnalysisLSUIActivator
