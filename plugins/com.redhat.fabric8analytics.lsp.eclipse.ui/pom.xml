@@ -29,7 +29,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://download.jboss.org/jbosstools/photon/snapshots/builds/jbosstools-fabric8analytics-lsp-server_master/2018-12-03_13-02-25-B1636/ca-lsp-server-0.0.6-SNAPSHOT.zip</url>
+							<url>http://download.jboss.org/jbosstools/photon/snapshots/builds/jbosstools-fabric8analytics-lsp-server_master/latest/ca-lsp-server-0.0.6-SNAPSHOT.zip</url>
 							<unpack>true</unpack>
 							<outputDirectory>server/</outputDirectory>
 						</configuration>
