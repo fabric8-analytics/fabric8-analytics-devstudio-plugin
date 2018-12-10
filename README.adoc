@@ -10,9 +10,9 @@
 
 'Dependency Analytics' extension supports projects using Maven.
 
-== Red Hat Dependency Analytics Plugin
+== Red Hat Dependency Analytics Eclipse Plugin
 
-This plugin adds support of Dependency Analytics in Devstudio.
+This plugin adds support of Dependency Analytics in Eclipse based IDE's such as Devstudio.
 
 == Usage
 
@@ -33,12 +33,6 @@ image:docs/images/fabric8analytics-install.png[title="installation", alt="instal
 
 
 == Features
-
-* Log In into OpenShift.io
-image:docs/images/icon.png[title="icon", alt="icon"]
-
-* Enables Fabric8 analyses
-image:docs/images/enableDialog.png[title="enable", alt="enable"]
 
 * This Plugin helps to analyze your application stack on manifest level.
 
