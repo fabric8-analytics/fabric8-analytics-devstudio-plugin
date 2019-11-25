@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc..
+ * Copyright (c) 2017-2019 Red Hat Inc..
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,10 +103,15 @@ public class Fabric8AnalyticsStreamConnectionProvider extends ProcessStreamConne
 		if (analyticsAuthData == null) {
 			throw new IOException("User is not logged in Openshift.io");
 		}
+		
+		if (Fabric8AnalysisPreferences.getInstance().isLSPServerEnabled()) {
+			super.start();
+			// if super.start() does not throw exception, we're started
+			Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is started ");			
+		} else {
+			throw new IOException("Fabric8 analysis server is disabled");
+		}
 
-		super.start();
-		// if super.start() does not throw exception, we're started
-		Fabric8AnalysisLSUIActivator.getDefault().logInfo("The Fabric8 analyses server is started ");
 	}
 
 	@Override

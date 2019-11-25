@@ -129,13 +129,6 @@ public class RecommenderAPIProviderTest {
 	}
 
 	@Test(expected=IllegalArgumentException.class)
-	public void checkNullToken() {
-		ThreeScaleData scaleData = new ThreeScaleData(URL, URL, USER_KEY);
-		AnalyticsAuthData data = new AnalyticsAuthData(scaleData);
-		new RecommenderAPIProvider(data);
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
 	public void requestAnalyses_nullFiles() throws ClientProtocolException, IOException, RecommenderAPIException, CoreException {
 		provider.requestAnalyses(null, null);
 	}
@@ -225,7 +218,6 @@ public class RecommenderAPIProviderTest {
 
 		assertThat(httpGet.getURI().toString(), startsWith(URL));
 		assertThat(httpGet.getURI().toString(), containsString("?user_key=" + USER_KEY));
-		assertThat(httpGet.getHeaders("Authorization")[0].getValue(), is("Bearer mytoken"));
 		assertThat(httpGet.getURI().toString(), containsString(JOB));
 	}
 

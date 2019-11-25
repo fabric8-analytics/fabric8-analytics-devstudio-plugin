@@ -74,11 +74,6 @@ public class ThreeScaleAPIProviderTest {
 		provider = new ThreeScaleAPIProviderWithCustomClient();
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void checkNullToken() {
-		new ThreeScaleAPIProvider();
-	}
-	
 	@Test
 	public void register3Scale_createGet() throws UnsupportedOperationException, IOException, ThreeScaleAPIException {
 		when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
