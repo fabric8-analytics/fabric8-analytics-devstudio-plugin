@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.redhat.fabric8analytics.tests</groupId>
 		<artifactId>tests</artifactId>
-		<version>0.0.3-SNAPSHOT</version>
+		<version>0.0.4-SNAPSHOT</version>
 	</parent>
 	<groupId>com.redhat.fabric8analytics.lsp.eclipse.ui.tests</groupId>
 	<artifactId>com.redhat.fabric8analytics.lsp.eclipse.ui.tests</artifactId>
@@ -24,18 +24,6 @@
 					<excludes>
 						<exclude>**/Abstract*.class</exclude>
 					</excludes>
-					<dependencies combine.children="append">
-						<dependency>
-							<type>p2-installable-unit</type>
-							<artifactId>org.mockito</artifactId>
-							<version>1.9.5</version>
-						</dependency>
-						<dependency>
-							<type>p2-installable-unit</type>
-							<artifactId>org.hamcrest</artifactId>
-							<version>0.0.0</version>
-						</dependency>
-					</dependencies>
 				</configuration>
 			</plugin>
 			<plugin>
