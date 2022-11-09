@@ -11,6 +11,8 @@
 
 package com.redhat.fabric8analytics.lsp.eclipse.ui;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.m2e.core.project.IMavenProjectChangedListener;
 import org.eclipse.m2e.core.project.MavenProjectChangedEvent;
@@ -57,7 +59,7 @@ class Fabric8FormPage extends MavenPomEditorPage implements IMavenProjectChanged
 	}
 
 	@Override
-	public void mavenProjectChanged(MavenProjectChangedEvent[] arg0, IProgressMonitor arg1) {
+	public void mavenProjectChanged(List<MavenProjectChangedEvent> events, IProgressMonitor monitor) {
 
 	}
 
