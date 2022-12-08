@@ -10,10 +10,11 @@
  *******************************************************************************/
 
 package com.redhat.fabric8analytics.lsp.eclipse.core.tests;
-import static org.hamcrest.CoreMatchers.is;
+
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -39,20 +40,20 @@ import com.redhat.fabric8analytics.lsp.eclipse.core.ThreeScaleAPIProvider;
 import com.redhat.fabric8analytics.lsp.eclipse.core.data.ThreeScaleData;
 
 public class ThreeScaleAPIProviderTest {
-	
+
 	private static final String PROD = "produrl";
-	
+
 	private static final String STAGE = "stageurl";
-	
+
 	private static final String USER_KEY = "myuserkey";
-	
+
 	private static final String TOKEN = "mytoken";
-	
+
 	private static final String URL = "www.myurl.com";
-	
-	private static final String JSON_ENDPOINTS = "{\"prod\":" + PROD +  ", \"stage\":"+ STAGE +"}";
-	
-	private static final String JSON = "{\"endpoints\":" + JSON_ENDPOINTS + ", \"user_key\": "+ USER_KEY +"}";
+
+	private static final String JSON_ENDPOINTS = "{\"prod\":" + PROD + ", \"stage\":" + STAGE + "}";
+
+	private static final String JSON = "{\"endpoints\":" + JSON_ENDPOINTS + ", \"user_key\": " + USER_KEY + "}";
 
 	private ThreeScaleAPIProvider provider;
 
@@ -63,7 +64,7 @@ public class ThreeScaleAPIProviderTest {
 	private HttpEntity httpEntity;
 
 	private StatusLine statusLine;
-	
+
 	@Before
 	public void setup() throws CoreException {
 		httpClient = mock(CloseableHttpClient.class);
@@ -73,7 +74,7 @@ public class ThreeScaleAPIProviderTest {
 
 		provider = new ThreeScaleAPIProviderWithCustomClient();
 	}
-	
+
 	@Test
 	public void register3Scale_createGet() throws UnsupportedOperationException, IOException, ThreeScaleAPIException {
 		when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
@@ -87,7 +88,8 @@ public class ThreeScaleAPIProviderTest {
 		provider.register3Scale();
 		verify(httpClient).execute(argumentCaptor.capture());
 		HttpGet httpGet = argumentCaptor.getValue();
-		assertThat(httpGet.getURI().toString(), startsWith(String.format(ThreeScaleAPIProvider.THREE_SCALE_URL,ThreeScaleAPIProvider.SERVICE_ID)));
+		assertThat(httpGet.getURI().toString(),
+				startsWith(String.format(ThreeScaleAPIProvider.THREE_SCALE_URL, ThreeScaleAPIProvider.SERVICE_ID)));
 	}
 
 	@Test
@@ -95,48 +97,47 @@ public class ThreeScaleAPIProviderTest {
 		when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);
 		when(httpResponse.getEntity()).thenReturn(httpEntity);
-		
-		
+
 		when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(JSON.getBytes()));
 		when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
 
 		ThreeScaleData data = provider.register3Scale();
 
 		verify(httpClient, atLeastOnce()).close();
-		assertThat(data.getProd(), is(PROD));
-		assertThat(data.getStage(), is(STAGE));
-		assertThat(data.getUserKey(), is(USER_KEY));
-		
+		assertThat(data.getProd(), equalTo(PROD));
+		assertThat(data.getStage(), equalTo(STAGE));
+		assertThat(data.getUserKey(), equalTo(USER_KEY));
+
 	}
 
-	@Test(expected=ThreeScaleAPIException.class)
+	@Test(expected = ThreeScaleAPIException.class)
 	public void register3Scale_responseOther() throws ClientProtocolException, IOException, ThreeScaleAPIException {
 		when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);
 		when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_FORBIDDEN);
 
 		provider.register3Scale();
-		
+
 		verify(httpClient, atLeastOnce()).close();
 	}
 
-	@Test(expected=ThreeScaleAPIException.class)
+	@Test(expected = ThreeScaleAPIException.class)
 	public void register3Scale_clientException() throws ClientProtocolException, IOException, ThreeScaleAPIException {
 		when(httpClient.execute(any(HttpGet.class))).thenThrow(IOException.class);
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);
 		when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_FORBIDDEN);
 
 		provider.register3Scale();
-		
+
 		verify(httpClient, atLeastOnce()).close();
 	}
-	
+
 	private class ThreeScaleAPIProviderWithCustomClient extends ThreeScaleAPIProvider {
 
 		public ThreeScaleAPIProviderWithCustomClient() {
 			super();
 		}
-		
+
 		@Override
 		protected CloseableHttpClient createClient() {
 			return httpClient;
