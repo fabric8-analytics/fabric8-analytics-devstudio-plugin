@@ -108,8 +108,8 @@ public class Fabric8AnalyticsStreamConnectionProviderTest {
 	public void start() throws IOException {
 		provider.start();
 
-		assertThat(provider.getInputStream(), equalTo(not(nullValue())));
-		assertThat(provider.getOutputStream(), equalTo(not(nullValue())));
+		assertThat(provider.getInputStream(), not(nullValue()));
+		assertThat(provider.getOutputStream(), not(nullValue()));
 	}
 
 	@Test
@@ -131,13 +131,13 @@ public class Fabric8AnalyticsStreamConnectionProviderTest {
 	public void propertyEnabled() throws IOException {
 		Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(false);
 
-		assertThat(provider.getInputStream(), equalTo(nullValue()));
-		assertThat(provider.getOutputStream(), equalTo(nullValue()));
+		assertThat(provider.getInputStream(), nullValue());
+		assertThat(provider.getOutputStream(), nullValue());
 
 		Fabric8AnalysisPreferences.getInstance().setLSPServerEnabled(true);
 
-		assertThat(provider.getInputStream(), equalTo(not(nullValue())));
-		assertThat(provider.getOutputStream(), equalTo(not(nullValue())));
+		assertThat(provider.getInputStream(), not(nullValue()));
+		assertThat(provider.getOutputStream(), not(nullValue()));
 	}
 
 	@Test

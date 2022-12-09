@@ -26,24 +26,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<configuration>
-					<resolver>p2</resolver>
-					<pomDependencies>consider</pomDependencies>
-					<ignoreTychoRepositories>true</ignoreTychoRepositories>
-					<dependency-resolution>
-						<extraRequirements>
-							<requirement>
-								<type>p2-installable-unit</type>
-								<id>org.eclipse.equinox.p2.core.feature.feature.group</id>
-								<versionRange>0.0.0</versionRange>
-							</requirement>
-						</extraRequirements>
-					</dependency-resolution>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 </project>
