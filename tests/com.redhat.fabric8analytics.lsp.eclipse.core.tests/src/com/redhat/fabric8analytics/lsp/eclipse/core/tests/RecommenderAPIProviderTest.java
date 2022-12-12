@@ -12,13 +12,13 @@
 package com.redhat.fabric8analytics.lsp.eclipse.core.tests;
 
 import static org.hamcrest.CoreMatchers.containsString;
-
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
@@ -63,7 +63,7 @@ public class RecommenderAPIProviderTest {
 	private static final String USER_KEY = "myuserkey";
 
 	private static final String URL = "www.myurl.com";
-	
+
 	private static final String JOB = "myjob";
 
 	private static final String JSON = "{\"id\":12345}";
@@ -77,7 +77,7 @@ public class RecommenderAPIProviderTest {
 	private HttpEntity httpEntity;
 
 	private StatusLine statusLine;
-	
+
 	private Map<String, String> files;
 
 	@Before
@@ -86,19 +86,19 @@ public class RecommenderAPIProviderTest {
 		httpResponse = mock(CloseableHttpResponse.class);
 		httpEntity = mock(HttpEntity.class);
 		statusLine = mock(StatusLine.class);
-		
+
 		ThreeScaleData scaleData = new ThreeScaleData(URL, URL, USER_KEY);
 		AnalyticsAuthData data = new AnalyticsAuthData(scaleData);
 
 		provider = new RecommenderAPIProviderWithCustomClient(data);
-		
+
 		IProject project = createProject("myproject");
 		files = new HashMap<>();
 		File fileA = createFile(project, "firstfile", "aaa content");
 		File fileB = createFile(project, "secondfile", "bbb content");
 		files.put(fileA.getAbsolutePath(), new String(Files.readAllBytes(fileA.toPath())));
 		files.put(fileB.getAbsolutePath(), new String(Files.readAllBytes(fileB.toPath())));
-		}
+	}
 
 	@After
 	public void after() throws CoreException {
@@ -114,30 +114,32 @@ public class RecommenderAPIProviderTest {
 		root.delete(true, null);
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void checkNullURL() {
 		ThreeScaleData scaleData = new ThreeScaleData(null, URL, USER_KEY);
 		AnalyticsAuthData data = new AnalyticsAuthData(scaleData);
 		new RecommenderAPIProvider(data);
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void checkNullUserKey() {
 		ThreeScaleData scaleData = new ThreeScaleData(URL, URL, null);
 		AnalyticsAuthData data = new AnalyticsAuthData(scaleData);
 		new RecommenderAPIProvider(data);
 	}
 
-	@Test(expected=IllegalArgumentException.class)
-	public void requestAnalyses_nullFiles() throws ClientProtocolException, IOException, RecommenderAPIException, CoreException {
+	@Test(expected = IllegalArgumentException.class)
+	public void requestAnalyses_nullFiles()
+			throws ClientProtocolException, IOException, RecommenderAPIException, CoreException {
 		provider.requestAnalyses(null, null);
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void requestAnalyses_emptyFiles() throws ClientProtocolException, IOException, RecommenderAPIException, CoreException {
+
+	@Test(expected = IllegalArgumentException.class)
+	public void requestAnalyses_emptyFiles()
+			throws ClientProtocolException, IOException, RecommenderAPIException, CoreException {
 		provider.requestAnalyses(Collections.emptyMap(), null);
 	}
-	
+
 	@Test
 	public void requestAnalyses_createPost() throws ClientProtocolException, IOException, RecommenderAPIException {
 		when(httpClient.execute(any(HttpPost.class))).thenReturn(httpResponse);
@@ -149,7 +151,7 @@ public class RecommenderAPIProviderTest {
 		final ArgumentCaptor<HttpPost> argumentCaptor = ArgumentCaptor.forClass(HttpPost.class);
 
 		provider.requestAnalyses(files, null);
-		
+
 		verify(httpClient).execute(argumentCaptor.capture());
 		HttpPost httpPost = argumentCaptor.getValue();
 		String filesString = IOUtils.toString(httpPost.getEntity().getContent());
@@ -173,10 +175,10 @@ public class RecommenderAPIProviderTest {
 		String jobID = provider.requestAnalyses(files, null);
 		verify(httpClient, atLeastOnce()).close();
 
-		assertThat(jobID, is("12345"));
+		assertThat(jobID, equalTo("12345"));
 	}
 
-	@Test(expected=RecommenderAPIException.class)
+	@Test(expected = RecommenderAPIException.class)
 	public void requestAnalyses_responseOther() throws ClientProtocolException, IOException, RecommenderAPIException {
 		when(httpClient.execute(any(HttpPost.class))).thenReturn(httpResponse);
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);
@@ -186,7 +188,7 @@ public class RecommenderAPIProviderTest {
 		verify(httpClient, atLeastOnce()).close();
 	}
 
-	@Test(expected=RecommenderAPIException.class)
+	@Test(expected = RecommenderAPIException.class)
 	public void requestAnalyses_clientException() throws ClientProtocolException, IOException, RecommenderAPIException {
 		when(httpClient.execute(any(HttpPost.class))).thenThrow(IOException.class);
 
@@ -194,16 +196,16 @@ public class RecommenderAPIProviderTest {
 		verify(httpClient, atLeastOnce()).close();
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void analysesFinished_nullJob() throws ClientProtocolException, IOException, RecommenderAPIException {
 		provider.analysesFinished(null);
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
+
+	@Test(expected = IllegalArgumentException.class)
 	public void analysesFinished_emptyStringJob() throws ClientProtocolException, IOException, RecommenderAPIException {
 		provider.analysesFinished("");
 	}
-	
+
 	@Test
 	public void analysesFinished_createGet() throws ClientProtocolException, IOException, RecommenderAPIException {
 		when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
@@ -227,38 +229,40 @@ public class RecommenderAPIProviderTest {
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);
 		when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
 
-		assertThat(provider.analysesFinished(JOB), is(true));
+		assertThat(provider.analysesFinished(JOB), equalTo(true));
 		verify(httpClient, atLeastOnce()).close();
 	}
 
 	@Test
-	public void analysesFinished_responseAccepted() throws ClientProtocolException, IOException, RecommenderAPIException {
+	public void analysesFinished_responseAccepted()
+			throws ClientProtocolException, IOException, RecommenderAPIException {
 		when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);
 		when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_ACCEPTED);
 
-		assertThat(provider.analysesFinished(JOB), is(false));
+		assertThat(provider.analysesFinished(JOB), equalTo(false));
 		verify(httpClient, atLeastOnce()).close();
 	}
 
-	@Test(expected=RecommenderAPIException.class)
+	@Test(expected = RecommenderAPIException.class)
 	public void analysesFinished_responseOther() throws ClientProtocolException, IOException, RecommenderAPIException {
 		when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);
 		when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_FORBIDDEN);
 
 		provider.analysesFinished(JOB);
-		
+
 		verify(httpClient, atLeastOnce()).close();
 	}
 
 	@SuppressWarnings("unchecked")
-	@Test(expected=RecommenderAPIException.class)
-	public void analysesFinished_clientException() throws ClientProtocolException, IOException, RecommenderAPIException {
+	@Test(expected = RecommenderAPIException.class)
+	public void analysesFinished_clientException()
+			throws ClientProtocolException, IOException, RecommenderAPIException {
 		when(httpClient.execute(any(HttpGet.class))).thenThrow(IOException.class);
 
 		provider.analysesFinished(JOB);
-		
+
 		verify(httpClient, atLeastOnce()).close();
 	}
 
@@ -267,14 +271,14 @@ public class RecommenderAPIProviderTest {
 		public RecommenderAPIProviderWithCustomClient(AnalyticsAuthData data) {
 			super(data);
 		}
-		
+
 		@Override
 		protected CloseableHttpClient createClient() {
 			return httpClient;
 		}
 	}
-	
-	private File createFile(IProject project, String name, String content) throws CoreException{
+
+	private File createFile(IProject project, String name, String content) throws CoreException {
 		IFile file = project.getFile(name);
 		file.create(new ByteArrayInputStream(content.getBytes()), IResource.NONE, null);
 		return file.getRawLocation().makeAbsolute().toFile();

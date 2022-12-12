@@ -25,5 +25,6 @@ Export-Package: com.redhat.fabric8analytics.lsp.eclipse.core,
  com.redhat.fabric8analytics.lsp.eclipse.core.job,
  com.redhat.fabric8analytics.lsp.eclipse.core.data,
  com.redhat.fabric8analytics.lsp.eclipse.core.internal;x-friends:=com.redhat.fabric8analytics.lsp.eclipse.ui
+Import-Package: javax.annotation
 
 
